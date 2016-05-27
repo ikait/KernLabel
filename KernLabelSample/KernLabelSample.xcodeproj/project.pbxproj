@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5A53A3431CF87CDF00F05432 /* KernLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; };
 		5A53A3441CF87CDF00F05432 /* KernLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5A53A3691CF9009900F05432 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A53A3681CF9009900F05432 /* ViewController.swift */; };
 		5ABC40F11CF53AAE00CC65A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */; };
 		5ABC40F81CF53AAE00CC65A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */; };
 		5ABC40FB1CF53AAE00CC65A2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5ABC40F91CF53AAE00CC65A2 /* LaunchScreen.storyboard */; };
@@ -48,6 +49,7 @@
 
 /* Begin PBXFileReference section */
 		5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KernLabel.xcodeproj; path = ../KernLabel/KernLabel.xcodeproj; sourceTree = "<group>"; };
+		5A53A3681CF9009900F05432 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5ABC40ED1CF53AAE00CC65A2 /* KernLabelSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KernLabelSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			children = (
 				5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */,
 				5AC9EE8F1CF5B2CC00E92EA6 /* TableViewController.swift */,
+				5A53A3681CF9009900F05432 /* ViewController.swift */,
 				5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */,
 				5ABC40F91CF53AAE00CC65A2 /* LaunchScreen.storyboard */,
 				5ABC40FC1CF53AAE00CC65A2 /* Info.plist */,
@@ -193,6 +196,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A53A3691CF9009900F05432 /* ViewController.swift in Sources */,
 				5ABC40F11CF53AAE00CC65A2 /* AppDelegate.swift in Sources */,
 				5AC9EE901CF5B2CC00E92EA6 /* TableViewController.swift in Sources */,
 			);
