@@ -14,7 +14,7 @@ private let k括弧開 = "｛［「『（｟〈《〔〘【〖"
 
 extension NSMutableAttributedString {
     var kerned: NSMutableAttributedString {
-        var regexp = try! NSRegularExpression(pattern: "([\(k句読点)\(k括弧閉)][\(k括弧開)])|([\(k括弧閉)][\(k句読点)])|([(k括弧閉)][(k括弧閉)])", options: [])
+        let regexp = try! NSRegularExpression(pattern: "([\(k句読点)\(k括弧閉)][\(k括弧開)])|([\(k括弧閉)][\(k句読点)])|([(k括弧閉)][(k括弧閉)])", options: [])
         regexp.matchesInString(self.string, options: [], range: NSMakeRange(0, self.length)).enumerate().forEach { result in
             let index = result.element.range.location
             let curAttrs = self.attributesAtIndex(index, effectiveRange: nil)

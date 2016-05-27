@@ -17,7 +17,8 @@ extension NSAttributedString {
             let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
                 return self.font.lineHeight
         }
-        return self.font.lineHeight * paragraphStyle.lineHeightMultiple
+        let lineHeightMultiple = paragraphStyle.lineHeightMultiple
+        return self.font.lineHeight * ((lineHeightMultiple.isZero) ? 1 : lineHeightMultiple)
     }
 
     var textAlignment: NSTextAlignment? {

@@ -241,7 +241,7 @@ struct Type {
     }
 
     private mutating func process(context: CGContext?) -> CGContext? {
-        var context = context ?? self.createEmptyContext()
+        let context = context ?? self.createEmptyContext()
 
         while self.location < self.length {
             self.goToNextLinePosition()
@@ -251,7 +251,7 @@ struct Type {
 
 
             // 押し出し禁則を適用する
-            if (self.width - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * 1.5) {  // kCharactersHaveRightSpace は 0.5 文字として計算
+            if (self.width - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * 1.25) {  // kCharactersHaveRightSpace は 0.25 文字として計算
                 if range.location + range.length + 2 <= self.length {
                     if kCharactersHaveRightSpace.contains(self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string) {
                         range = NSMakeRange(range.location, range.length + 2)
@@ -261,7 +261,7 @@ struct Type {
             }
 
 
-            var overflow = self.isOverflow(currentLineCount)
+            let overflow = self.isOverflow(currentLineCount)
 
             // overflow していて、 truncate する必要があるとき
             if overflow && self.options.contains(.TruncatesLastVisibleLine) {

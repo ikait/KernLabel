@@ -140,7 +140,6 @@ public class KernLabel: UIView {
                 let attributedText = NSMutableAttributedString(attributedString: _attributedText)
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.alignment = newValue
-                paragraphStyle.lineBreakMode = self.lineBreakMode
                 attributedText.attributes = [
                     NSParagraphStyleAttributeName: paragraphStyle
                 ]
@@ -169,7 +168,6 @@ public class KernLabel: UIView {
             if let _attributedText = self.attributedText {
                 let attributedText = NSMutableAttributedString(attributedString: _attributedText)
                 let paragraphStyle = NSMutableParagraphStyle()
-                paragraphStyle.alignment = self.textAlignment
                 paragraphStyle.lineBreakMode = newValue
                 attributedText.attributes = [
                     NSParagraphStyleAttributeName: paragraphStyle
@@ -214,7 +212,7 @@ public class KernLabel: UIView {
     /**
      Text rect size
      */
-    public func textRectForBounds(_ bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+    public func textRectForBounds(bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
         guard let _attributedText = self.attributedText else {
             return CGRectZero
         }
@@ -232,10 +230,10 @@ public class KernLabel: UIView {
      Label size amount of texts considered
      */
     public override func intrinsicContentSize() -> CGSize {
-        guard let _attributedText = self.attributedText else {
+        guard self.attributedText != nil else {
             return CGSizeZero
         }
-        var width = self.preferredMaxLayoutWidth == 0 ?
+        let width = self.preferredMaxLayoutWidth == 0 ?
             (superview?.frame.width ?? 0) : self.preferredMaxLayoutWidth
         let rect = CGRectMake(0, 0, width, pow(2, 16))
         return self.textRectForBounds(rect, limitedToNumberOfLines: 0).size
@@ -243,19 +241,21 @@ public class KernLabel: UIView {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        self.contentMode = .Redraw
-        self.backgroundColor = UIColor.clearColor()
+        self.initLabelSettings()
     }
 
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
+        self.initLabelSettings()
+    }
+
+    private func initLabelSettings() {
         self.contentMode = .Redraw
         self.backgroundColor = UIColor.clearColor()
     }
 
     public override func updateConstraints() {
         self.invalidateIntrinsicContentSize()
-        self.translatesAutoresizingMaskIntoConstraints = false
         if self.preferredMaxLayoutWidth != self.bounds.width {
             self.preferredMaxLayoutWidth = self.bounds.width
         }
@@ -281,11 +281,15 @@ public class KernLabel: UIView {
         type.drawText(on: context)
     }
 
-    public func drawTextInRect(_ rect: CGRect) {
+    public func drawTextInRect(rect: CGRect) {
         let context = UIGraphicsGetCurrentContext()
+        var options = NSStringDrawingOptions.UsesLineFragmentOrigin
+        if self.lineBreakMode == .ByTruncatingTail {
+            options.unionInPlace(.TruncatesLastVisibleLine)
+        }
         self.drawRectWithKerning(
             rect,
-            options: (self.lineBreakMode == .ByTruncatingTail) ? [.TruncatesLastVisibleLine] : [],
+            options: options,
             context: context!)
     }
 
