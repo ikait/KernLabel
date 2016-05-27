@@ -11,6 +11,12 @@ import KernLabel
 
 class TableViewController: UITableViewController {
 
+    var paragraphStyle: NSParagraphStyle {
+        let style = NSMutableParagraphStyle()
+        style.lineHeightMultiple = 1.6
+        return style
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerClass(Cell.self, forCellReuseIdentifier: "Cell")
@@ -35,7 +41,13 @@ class TableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! Cell
         cell.label?.numberOfLines = 0
-        cell.label?.text = "\(Sentences[indexPath.row])"
+        cell.label?.attributedText = NSAttributedString(
+            string: Sentences[indexPath.row],
+            attributes: [
+                NSParagraphStyleAttributeName: self.paragraphStyle,
+                NSFontAttributeName: UIFont(name: "Hiragino Kaku Gothic ProN W3", size: 17)!
+            ]
+        )
         return cell
     }
 }
@@ -51,7 +63,7 @@ private class Cell: UITableViewCell {
         self.label?.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.label!)
         self.contentView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat(
-            "V:|-8-[view]-8-|",
+            "V:|-10-[view]-10-|",
             options: [],
             metrics: nil,
             views: ["view": self.label!]))

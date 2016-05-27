@@ -292,7 +292,7 @@ struct Type {
         // キャッシュ
         self.typedContext = context
         self.intrinsicTextSize = CGSizeMake(
-            self.width, self.currentPosition.y + self.font.descender * -1)
+            self.width, self.currentPosition.y + self.font.ascender)
 
         return context
     }

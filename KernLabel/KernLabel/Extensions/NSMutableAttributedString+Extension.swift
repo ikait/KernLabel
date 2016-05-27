@@ -18,7 +18,7 @@ extension NSMutableAttributedString {
         regexp.matchesInString(self.string, options: [], range: NSMakeRange(0, self.length)).enumerate().forEach { result in
             let index = result.element.range.location
             let curAttrs = self.attributesAtIndex(index, effectiveRange: nil)
-            let font = curAttrs[NSFontAttributeName] as! UIFont
+            let font = curAttrs[NSFontAttributeName] as? UIFont ?? UIFont.systemFontOfSize(UIFont.systemFontSize())
             self.addAttributes([
                 NSKernAttributeName: font.pointSize * -0.5,
             ], range: NSMakeRange(index, 1))

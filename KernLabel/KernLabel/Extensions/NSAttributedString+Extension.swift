@@ -13,7 +13,11 @@ private let kCGFloatHuge: CGFloat = pow(2, 16)
 
 extension NSAttributedString {
     var lineHeight: CGFloat {
-        return self.font.lineHeight
+        guard let attributes = self.attributes,
+            let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+                return self.lineHeight
+        }
+        return self.font.lineHeight * paragraphStyle.lineHeightMultiple
     }
 
     var textAlignment: NSTextAlignment? {
