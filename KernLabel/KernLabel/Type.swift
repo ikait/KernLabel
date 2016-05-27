@@ -122,9 +122,10 @@ struct Type {
 
     /**
      y の開始位置を移動
+     一行目であれば、ascender 分だけを加算する（lineHeight だと descender も含まれるので上が不自然に開いてしまうので）
      */
     private mutating func goToNextLinePosition() {
-        self.currentPosition.y += self.lineHeight
+        self.currentPosition.y += (self.lines == 0) ? self.font.ascender : self.lineHeight
     }
 
     /**
@@ -292,7 +293,7 @@ struct Type {
         // キャッシュ
         self.typedContext = context
         self.intrinsicTextSize = CGSizeMake(
-            self.width, self.currentPosition.y + self.font.ascender)
+            self.width, self.currentPosition.y + self.font.ascender - self.font.capHeight)
 
         return context
     }
