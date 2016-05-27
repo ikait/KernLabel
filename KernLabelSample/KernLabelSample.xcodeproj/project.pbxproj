@@ -7,13 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D7481141CF80B150036B932 /* KernLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D7481131CF80B150036B932 /* KernLabel.framework */; };
-		4D7481151CF80B150036B932 /* KernLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4D7481131CF80B150036B932 /* KernLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5A53A3431CF87CDF00F05432 /* KernLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; };
+		5A53A3441CF87CDF00F05432 /* KernLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5ABC40F11CF53AAE00CC65A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */; };
 		5ABC40F81CF53AAE00CC65A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */; };
 		5ABC40FB1CF53AAE00CC65A2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5ABC40F91CF53AAE00CC65A2 /* LaunchScreen.storyboard */; };
 		5AC9EE901CF5B2CC00E92EA6 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC9EE8F1CF5B2CC00E92EA6 /* TableViewController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5A53A3411CF87CC600F05432 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5ABC40B51CF539C200CC65A2;
+			remoteInfo = KernLabel;
+		};
+		5A53A3451CF87CDF00F05432 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5ABC40B41CF539C200CC65A2;
+			remoteInfo = KernLabel;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		4D7481161CF80B160036B932 /* Embed Frameworks */ = {
@@ -22,7 +39,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4D7481151CF80B150036B932 /* KernLabel.framework in Embed Frameworks */,
+				5A53A3441CF87CDF00F05432 /* KernLabel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -30,7 +47,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4D7481131CF80B150036B932 /* KernLabel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = KernLabel.framework; path = "/Users/ikai/Library/Developer/Xcode/DerivedData/KernLabel-elzgwbekonadtucssfzoxjfqegkp/Build/Products/Debug-iphoneos/KernLabel.framework"; sourceTree = "<absolute>"; };
+		5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KernLabel.xcodeproj; path = ../KernLabel/KernLabel.xcodeproj; sourceTree = "<group>"; };
 		5ABC40ED1CF53AAE00CC65A2 /* KernLabelSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KernLabelSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -44,17 +61,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D7481141CF80B150036B932 /* KernLabel.framework in Frameworks */,
+				5A53A3431CF87CDF00F05432 /* KernLabel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5A53A33E1CF87CC500F05432 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5A53A3421CF87CC600F05432 /* KernLabel.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5ABC40E41CF53AAE00CC65A2 = {
 			isa = PBXGroup;
 			children = (
-				4D7481131CF80B150036B932 /* KernLabel.framework */,
+				5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */,
 				5ABC40EF1CF53AAE00CC65A2 /* KernLabelSample */,
 				5ABC40EE1CF53AAE00CC65A2 /* Products */,
 			);
@@ -95,6 +120,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5A53A3461CF87CDF00F05432 /* PBXTargetDependency */,
 			);
 			name = KernLabelSample;
 			productName = KernLabelSample;
@@ -127,12 +153,28 @@
 			mainGroup = 5ABC40E41CF53AAE00CC65A2;
 			productRefGroup = 5ABC40EE1CF53AAE00CC65A2 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 5A53A33E1CF87CC500F05432 /* Products */;
+					ProjectRef = 5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				5ABC40EC1CF53AAE00CC65A2 /* KernLabelSample */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		5A53A3421CF87CC600F05432 /* KernLabel.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = KernLabel.framework;
+			remoteRef = 5A53A3411CF87CC600F05432 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5ABC40EB1CF53AAE00CC65A2 /* Resources */ = {
@@ -157,6 +199,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5A53A3461CF87CDF00F05432 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KernLabel;
+			targetProxy = 5A53A3451CF87CDF00F05432 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		5ABC40F91CF53AAE00CC65A2 /* LaunchScreen.storyboard */ = {
@@ -257,6 +307,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = KernLabelSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -269,6 +320,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = KernLabelSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
