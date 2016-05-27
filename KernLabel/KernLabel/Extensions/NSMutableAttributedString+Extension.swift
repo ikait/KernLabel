@@ -11,17 +11,19 @@ import UIKit
 private let k句読点 = "、，。．"
 private let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
 private let k括弧開 = "｛［「『（｟〈《〔〘【〖"
+private let k他約物 = "！？：；︰‐・…‥〜ー―※"
 
 extension NSMutableAttributedString {
     var kerned: NSMutableAttributedString {
-        let regexp = try! NSRegularExpression(pattern: "([\(k句読点)\(k括弧閉)][\(k括弧開)])|([\(k括弧閉)][\(k句読点)])|([(k括弧閉)][(k括弧閉)])", options: [])
+        let regexp = try! NSRegularExpression(pattern: "([\(k括弧閉)]?[\(k句読点)]?[\(k他約物)]?[\(k括弧開)])|([\(k括弧閉)][\(k句読点)]?[\(k他約物)]?)", options: [])
         regexp.matchesInString(self.string, options: [], range: NSMakeRange(0, self.length)).enumerate().forEach { result in
-            let index = result.element.range.location
-            let curAttrs = self.attributesAtIndex(index, effectiveRange: nil)
+            let (location, length) = (result.element.range.location, result.element.range.length)
+            let curAttrs = self.attributesAtIndex(location, effectiveRange: nil)
             let font = curAttrs[NSFontAttributeName] as? UIFont ?? UIFont.systemFontOfSize(UIFont.systemFontSize())
             self.addAttributes([
                 NSKernAttributeName: font.pointSize * -0.5,
-            ], range: NSMakeRange(index, 1))
+                NSBackgroundColorAttributeName: UIColor.blueColor()
+            ], range: NSMakeRange(location, length - 1))
         }
         return self
     }
