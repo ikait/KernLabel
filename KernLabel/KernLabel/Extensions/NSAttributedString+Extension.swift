@@ -15,7 +15,7 @@ extension NSAttributedString {
     var lineHeight: CGFloat {
         guard let attributes = self.attributes,
             let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
-                return self.lineHeight
+                return self.font.lineHeight
         }
         return self.font.lineHeight * paragraphStyle.lineHeightMultiple
     }
