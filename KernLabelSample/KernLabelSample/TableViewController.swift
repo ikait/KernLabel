@@ -13,7 +13,7 @@ class TableViewController: UITableViewController {
 
     var paragraphStyle: NSParagraphStyle {
         let style = NSMutableParagraphStyle()
-        style.lineHeightMultiple = 1.6
+        style.lineHeightMultiple = 1.2
         return style
     }
 
@@ -45,7 +45,7 @@ class TableViewController: UITableViewController {
             string: Sentences[indexPath.row],
             attributes: [
                 NSParagraphStyleAttributeName: self.paragraphStyle,
-                NSFontAttributeName: UIFont(name: "Hiragino Kaku Gothic ProN W3", size: 17)!
+                NSFontAttributeName: UIFont.systemFontOfSize(17)
             ]
         )
         return cell
