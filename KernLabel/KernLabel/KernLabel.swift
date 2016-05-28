@@ -30,12 +30,13 @@ final class DefaultLabelSettings {
 
 
 /**
- The Label class implements a read-only text view.
+ カーニングされたテキストを表示するクラス
 
- [UILabel]: https://developer.apple.com/library/ios/documentation/UIKit/Reference/UILabel_Class/#//apple_ref/occ/instp/UILabel ""
- - seealso: [UILabel]
+ [UILabel Class Reference - Apple Developer]: https://developer.apple.com/library/ios/documentation/UIKit/Reference/UILabel_Class/#//apple_ref/occ/instp/UILabel "UILabel Class Reference - Apple Developer"
+ - seealso: [UILabel Class Reference - Apple Developer]
  */
 public class KernLabel: UIView {
+
 
     // MARK: - Accessing the Text Attributes
 
@@ -70,7 +71,6 @@ public class KernLabel: UIView {
     /**
      The font of the text.
      */
-    public var _font = DefaultLabelSettings.font
     public var font: UIFont {
         get {
             if let attributedText = self.attributedText,
@@ -91,11 +91,12 @@ public class KernLabel: UIView {
             self._font = newValue
         }
     }
+    var _font = DefaultLabelSettings.font
+
 
     /**
      The color of the text.
      */
-    public var _textColor = DefaultLabelSettings.textColor
     public var textColor: UIColor {
         get {
             if let attributedText = self.attributedText,
@@ -116,8 +117,8 @@ public class KernLabel: UIView {
             self._textColor = newValue
         }
     }
+    var _textColor = DefaultLabelSettings.textColor
 
-    public var _textAlignment = DefaultLabelSettings.textAlignment
 
     /**
      The technique to use for aligning the text. Supported alignments are as follows:
@@ -148,13 +149,14 @@ public class KernLabel: UIView {
             self._textAlignment = newValue
         }
     }
+    var _textAlignment = DefaultLabelSettings.textAlignment
+
 
     /**
      The technique to use for wrapping and truncating the label’s text.
 
      - seealso: adjustsFontSizeToFitWidth
      */
-    public var _lineBreakMode = DefaultLabelSettings.lineBreakMode
     public var lineBreakMode: NSLineBreakMode {
         get {
             if let attributedText = self.attributedText,
@@ -177,6 +179,8 @@ public class KernLabel: UIView {
             self._lineBreakMode = newValue
         }
     }
+    var _lineBreakMode = DefaultLabelSettings.lineBreakMode
+
 
     /**
      The enabled state to use when drawing the label’s text.
@@ -186,8 +190,32 @@ public class KernLabel: UIView {
 
     // MARK: - Sizing
 
+    @available(iOS 9.0, *)
+    public var allowsDefaultTighteningForTruncation: Bool {
+        get {
+            if let attributedText = self.attributedText,
+                let attributes = attributedText.attributes,
+                let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
+                return paragraphStyle.allowsDefaultTighteningForTruncation
+            }
+            return self._allowsDefaultTighteningForTruncation
+        }
+        set {
+            if let _attributedText = self.attributedText {
+                let attributedText = NSMutableAttributedString(attributedString: _attributedText)
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.allowsDefaultTighteningForTruncation = newValue
+                attributedText.attributes = [
+                    NSParagraphStyleAttributeName: paragraphStyle
+                ]
+                self.attributedText = attributedText
+            }
+            self._allowsDefaultTighteningForTruncation = newValue
+        }
+    }
+    var _allowsDefaultTighteningForTruncation = DefaultLabelSettings.allowsDefaultTighteningForTruncation
+
     public var adjustsFontSizeToFitWidth = DefaultLabelSettings.adjustsFontSizeToFitWidth
-    public var allowsDefaultTighteningForTruncation = DefaultLabelSettings.allowsDefaultTighteningForTruncation
     public var baselineAdjustment = DefaultLabelSettings.baselineAdjustment
     public var minimumScaleFactor: CGFloat = DefaultLabelSettings.minimumScaleFactor
     public var numberOfLines: Int = DefaultLabelSettings.numberOfLines
@@ -205,7 +233,6 @@ public class KernLabel: UIView {
     public var shadowOffset = DefaultLabelSettings.shadowOffset
     public var preferredMaxLayoutWidth: CGFloat = DefaultLabelSettings.preferredMaxLayoutWidth
     public var truncateText = DefaultLabelSettings.truncateText
-
 
     // MARK: - Methods
 
@@ -234,8 +261,8 @@ public class KernLabel: UIView {
             return CGSizeZero
         }
         let width = self.preferredMaxLayoutWidth == 0 ?
-            (superview?.frame.width ?? 0) : self.preferredMaxLayoutWidth
-        let rect = CGRectMake(0, 0, width, pow(2, 16))
+            (superview?.frame.width ?? kCGFloatHuge) : self.preferredMaxLayoutWidth
+        let rect = CGRectMake(0, 0, width, kCGFloatHuge)
         return self.textRectForBounds(rect, limitedToNumberOfLines: 0).size
     }
 

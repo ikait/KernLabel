@@ -9,8 +9,6 @@
 import UIKit
 
 
-private let kCGFloatHuge: CGFloat = pow(2, 16)
-
 extension NSAttributedString {
     var lineHeight: CGFloat {
         guard let attributes = self.attributes,

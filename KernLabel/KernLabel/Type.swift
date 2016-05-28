@@ -19,7 +19,7 @@ private let kCharactersHaveRightSpace = [
     "」", "』", "】", "》", "〉", "〕", "｝", "）", "］",
     "、", "。", "，", "．"
 ]
-private let kCGFloatHuge: CGFloat = pow(2, 16)
+let kCGFloatHuge: CGFloat = pow(2, 12)
 
 
 struct Type {
@@ -72,9 +72,6 @@ struct Type {
     /// typesetter
     var typesetter: CTTypesetter
 
-    /// cache
-    var typedContext: CGContext?
-
     /// 実際のテキストサイズ
     var intrinsicTextSize: CGSize?
 
@@ -117,6 +114,7 @@ struct Type {
             0,
             kCGColorSpace,
             kCGImageAlphaInfo)!
+        CGContextScaleCTM(c, kScreenScale, kScreenScale)
         return c
     }
 
@@ -241,10 +239,17 @@ struct Type {
         self.lines += 1
     }
 
-    private mutating func process(context: CGContext?) -> CGContext? {
-        let context = context ?? self.createEmptyContext()
+    /**
+     文字を生成する。canvasContext を与えると、そこに文字を描画する。
+
+     - parameter canvasContext: 文字が描画される context
+     */
+    private mutating func process(canvasContext: CGContext? = nil) -> CGContext? {
+
+        let context = self.createEmptyContext()
 
         while self.location < self.length {
+
             self.goToNextLinePosition()
             var offset = self.getOffset()
             var currentLineCount = self.getSuggestedLineCount(offset)
@@ -290,25 +295,42 @@ struct Type {
             self.goToNextLine(currentLineCount)
         }
 
-        // キャッシュ
-        self.typedContext = context
+        // 文字の大きさを補足
         self.intrinsicTextSize = CGSizeMake(
             self.width, self.currentPosition.y + self.font.ascender - self.font.capHeight)
+
+        // 描画
+        if let canvasContext = canvasContext {
+            CGContextDrawImage(
+                canvasContext,
+                CGRectMake(
+                    0,
+                    (self.height - self.intrinsicTextSize!.height) / 2,
+                    self.width,
+                    self.height),
+                CGBitmapContextCreateImage(context)
+            )
+        }
 
         return context
     }
 
+    /**
+     文字を context に描画する
+
+     - parameter on: 文字が描画される canvas
+     */
     mutating func drawText(on context: CGContext) {
         self.process(context)
     }
 
+    /**
+     文字が描画された CGImage をかえす
+     */
     mutating func createDrawedImage() -> CGImage? {
-        if let typedContext = self.typedContext {
-            return CGBitmapContextCreateImage(typedContext)
-        }
-        guard let context = self.process(nil) else {
+        guard let typedContext = self.process() else {
             return nil
         }
-        return CGBitmapContextCreateImage(context)
+        return CGBitmapContextCreateImage(typedContext)
     }
 }
