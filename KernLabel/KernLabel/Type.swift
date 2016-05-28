@@ -239,6 +239,20 @@ struct Type {
         self.lines += 1
     }
 
+    private func draw(context: CGContext, on canvasContext: CGContext?) {
+        if let canvasContext = canvasContext {
+            CGContextDrawImage(
+                canvasContext,
+                CGRectMake(
+                    0,  // ↓ Int で切り捨ててピクセルまたぎでボヤけないようにする
+                    CGFloat(Int((self.height - self.intrinsicTextSize!.height) / 2)),
+                    self.width,
+                    self.height),
+                CGBitmapContextCreateImage(context)
+            )
+        }
+    }
+
     /**
      文字を生成する。canvasContext を与えると、そこに文字を描画する。
 
@@ -265,7 +279,6 @@ struct Type {
                     }
                 }
             }
-
 
             let overflow = self.isOverflow(currentLineCount)
 
@@ -300,17 +313,8 @@ struct Type {
             self.width, self.currentPosition.y + self.font.ascender - self.font.capHeight)
 
         // 描画
-        if let canvasContext = canvasContext {
-            CGContextDrawImage(
-                canvasContext,
-                CGRectMake(
-                    0,
-                    (self.height - self.intrinsicTextSize!.height) / 2,
-                    self.width,
-                    self.height),
-                CGBitmapContextCreateImage(context)
-            )
-        }
+        self.draw(context, on: canvasContext)
+
 
         return context
     }
