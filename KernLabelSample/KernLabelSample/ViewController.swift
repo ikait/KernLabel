@@ -15,16 +15,21 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.whiteColor()
 
-        let text = "【行頭つめ】あいうえお「かきくけこ」「さ」、ああああああああああああ「：」！「「」」、。\nああ123いいabcうう【】【【】】…【】"
-        let frame = CGRectMake(10, 100, self.view.frame.width - 20, 120)
+        var text = ""
+        text += "【行頭つめ】あいうえお「かきくけこ」「さ」、ああああああああああああ「：」！「「」」、。\n"
+        text += "ああ123いいabcうう【】【【】】…【】\n"
+        text += "→2016年1月1日（金）←"
+        let frame = CGRectMake(10, 100, self.view.frame.width - 20, 150)
         let backgroundColor = UIColor.lightGrayColor()
         let numberOfLines = 0
+        let textAlignment = NSTextAlignment.Left
 
         let label = UILabel()
         label.frame = frame
         label.backgroundColor = backgroundColor
         label.text = "\(UILabel.self)\n\n\(text)"
         label.numberOfLines = numberOfLines
+        label.textAlignment = textAlignment
         self.view.addSubview(label)
 
         let klabel = KernLabel()
@@ -32,6 +37,7 @@ class ViewController: UIViewController {
         klabel.backgroundColor = backgroundColor
         klabel.text = "\(KernLabel.self)\n\n\(text)"
         klabel.numberOfLines = numberOfLines
+        klabel.textAlignment = textAlignment
         self.view.addSubview(klabel)
     }
 
