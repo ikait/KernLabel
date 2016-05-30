@@ -178,7 +178,36 @@ struct Type {
      offset を考慮したうえで、現在の行には何文字入るか？
      */
     private func getSuggestedLineCount(offset: CGFloat? = nil) -> Int {
-        return CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(self.width + (offset ?? self.getOffset())))
+
+        var currentLineCount = CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(self.width + (offset ?? self.getOffset())))
+        let range = self.getCurrentLineRange(currentLineCount)
+
+        //
+        // 押し出し禁則を適用する。句読点等は行頭１文字目に来ないので、現在行の文字列の実質的な幅が、
+        // 挿入可能な幅よりも 1.25 文字分 (1文字+約物0.25文字分) 開いていれば、
+        // 押し出し禁則を適用できるとし 2 文字分を現在行のカウントに加算する。
+        //
+        // 例:
+        // ┌─────────┐
+        // │押し出し禁則によ　│
+        // │り、行末が開かなく│
+        // └─────────┘
+        //　　↓
+        // ┌─────────┐
+        // │押し出し禁則により、
+        // │行末が開かなくなる。
+        // └─────────┘
+        //
+        // TODO: textInsets を指定しない場合は押し出し禁則させないようにする
+        //
+        if (self.width - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * 1.25) {  // kCharactersHaveRightSpace は 0.25 文字として計算
+            if range.location + range.length + 2 <= self.length {  // 2文字加算しても全体の文字数に収まるか
+                if kCharactersHaveRightSpace.contains(self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string) {
+                    currentLineCount = range.length
+                }
+            }
+        }
+        return currentLineCount
     }
 
     /**
@@ -266,19 +295,8 @@ struct Type {
 
             self.goToNextLinePosition()
             var offset = self.getOffset()
-            var currentLineCount = self.getSuggestedLineCount(offset)
+            let currentLineCount = self.getSuggestedLineCount(offset)
             var range = self.getCurrentLineRange(currentLineCount)
-
-
-            // 押し出し禁則を適用する
-            if (self.width - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * 1.25) {  // kCharactersHaveRightSpace は 0.25 文字として計算
-                if range.location + range.length + 2 <= self.length {
-                    if kCharactersHaveRightSpace.contains(self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string) {
-                        range = NSMakeRange(range.location, range.length + 2)
-                        currentLineCount = range.length
-                    }
-                }
-            }
 
             let overflow = self.isOverflow(currentLineCount)
 
