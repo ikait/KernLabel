@@ -19,6 +19,7 @@ private let kCharactersHaveRightSpace = [
     "」", "』", "】", "》", "〉", "〕", "｝", "）", "］",
     "、", "。", "，", "．"
 ]
+private let kCharacterHaveRightSpaceRatio: CGFloat = 0.25  // 右半分が空白な文字の、fontSize における実質的な幅の割合
 let kCGFloatHuge: CGFloat = pow(2, 12)
 
 
@@ -187,11 +188,14 @@ struct Type {
 
     /**
      offset を考慮したうえで、現在の行には何文字入るか？
-     */
-    private func getSuggestedLineCount(offset: CGFloat? = nil) -> Int {
 
-        var currentLineCount = CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(self.width + (offset ?? self.getOffset())))
-        let range = self.getCurrentLineRange(currentLineCount)
+     - returns: (現在行にはいる文字数, 押し出しされたかどうか)
+     */
+    private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool) {
+        let lineWidth: CGFloat = self.width + (offset ?? self.getOffset())
+        var currentLineCount = CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(lineWidth))
+        var range = self.getCurrentLineRange(currentLineCount)
+        var isOsidashied = false
 
         //
         // 押し出し禁則を適用する。句読点等は行頭１文字目に来ないので、現在行の文字列の実質的な幅が、
@@ -211,14 +215,16 @@ struct Type {
         //
         // TODO: textInsets を指定しない場合は押し出し禁則させないようにする
         //
-        if (self.width - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * (1 + 0.25)) {  // kCharactersHaveRightSpace は 0.25 文字として計算
+        if (lineWidth - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * (1 + kCharacterHaveRightSpaceRatio)) {  //
             if range.location + range.length + 2 <= self.length {  // 2文字加算しても全体の文字数に収まるか
                 if kCharactersHaveRightSpace.contains(self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string) {
+                    range = NSMakeRange(range.location, range.length + 2)
                     currentLineCount = range.length
+                    isOsidashied = true
                 }
             }
         }
-        return currentLineCount
+        return (currentLineCount, isOsidashied)
     }
 
     /**
@@ -227,14 +233,14 @@ struct Type {
     private func getCurrentLineRange(currentLineCount: Int? = nil) -> NSRange {
         return NSMakeRange(
             self.location,
-            currentLineCount ?? self.getSuggestedLineCount(self.getOffset()))
+            currentLineCount ?? self.getSuggestedLineCount(self.getOffset()).0)
     }
 
     /** 
      次の行が指定した高さを超えるか or 行数制限を超えるか
      */
     private func isOverflow(currentLineCount: Int? = nil) -> Bool {
-        let surplus = self.location + (currentLineCount ?? self.getSuggestedLineCount()) < self.length
+        let surplus = self.location + (currentLineCount ?? self.getSuggestedLineCount().0) < self.length
         let heightShortage = self.currentPosition.y + self.lineHeight > self.height
         let exceedNumberOfLines = self.numberOfLines == 0 ? false : self.lines + 1 >= self.numberOfLines
         return exceedNumberOfLines || (surplus && heightShortage)
@@ -257,7 +263,7 @@ struct Type {
         return (truncateLineCount ?? self.getTruncateLineCount()) + self.location
     }
 
-    private func draw(range: NSRange, offset: CGFloat, on context: CGContext) {
+    private func draw(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) {
 
         // 反転をもどす
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
@@ -273,14 +279,17 @@ struct Type {
             self.typesetter, CFRangeMake(range.location, range.length))
 
         // 均等揃えする
+        /*
         let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
-        let lineWidth = Double(self.width)
+        let characterRightSpace = oshidashi ? Double(self.fontSize/* + kCharacterHaveRightSpaceRatio*/) : 0
+        let lineWidth = Double(self.width) + characterRightSpace
         if (lineWidth - Double(self.fontSize)) < typographicWidth {
             if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
                 CTLineDraw(justifiedCtline, context)
                 return
             }
         }
+        */
 
         // 描画
         CTLineDraw(ctline, context)
@@ -318,7 +327,7 @@ struct Type {
 
             self.goToNextLinePosition()
             var offset = self.getOffset()
-            let currentLineCount = self.getSuggestedLineCount(offset)
+            let (currentLineCount, oshidashi) = self.getSuggestedLineCount(offset)
             var range = self.getCurrentLineRange(currentLineCount)
 
             let overflow = self.isOverflow(currentLineCount)
@@ -338,7 +347,7 @@ struct Type {
             // 末尾文字列を考慮して先頭のオフセットを減算
             offset += self.getOffsetTail(range)
 
-            self.draw(range, offset: offset, on: context)
+            self.draw(range, offset: offset, oshidashi: oshidashi, on: context)
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
