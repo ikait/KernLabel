@@ -81,7 +81,16 @@ struct Type {
         return self.fontSize / 2
     }
 
-    init(attributedText: NSAttributedString, rect: CGRect, numberOfLines: Int, options: NSStringDrawingOptions, truncateText: String = "...", kerningRegexp: NSRegularExpression) {
+    var verticalAlignment = KernLabelVerticalAlignment.Middle
+
+    init(
+        attributedText: NSAttributedString,
+        rect: CGRect,
+        numberOfLines: Int,
+        options: NSStringDrawingOptions,
+        truncateText: String = "...",
+        kerningRegexp: NSRegularExpression,
+        verticalAlignment: KernLabelVerticalAlignment = .Middle) {
         self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(kerningRegexp)
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
@@ -100,6 +109,7 @@ struct Type {
         self.options = options
         self.truncateText = truncateText
         self.numberOfLines = numberOfLines
+        self.verticalAlignment = verticalAlignment
     }
 
     func createEmptyContext(context: CGContext? = nil) -> CGContext {
@@ -299,13 +309,24 @@ struct Type {
         self.lines += 1
     }
 
+    private func getDrawOffsetY() -> CGFloat {
+        switch self.verticalAlignment {
+        case .Top:
+            return 0
+        case .Middle:    // ↓ Int で切り捨ててピクセルまたぎでボヤけないようにする
+            return CGFloat(Int((self.height - self.intrinsicTextSize.height) / 2))
+        case .Bottom:
+            return CGFloat(Int(self.height - self.intrinsicTextSize.height))
+        }
+    }
+
     private func draw(context: CGContext, on canvasContext: CGContext?) {
         if let canvasContext = canvasContext {
             CGContextDrawImage(
                 canvasContext,
                 CGRectMake(
-                    0,  // ↓ Int で切り捨ててピクセルまたぎでボヤけないようにする
-                    CGFloat(Int((self.height - self.intrinsicTextSize.height) / 2)),
+                    0,
+                    self.getDrawOffsetY(),
                     self.width,
                     self.height),
                 CGBitmapContextCreateImage(context)

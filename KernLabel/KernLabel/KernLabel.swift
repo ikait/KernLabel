@@ -27,11 +27,19 @@ final class DefaultLabelSettings {
     static let preferredMaxLayoutWidth: CGFloat = 0
     static let truncateText = "..."
     static let kerningMode = KernLabelKerningMode.Normal
+    static let verticalAlignment = KernLabelVerticalAlignment.Middle
 }
 
 
+/**
+ カーニングモードの設定
+ */
 public enum KernLabelKerningMode: Int {
+
+    /// 一部をカーニングする
     case Normal
+
+    /// すべてカーニングする
     case All
 
     var regexp: NSRegularExpression {
@@ -50,6 +58,15 @@ public enum KernLabelKerningMode: Int {
                 options: [])
         }
     }
+}
+
+/**
+ 縦方向の位置
+ */
+public enum KernLabelVerticalAlignment: Int {
+    case Top
+    case Middle
+    case Bottom
 }
 
 
@@ -181,6 +198,8 @@ public class KernLabel: UIView {
         }
     }
     var _textAlignment = DefaultLabelSettings.textAlignment
+
+    public var verticalAlignment = DefaultLabelSettings.verticalAlignment
 
 
     /**
@@ -338,7 +357,8 @@ public class KernLabel: UIView {
             numberOfLines: self.numberOfLines,
             options: options,
             truncateText: self.truncateText,
-            kerningRegexp: self.kerningMode.regexp)
+            kerningRegexp: self.kerningMode.regexp,
+            verticalAlignment: self.verticalAlignment)
         type.drawText(on: context)
     }
 
