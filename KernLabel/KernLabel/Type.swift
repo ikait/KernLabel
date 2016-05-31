@@ -81,9 +81,8 @@ struct Type {
         return self.fontSize / 2
     }
 
-
-    init(attributedText: NSAttributedString, rect: CGRect, numberOfLines: Int, options: NSStringDrawingOptions, truncateText: String = "...") {
-        self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerned
+    init(attributedText: NSAttributedString, rect: CGRect, numberOfLines: Int, options: NSStringDrawingOptions, truncateText: String = "...", kerningRegexp: NSRegularExpression) {
+        self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(kerningRegexp)
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
         self.fontSize = self.font.pointSize

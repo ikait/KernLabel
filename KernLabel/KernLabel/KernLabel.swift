@@ -26,6 +26,30 @@ final class DefaultLabelSettings {
     static let shadowOffset = CGSizeMake(0, -1)
     static let preferredMaxLayoutWidth: CGFloat = 0
     static let truncateText = "..."
+    static let kerningMode = KernLabelKerningMode.Normal
+}
+
+
+public enum KernLabelKerningMode: Int {
+    case Normal
+    case All
+
+    var regexp: NSRegularExpression {
+        let k句読点 = "、，。．"
+        let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
+        let k括弧開 = "｛［「『（｟〈《〔〘【〖"
+        let k他約物 = "！？：；︰‐・…‥〜ー―※"
+        switch self {
+        case .Normal:
+            return try! NSRegularExpression(
+                pattern: "([\(k括弧閉)]?[\(k句読点)]?[\(k他約物)]?[\(k括弧開)])|([\(k括弧閉)][\(k句読点)]?[\(k他約物)]?)",
+                options: [])
+        case .All:
+            return try! NSRegularExpression(
+                pattern: "(.[\(k括弧開)])|([\(k括弧閉)].)",
+                options: [])
+        }
+    }
 }
 
 
@@ -226,6 +250,7 @@ public class KernLabel: UIView {
     public var baselineAdjustment = DefaultLabelSettings.baselineAdjustment
     public var minimumScaleFactor: CGFloat = DefaultLabelSettings.minimumScaleFactor
     public var numberOfLines: Int = DefaultLabelSettings.numberOfLines
+    public var kerningMode: KernLabelKerningMode = DefaultLabelSettings.kerningMode
 
 
     // MARK: - Managing Highlight Values
@@ -255,7 +280,8 @@ public class KernLabel: UIView {
             rect: bounds,
             numberOfLines: self.numberOfLines,
             options: [.UsesLineFragmentOrigin],
-            truncateText: self.truncateText)
+            truncateText: self.truncateText,
+            kerningRegexp: self.kerningMode.regexp)
         type.createDrawedImage()
         return CGRect(origin: CGPointZero, size: type.intrinsicTextSize!)
     }
@@ -311,7 +337,8 @@ public class KernLabel: UIView {
             rect: rect,
             numberOfLines: self.numberOfLines,
             options: options,
-            truncateText: self.truncateText)
+            truncateText: self.truncateText,
+            kerningRegexp: self.kerningMode.regexp)
         type.drawText(on: context)
     }
 
