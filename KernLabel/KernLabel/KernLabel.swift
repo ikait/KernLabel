@@ -283,7 +283,7 @@ public class KernLabel: UIView {
             truncateText: self.truncateText,
             kerningRegexp: self.kerningMode.regexp)
         type.createDrawedImage()
-        return CGRect(origin: CGPointZero, size: type.intrinsicTextSize!)
+        return CGRect(origin: CGPointZero, size: type.intrinsicTextSize)
     }
 
     /**

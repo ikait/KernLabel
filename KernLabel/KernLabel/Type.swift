@@ -74,7 +74,7 @@ struct Type {
     var typesetter: CTTypesetter
 
     /// 実際のテキストサイズ
-    var intrinsicTextSize: CGSize?
+    var intrinsicTextSize = CGSizeZero
 
     // フォントの半分の大きさ
     var fontHalfWidth: CGFloat {
@@ -305,7 +305,7 @@ struct Type {
                 canvasContext,
                 CGRectMake(
                     0,  // ↓ Int で切り捨ててピクセルまたぎでボヤけないようにする
-                    CGFloat(Int((self.height - self.intrinsicTextSize!.height) / 2)),
+                    CGFloat(Int((self.height - self.intrinsicTextSize.height) / 2)),
                     self.width,
                     self.height),
                 CGBitmapContextCreateImage(context)
@@ -319,6 +319,10 @@ struct Type {
      - parameter canvasContext: 文字が描画される context
      */
     private mutating func process(canvasContext: CGContext? = nil) -> CGContext? {
+
+        if self.attributedText.string.isEmpty {
+            return nil
+        }
 
         let context = self.createEmptyContext()
 
