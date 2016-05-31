@@ -58,8 +58,8 @@ public class KernLabel: UIView {
                 return style
             }()
             self.attributedText = NSAttributedString(string: newValue, attributes: [
-                NSFontAttributeName: DefaultLabelSettings.font,
-                NSForegroundColorAttributeName: DefaultLabelSettings.textColor,
+                NSFontAttributeName: self.font,
+                NSForegroundColorAttributeName: self.textColor,
                 NSParagraphStyleAttributeName: style
             ])
         }
