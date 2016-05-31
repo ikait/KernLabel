@@ -51,9 +51,16 @@ public class KernLabel: UIView {
             guard let newValue = newValue else {
                 return
             }
+            let style: NSParagraphStyle = {
+                let style = NSMutableParagraphStyle()
+                style.lineBreakMode = self.lineBreakMode
+                style.alignment = self.textAlignment
+                return style
+            }()
             self.attributedText = NSAttributedString(string: newValue, attributes: [
                 NSFontAttributeName: DefaultLabelSettings.font,
-                NSForegroundColorAttributeName: DefaultLabelSettings.textColor
+                NSForegroundColorAttributeName: DefaultLabelSettings.textColor,
+                NSParagraphStyleAttributeName: style
             ])
         }
     }
