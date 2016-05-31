@@ -76,12 +76,25 @@ struct Type {
     /// 実際のテキストサイズ
     var intrinsicTextSize = CGSizeZero
 
-    // フォントの半分の大きさ
+    /// フォントの半分の大きさ
     var fontHalfWidth: CGFloat {
         return self.fontSize / 2
     }
 
     var verticalAlignment = KernLabelVerticalAlignment.Middle
+
+    /// 現時点での最長の一行の長さ
+    private var _currentLongestTypographicWidth: CGFloat = 0
+    var currentLongestTypographicWidth: CGFloat {
+        get {
+            return self._currentLongestTypographicWidth
+        }
+        set {
+            if newValue > self._currentLongestTypographicWidth {
+                self._currentLongestTypographicWidth = newValue
+            }
+        }
+    }
 
     init(
         attributedText: NSAttributedString,
@@ -272,7 +285,7 @@ struct Type {
         return (truncateLineCount ?? self.getTruncateLineCount()) + self.location
     }
 
-    private func draw(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) {
+    private mutating func draw(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) {
 
         // 反転をもどす
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
@@ -286,6 +299,11 @@ struct Type {
         // 行を生成
         let ctline = CTTypesetterCreateLine(
             self.typesetter, CFRangeMake(range.location, range.length))
+
+        // 実質の文字の幅を取得
+        let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
+        self.currentLongestTypographicWidth = CGFloat(typographicWidth)
+
 
         // 均等揃えする
         /*
@@ -384,7 +402,8 @@ struct Type {
 
         // 文字の大きさを補足
         self.intrinsicTextSize = CGSizeMake(
-            self.width, self.currentPosition.y + self.font.ascender - self.font.capHeight)
+            self.currentLongestTypographicWidth,
+            self.currentPosition.y + self.font.ascender - self.font.capHeight)
 
         // 描画
         self.draw(context, on: canvasContext)
