@@ -211,7 +211,7 @@ struct Type {
         //
         // TODO: textInsets を指定しない場合は押し出し禁則させないようにする
         //
-        if (self.width - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * 1.25) {  // kCharactersHaveRightSpace は 0.25 文字として計算
+        if (self.width - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * (1 + 0.25)) {  // kCharactersHaveRightSpace は 0.25 文字として計算
             if range.location + range.length + 2 <= self.length {  // 2文字加算しても全体の文字数に収まるか
                 if kCharactersHaveRightSpace.contains(self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string) {
                     currentLineCount = range.length
@@ -268,9 +268,21 @@ struct Type {
             self.startPosition.x + self.currentPosition.x - offset,
             self.startPosition.y + self.currentPosition.y)
 
-        // 行を描画
+        // 行を生成
         let ctline = CTTypesetterCreateLine(
             self.typesetter, CFRangeMake(range.location, range.length))
+
+        // 均等揃えする
+        let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
+        let lineWidth = Double(self.width)
+        if (lineWidth - Double(self.fontSize)) < typographicWidth {
+            if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
+                CTLineDraw(justifiedCtline, context)
+                return
+            }
+        }
+
+        // 描画
         CTLineDraw(ctline, context)
     }
 
