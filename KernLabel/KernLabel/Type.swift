@@ -134,6 +134,21 @@ struct Type {
     }
 
     /**
+     行末の文字を取得
+     */
+    private func getLineTail(range: NSRange) -> String {
+        var tail = ""
+        let location = range.location + range.length
+        if location <= self.attributedText.length {
+            tail = self.attributedText.attributedSubstringFromRange(NSMakeRange(location - 1, 1)).string
+            if tail == "\n" && location - 2 >= 0 {  // 行末が改行の場合は、改行文字の前の文字を取得する。
+                tail = self.attributedText.attributedSubstringFromRange(NSMakeRange(location - 2, 1)).string
+            }
+        }
+        return tail
+    }
+
+    /**
      行頭オフセットを取得。カーニング対象文字の場合は、半角分のオフセット
      */
     private func getOffset(lineHead: String? = nil) -> CGFloat {
@@ -147,11 +162,7 @@ struct Type {
         guard let alignment = self.attributedText.textAlignment else {
             return 0
         }
-        let location = range.location + range.length
-        var tail = ""
-        if location <= self.attributedText.length {
-            tail = self.attributedText.attributedSubstringFromRange(NSMakeRange(location - 1, 1)).string
-        }
+        let tail = self.getLineTail(range)
         var offset: CGFloat = 0
         switch alignment {
         case .Right:
