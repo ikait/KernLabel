@@ -17,7 +17,6 @@ extension NSMutableAttributedString {
             let font = curAttrs[NSFontAttributeName] as? UIFont ?? UIFont.systemFontOfSize(UIFont.systemFontSize())
             self.addAttributes([
                 NSKernAttributeName: font.pointSize * -0.5,
-                NSBackgroundColorAttributeName: UIColor.blueColor()
             ], range: NSMakeRange(location, length - 1))
         }
         return self
