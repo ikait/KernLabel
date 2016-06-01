@@ -36,18 +36,23 @@ final class DefaultLabelSettings {
  */
 public enum KernLabelKerningMode: Int {
 
+    /// カーニングを行わない
+    case None
+
     /// 一部をカーニングする
     case Normal
 
     /// すべてカーニングする
     case All
 
-    var regexp: NSRegularExpression {
+    var regexp: NSRegularExpression? {
         let k句読点 = "、，。．"
         let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
         let k括弧開 = "｛［「『（｟〈《〔〘【〖"
         let k他約物 = "！？：；︰‐・…‥〜ー―※"
         switch self {
+        case .None:
+            return nil
         case .Normal:
             return try! NSRegularExpression(
                 pattern: "([\(k括弧閉)]?[\(k句読点)]?[\(k他約物)]?[\(k括弧開)])|([\(k括弧閉)][\(k句読点)]?[\(k他約物)]?)",
@@ -189,6 +194,7 @@ public class KernLabel: UIView {
                 let attributedText = NSMutableAttributedString(attributedString: _attributedText)
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.alignment = newValue
+                paragraphStyle.lineBreakMode = self.lineBreakMode
                 attributedText.attributes = [
                     NSParagraphStyleAttributeName: paragraphStyle
                 ]
@@ -221,6 +227,7 @@ public class KernLabel: UIView {
                 let attributedText = NSMutableAttributedString(attributedString: _attributedText)
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.lineBreakMode = newValue
+                paragraphStyle.alignment = self.textAlignment
                 attributedText.attributes = [
                     NSParagraphStyleAttributeName: paragraphStyle
                 ]
@@ -354,10 +361,10 @@ public class KernLabel: UIView {
         var type = Type(
             attributedText: _attributedText,
             rect: rect,
+            kerningRegexp: self.kerningMode.regexp,
             numberOfLines: self.numberOfLines,
             options: options,
             truncateText: self.truncateText,
-            kerningRegexp: self.kerningMode.regexp,
             verticalAlignment: self.verticalAlignment)
         type.drawText(on: context)
     }

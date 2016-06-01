@@ -10,7 +10,10 @@ import UIKit
 
 
 extension NSMutableAttributedString {
-    func kerning(regexp: NSRegularExpression) -> Self {
+    func kerning(regexp: NSRegularExpression?) -> Self {
+        guard let regexp = regexp else {
+            return self
+        }
         regexp.matchesInString(self.string, options: [], range: NSMakeRange(0, self.length)).enumerate().forEach { result in
             let (location, length) = (result.element.range.location, result.element.range.length)
             let curAttrs = self.attributesAtIndex(location, effectiveRange: nil)

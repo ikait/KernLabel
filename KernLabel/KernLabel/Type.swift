@@ -99,10 +99,10 @@ struct Type {
     init(
         attributedText: NSAttributedString,
         rect: CGRect,
-        numberOfLines: Int,
-        options: NSStringDrawingOptions,
+        kerningRegexp: NSRegularExpression? = KernLabelKerningMode.Normal.regexp,
+        numberOfLines: Int = 0,
+        options: NSStringDrawingOptions = .UsesLineFragmentOrigin,
         truncateText: String = "...",
-        kerningRegexp: NSRegularExpression,
         verticalAlignment: KernLabelVerticalAlignment = .Middle) {
         self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(kerningRegexp)
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
