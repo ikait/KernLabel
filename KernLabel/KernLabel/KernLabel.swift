@@ -306,15 +306,21 @@ public class KernLabel: UIView {
     }
 
     /**
-     Label size amount of texts considered
+     Essential label size which amount of texts considered
      */
     public override func intrinsicContentSize() -> CGSize {
+        return self.intrinsicContentSize(self.preferredMaxLayoutWidth == 0 ?
+            (superview?.frame.width ?? kCGFloatHuge) : self.preferredMaxLayoutWidth)
+    }
+
+    /**
+     Essential label size which amount of texts and width and height (optional) passed considered
+     */
+    public func intrinsicContentSize(width: CGFloat, height: CGFloat = kCGFloatHuge) -> CGSize {
         guard self.attributedText != nil else {
             return CGSizeZero
         }
-        let width = self.preferredMaxLayoutWidth == 0 ?
-            (superview?.frame.width ?? kCGFloatHuge) : self.preferredMaxLayoutWidth
-        let rect = CGRectMake(0, 0, width, kCGFloatHuge)
+        let rect = CGRectMake(0, 0, width, height)
         return self.textRectForBounds(rect, limitedToNumberOfLines: 0).size
     }
 
