@@ -14,9 +14,9 @@ class TabBarController: UITabBarController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
         self.viewControllers = [
-            SpeedTestViewController(),
             ViewController(),
-            TableViewController(nibName: nil, bundle: nil)
+            SpeedTestViewController(),
+            TableViewController()
         ]
     }
 
