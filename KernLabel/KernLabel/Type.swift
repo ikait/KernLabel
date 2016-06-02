@@ -103,7 +103,7 @@ struct Type {
         numberOfLines: Int = 0,
         options: NSStringDrawingOptions = .UsesLineFragmentOrigin,
         truncateText: String = "...",
-        verticalAlignment: KernLabelVerticalAlignment = .Middle) {
+        verticalAlignment: KernLabelVerticalAlignment = .Top) {
         self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(kerningRegexp)
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
