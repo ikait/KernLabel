@@ -15,7 +15,7 @@ final class PerformanceCheck {
         let q = dispatch_queue_create("\(target)", DISPATCH_QUEUE_SERIAL)
         dispatch_sync(q) {
             let st = NSDate()
-            [Int](0...sample).forEach { _ in
+            [Int](0..<sample).forEach { _ in
                 target()
             }
             opt = NSDate().timeIntervalSinceDate(st)
