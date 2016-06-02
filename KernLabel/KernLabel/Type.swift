@@ -115,7 +115,7 @@ struct Type {
             options.contains(.UsesLineFragmentOrigin) ? rect.origin.x : 0,
             options.contains(.UsesLineFragmentOrigin) ? rect.origin.y : 0)
         self.currentPosition = CGPointZero
-        self.truncateRect = NSString(string: truncateText).boundingRectWithSize(CGSizeMake(CGFloat.max, CGFloat.min), options: NSStringDrawingOptions(), attributes: attributedText.attributes, context: nil)
+        self.truncateRect = NSString(string: truncateText).boundingRectWithSize(CGSizeMake(kCGFloatHuge, kCGFloatHuge), options: NSStringDrawingOptions(), attributes: attributedText.attributes, context: nil)
         self.lines = 0
         self.location = 0
         self.length = self.attributedText.length
@@ -131,8 +131,8 @@ struct Type {
         }
         let c = CGBitmapContextCreate(
             nil,
-            Int(self.width * kScreenScale),
-            Int(self.height * kScreenScale),
+            Int((self.startPosition.x + self.width) * kScreenScale),
+            Int((self.startPosition.y + self.height) * kScreenScale),
             8,
             0,
             kCGColorSpace,
@@ -285,7 +285,7 @@ struct Type {
         return (truncateLineCount ?? self.getTruncateLineCount()) + self.location
     }
 
-    private mutating func draw(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) {
+    private mutating func drawLine(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) {
 
         // 反転をもどす
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
@@ -293,8 +293,8 @@ struct Type {
         // 描画開始位置を設定。offsetで行頭約物の位置を修正
         CGContextSetTextPosition(
             context,
-            self.startPosition.x + self.currentPosition.x - offset,
-            self.startPosition.y + self.currentPosition.y)
+            self.startPosition.x + self.currentPosition.x - offset,  // 開始位置分、描画範囲が広がる(x分)
+            self.startPosition.y + self.currentPosition.y)           // 開始位置分、描画範囲が広がる(y分)
 
         // 行を生成
         let ctline = CTTypesetterCreateLine(
@@ -345,8 +345,8 @@ struct Type {
                 CGRectMake(
                     0,
                     self.getDrawOffsetY(),
-                    self.width,
-                    self.height),
+                    self.width + self.startPosition.x,   // 開始位置分、描画範囲が広がる(x分)
+                    self.height + self.startPosition.y), // 開始位置分、描画範囲が広がる(y分)
                 CGBitmapContextCreateImage(context)
             )
         }
@@ -389,7 +389,7 @@ struct Type {
             // 末尾文字列を考慮して先頭のオフセットを減算
             offset += self.getOffsetTail(range)
 
-            self.draw(range, offset: offset, oshidashi: oshidashi, on: context)
+            self.drawLine(range, offset: offset, oshidashi: oshidashi, on: context)
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
