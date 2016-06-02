@@ -11,10 +11,12 @@
 		5A53A3431CF87CDF00F05432 /* KernLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; };
 		5A53A3441CF87CDF00F05432 /* KernLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5A53A3691CF9009900F05432 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A53A3681CF9009900F05432 /* ViewController.swift */; };
+		5A7481B41D006D49008E4A97 /* PerformanceCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7481B31D006D49008E4A97 /* PerformanceCheck.swift */; };
 		5ABC40F11CF53AAE00CC65A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */; };
 		5ABC40F81CF53AAE00CC65A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */; };
 		5ABC40FB1CF53AAE00CC65A2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5ABC40F91CF53AAE00CC65A2 /* LaunchScreen.storyboard */; };
 		5AC9EE901CF5B2CC00E92EA6 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC9EE8F1CF5B2CC00E92EA6 /* TableViewController.swift */; };
+		5ADC36F41CFF31C100AE31AA /* SpeedTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADC36F31CFF31C100AE31AA /* SpeedTestViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,12 +54,14 @@
 		4DAF3E081CFBCEC6007F99C2 /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KernLabel.xcodeproj; path = ../KernLabel/KernLabel.xcodeproj; sourceTree = "<group>"; };
 		5A53A3681CF9009900F05432 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5A7481B31D006D49008E4A97 /* PerformanceCheck.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerformanceCheck.swift; sourceTree = "<group>"; };
 		5ABC40ED1CF53AAE00CC65A2 /* KernLabelSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KernLabelSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5ABC40FA1CF53AAE00CC65A2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5ABC40FC1CF53AAE00CC65A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5AC9EE8F1CF5B2CC00E92EA6 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		5ADC36F31CFF31C100AE31AA /* SpeedTestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeedTestViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,8 @@
 				5ABC40F01CF53AAE00CC65A2 /* AppDelegate.swift */,
 				5AC9EE8F1CF5B2CC00E92EA6 /* TableViewController.swift */,
 				4DAF3E081CFBCEC6007F99C2 /* TabBarController.swift */,
+				5ADC36F31CFF31C100AE31AA /* SpeedTestViewController.swift */,
+				5A7481B31D006D49008E4A97 /* PerformanceCheck.swift */,
 				5A53A3681CF9009900F05432 /* ViewController.swift */,
 				5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */,
 				5ABC40F91CF53AAE00CC65A2 /* LaunchScreen.storyboard */,
@@ -200,6 +206,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A53A3691CF9009900F05432 /* ViewController.swift in Sources */,
+				5A7481B41D006D49008E4A97 /* PerformanceCheck.swift in Sources */,
+				5ADC36F41CFF31C100AE31AA /* SpeedTestViewController.swift in Sources */,
 				4DAF3E091CFBCEC6007F99C2 /* TabBarController.swift in Sources */,
 				5ABC40F11CF53AAE00CC65A2 /* AppDelegate.swift in Sources */,
 				5AC9EE901CF5B2CC00E92EA6 /* TableViewController.swift in Sources */,
@@ -321,6 +329,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = tokyo.ikai.KernLabelSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -334,6 +343,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = tokyo.ikai.KernLabelSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
