@@ -319,16 +319,13 @@ struct Type {
         - on: 描画する context
      - returns: 描画した行の実質的な幅(長さ)
      */
-    private func drawLine(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) -> CGFloat {
-
-        // 反転をもどす
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
+    private func getCTLine(
+        range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext
+        ) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 描画開始位置を設定。offsetで行頭約物の位置を修正
-        CGContextSetTextPosition(
-            context,
-            self.startPosition.x + self.currentPosition.x - offset,  // 開始位置分、描画範囲が広がる(x分)
-            self.startPosition.y + self.currentPosition.y)           // 開始位置分、描画範囲が広がる(y分)
+        let offsetX = self.startPosition.x + self.currentPosition.x - offset
+        let offsetY = self.startPosition.y + self.currentPosition.y
 
         // 行を生成
         let ctline = CTTypesetterCreateLine(
@@ -339,21 +336,32 @@ struct Type {
 
         // 均等揃えする
         /*
-        let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
         let characterRightSpace = oshidashi ? Double(self.fontSize/* + kCharacterHaveRightSpaceRatio*/) : 0
         let lineWidth = Double(self.width) + characterRightSpace
         if (lineWidth - Double(self.fontSize)) < typographicWidth {
             if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
-                CTLineDraw(justifiedCtline, context)
-                return
+                ctline = justifiedCtline
             }
         }
         */
 
-        // 描画
-        CTLineDraw(ctline, context)
+        return (CGFloat(typographicWidth), offsetX, offsetY, ctline)
+    }
 
-        return CGFloat(typographicWidth)
+    /**
+     与えられた全ての行を描画する
+
+     - parameters
+        - lines: (typographicWidth, offsetX, offsetY, ctline)
+        - context: 描画する context
+     */
+    private func drawLines(lines: [(CGFloat, CGFloat, CGFloat, CTLine)], on context: CGContext) {
+        let y = self.getDrawOffsetY()
+        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1)) // 反転を戻す
+        lines.forEach { _, offsetX, offsetY, ctline in
+            CGContextSetTextPosition(context, offsetX, offsetY + y)
+            CTLineDraw(ctline, context)
+        }
     }
 
     /**
@@ -370,6 +378,7 @@ struct Type {
      `verticalAlignment` で設定した値をもとに Y 座標のオフセットを返す
 
      - returns: 描画する行の Y 座標のオフセット
+     - precondition: `instrinsicTextSize` が計算済みであること
      */
     func getDrawOffsetY() -> CGFloat {
         switch self.verticalAlignment {
@@ -413,6 +422,9 @@ struct Type {
 
         let context = self.createContext(canvasContext)
 
+        /// currentLongestTypographicWidth, offsetX, offsetY, ctline
+        var lines: [(CGFloat, CGFloat, CGFloat, CTLine)] = []
+
         while self.location < self.length {
 
             self.goToNextLinePosition()
@@ -437,7 +449,7 @@ struct Type {
             // 末尾文字列を考慮して先頭のオフセットを減算
             offset += self.getOffsetTail(range)
 
-            self.currentLongestTypographicWidth = self.drawLine(range, offset: offset, oshidashi: oshidashi, on: context)
+            lines.append(self.getCTLine(range, offset: offset, oshidashi: oshidashi, on: context))
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
@@ -450,8 +462,11 @@ struct Type {
 
         // 文字の大きさを補足
         self.intrinsicTextSize = CGSizeMake(
-            self.currentLongestTypographicWidth,
+            lines.maxElement { $0.0 < $1.0 }?.0 ?? self.width,  // 最も大きい typographicWidth
             self.currentPosition.y + self.font.ascender - self.font.capHeight)
+
+        // 全ての行を描画
+        self.drawLines(lines, on: context)
 
         return context
     }
