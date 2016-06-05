@@ -14,13 +14,12 @@ extension NSMutableAttributedString {
         guard let regexp = regexp else {
             return self
         }
+        let defaultFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
         regexp.matchesInString(self.string, options: [], range: NSMakeRange(0, self.length)).enumerate().forEach { result in
             let (location, length) = (result.element.range.location, result.element.range.length)
             let curAttrs = self.attributesAtIndex(location, effectiveRange: nil)
-            let font = curAttrs[NSFontAttributeName] as? UIFont ?? UIFont.systemFontOfSize(UIFont.systemFontSize())
-            self.addAttributes([
-                NSKernAttributeName: font.pointSize * -0.5,
-            ], range: NSMakeRange(location, length - 1))
+            let font = curAttrs[NSFontAttributeName] as? UIFont ?? defaultFont
+            self.addAttribute(NSKernAttributeName, value: font.pointSize * -0.5, range: NSMakeRange(location, length - 1))
         }
         return self
     }

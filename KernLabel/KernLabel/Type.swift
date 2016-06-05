@@ -252,9 +252,11 @@ struct Type {
         //
         // TODO: textInsets を指定しない場合は押し出し禁則させないようにする
         //
-        if (lineWidth - self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil)) >= (self.fontSize * (1 + kCharacterHaveRightSpaceRatio)) {  //
-            if range.location + range.length + 2 <= self.length {  // 2文字加算しても全体の文字数に収まるか
-                if kCharactersHaveRightSpace.contains(self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string) {
+        if range.location + range.length + 2 <= self.length {  // 2文字加算しても全体の文字数に収まるか
+            let tmpTail = self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string  // 次の行の2文字目
+            if kCharactersHaveRightSpace.contains(tmpTail) {
+                let textWidth = self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil) // 現在行の実質的な幅
+                if (lineWidth - textWidth) >= (self.fontSize * (1 + kCharacterHaveRightSpaceRatio)) {  // 1文字 + 句読点幅ぶんあれば
                     range = NSMakeRange(range.location, range.length + 2)
                     currentLineCount = range.length
                     isOsidashied = true

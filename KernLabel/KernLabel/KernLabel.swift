@@ -46,24 +46,28 @@ public enum KernLabelKerningMode: Int {
     case All
 
     var regexp: NSRegularExpression? {
-        let k句読点 = "、，。．"
-        let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
-        let k括弧開 = "｛［「『（｟〈《〔〘【〖"
-        let k他約物 = "！？：；︰‐・…‥〜ー―※"
         switch self {
         case .None:
             return nil
         case .Normal:
-            return try! NSRegularExpression(
-                pattern: "([\(k括弧閉)]?[\(k句読点)]?[\(k他約物)]?[\(k括弧開)])|([\(k括弧閉)][\(k句読点)]?[\(k他約物)]?)",
-                options: [])
+            return kKernLabelKerningModeRegexpNormal
         case .All:
-            return try! NSRegularExpression(
-                pattern: "(.[\(k括弧開)])|([\(k括弧閉)].)",
-                options: [])
+            return kKernLabelKerningModeRegexpAll
         }
     }
 }
+private let k句読点 = "、，。．"
+private let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
+private let k括弧開 = "｛［「『（｟〈《〔〘【〖"
+private let k他約物 = "！？：；︰‐・…‥〜ー―※"
+private let kKernLabelKerningModeRegexpNormal = try! NSRegularExpression(
+    pattern: "([\(k括弧閉)]?[\(k句読点)]?[\(k他約物)]?[\(k括弧開)])|([\(k括弧閉)][\(k句読点)]?[\(k他約物)]?)",
+    options: [])
+private let kKernLabelKerningModeRegexpAll = try! NSRegularExpression(
+    pattern: "(.[\(k括弧開)])|([\(k括弧閉)].)",
+    options: [])
+
+
 
 /**
  縦方向の位置
