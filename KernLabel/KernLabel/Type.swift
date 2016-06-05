@@ -84,7 +84,6 @@ struct Type {
     var verticalAlignment = KernLabelVerticalAlignment.Middle
 
     /// 現時点での最長の一行の長さ
-    private var _currentLongestTypographicWidth: CGFloat = 0
     var currentLongestTypographicWidth: CGFloat {
         get {
             return self._currentLongestTypographicWidth
@@ -95,6 +94,7 @@ struct Type {
             }
         }
     }
+    private var _currentLongestTypographicWidth: CGFloat = 0
 
     init(
         attributedText: NSAttributedString,
@@ -310,15 +310,16 @@ struct Type {
     }
 
     /**
-     行を描画する
+     range 行を、context 上に描画する。また、描画した行の実質的な幅をかえす。
 
      - parameters:
         - range: 全体における描画する行の範囲
         - offset: 行頭オフセット
         - oshidashi: 押し出しするか？
         - on: 描画する context
+     - returns: 描画した行の実質的な幅(長さ)
      */
-    private mutating func drawLine(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) {
+    private func drawLine(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) -> CGFloat {
 
         // 反転をもどす
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
@@ -335,8 +336,6 @@ struct Type {
 
         // 実質の文字の幅を取得
         let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
-        self.currentLongestTypographicWidth = CGFloat(typographicWidth)
-
 
         // 均等揃えする
         /*
@@ -353,6 +352,8 @@ struct Type {
 
         // 描画
         CTLineDraw(ctline, context)
+
+        return CGFloat(typographicWidth)
     }
 
     /**
@@ -378,6 +379,23 @@ struct Type {
             return CGFloat(Int((self.height - self.intrinsicTextSize.height) / 2))
         case .Bottom:
             return CGFloat(Int(self.height - self.intrinsicTextSize.height))
+        }
+    }
+
+    /**
+     canvasContext の上に context を描画する
+     */
+    private func draw(context: CGContext, on canvasContext: CGContext?) {
+        if let canvasContext = canvasContext {
+            CGContextDrawImage(
+                canvasContext,
+                CGRectMake(
+                    0,
+                    self.getDrawOffsetY(),
+                    self.width + self.startPosition.x,   // 開始位置分、描画範囲が広がる(x分)
+                    self.height + self.startPosition.y), // 開始位置分、描画範囲が広がる(y分)
+                CGBitmapContextCreateImage(context)
+            )
         }
     }
 
@@ -419,7 +437,7 @@ struct Type {
             // 末尾文字列を考慮して先頭のオフセットを減算
             offset += self.getOffsetTail(range)
 
-            self.drawLine(range, offset: offset, oshidashi: oshidashi, on: context)
+            self.currentLongestTypographicWidth = self.drawLine(range, offset: offset, oshidashi: oshidashi, on: context)
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
