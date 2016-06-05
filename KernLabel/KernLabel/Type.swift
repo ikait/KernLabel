@@ -17,6 +17,8 @@ private let kCharactersHaveLeftSpace = [
 ]
 private let kCharactersHaveRightSpace = [
     "」", "』", "】", "》", "〉", "〕", "｝", "）", "］",
+]
+private let kCharactersCanBurasagari = [
     "、", "。", "，", "．"
 ]
 private let kCharacterHaveRightSpaceRatio: CGFloat = 0.25  // 右半分が空白な文字の、fontSize における実質的な幅の割合
@@ -226,44 +228,44 @@ struct Type {
      offset を考慮したうえで、現在の行には何文字入るか？
 
      - parameter offset: 行頭オフセット。指定しない場合は `getOffset()` で算出したものを使用する
-     - returns: (現在行にはいる文字数, 押し出しされたかどうか)
+     - returns: (現在行にはいる文字数, ぶらさがるかどうか)
      */
     private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool) {
         let lineWidth: CGFloat = self.width + (offset ?? self.getOffset())
         var currentLineCount = CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(lineWidth))
         var range = self.getCurrentLineRange(currentLineCount)
-        var isOsidashied = false
+        var didBurasagari = false
 
         //
-        // 押し出し禁則を適用する。句読点等は行頭１文字目に来ないので、現在行の文字列の実質的な幅が、
+        // ぶらさがり処理を適用する。句読点等は行頭１文字目に来ないので、現在行の文字列の実質的な幅が、
         // 挿入可能な幅よりも 1.25 文字分 (1文字+約物0.25文字分) 開いていれば、
-        // 押し出し禁則を適用できるとし 2 文字分を現在行のカウントに加算する。
+        // ぶらさがり処理を適用できるとし 2 文字分を現在行のカウントに加算する。
         //
         // 例:
         // ┌─────────┐
-        // │押し出し禁則によ　│
+        // │ぶら下り処理によ　│
         // │り、行末が開かなく│
         // └─────────┘
         //　　↓
         // ┌─────────┐
-        // │押し出し禁則により、
+        // │ぶら下り処理により、
         // │行末が開かなくなる。
         // └─────────┘
         //
-        // TODO: textInsets を指定しない場合は押し出し禁則させないようにする
+        // TODO: textInsets を指定しない場合はぶらさがり処理させないようにする
         //
         if range.location + range.length + 2 <= self.length {  // 2文字加算しても全体の文字数に収まるか
             let tmpTail = self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length + 1, 1)).string  // 次の行の2文字目
-            if kCharactersHaveRightSpace.contains(tmpTail) {
-                let textWidth = self.attributedText.attributedSubstringFromRange(range).boundingWidth(options: [], context: nil) // 現在行の実質的な幅
+            if kCharactersCanBurasagari.contains(tmpTail) {
+                let textWidth = self.attributedText.attributedSubstringFromRange(range).size().width
                 if (lineWidth - textWidth) >= (self.fontSize * (1 + kCharacterHaveRightSpaceRatio)) {  // 1文字 + 句読点幅ぶんあれば
                     range = NSMakeRange(range.location, range.length + 2)
                     currentLineCount = range.length
-                    isOsidashied = true
+                    didBurasagari = true
                 }
             }
         }
-        return (currentLineCount, isOsidashied)
+        return (currentLineCount, didBurasagari)
     }
 
     /**
@@ -315,12 +317,12 @@ struct Type {
      - parameters:
         - range: 全体における描画する行の範囲
         - offset: 行頭オフセット
-        - oshidashi: 押し出しするか？
+        - burasagari: ぶらさがりするか？
         - on: 描画する context
      - returns: 描画した行の実質的な幅(長さ)
      */
     private func getCTLine(
-        range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext
+        range: NSRange, offset: CGFloat, burasagari: Bool = false, on context: CGContext
         ) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 描画開始位置を設定。offsetで行頭約物の位置を修正
@@ -336,7 +338,7 @@ struct Type {
 
         // 均等揃えする
         /*
-        let characterRightSpace = oshidashi ? Double(self.fontSize/* + kCharacterHaveRightSpaceRatio*/) : 0
+        let characterRightSpace = burasagari ? Double(self.fontSize/* + kCharacterHaveRightSpaceRatio*/) : 0
         let lineWidth = Double(self.width) + characterRightSpace
         if (lineWidth - Double(self.fontSize)) < typographicWidth {
             if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
@@ -429,7 +431,7 @@ struct Type {
 
             self.goToNextLinePosition()
             var offset = self.getOffset()
-            let (currentLineCount, oshidashi) = self.getSuggestedLineCount(offset)
+            let (currentLineCount, burasagari) = self.getSuggestedLineCount(offset)
             var range = self.getCurrentLineRange(currentLineCount)
 
             let overflow = self.isOverflow(currentLineCount)
@@ -449,7 +451,7 @@ struct Type {
             // 末尾文字列を考慮して先頭のオフセットを減算
             offset += self.getOffsetTail(range)
 
-            lines.append(self.getCTLine(range, offset: offset, oshidashi: oshidashi, on: context))
+            lines.append(self.getCTLine(range, offset: offset, burasagari: burasagari, on: context))
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
