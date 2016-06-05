@@ -11,11 +11,7 @@ import KernLabel
 
 class ViewTableViewController: UITableViewController {
 
-    var paragraphStyle: NSParagraphStyle {
-        let style = NSMutableParagraphStyle()
-        style.lineHeightMultiple = 1.2
-        return style
-    }
+    var heights: [NSIndexPath: CGFloat] = [:]
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -33,13 +29,10 @@ class ViewTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerClass(ViewTableCell.self, forCellReuseIdentifier: "ViewTableCell")
-        self.tableView.rowHeight = UITableViewAutomaticDimension
-        self.tableView.estimatedRowHeight = 100
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        self.tableView.reloadData()
     }
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -47,46 +40,75 @@ class ViewTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Sentences.count
+        return 400
+    }
+
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if let height = self.heights[indexPath] {
+            return height
+        }
+        let type = KernTypeString(string: Sentences[indexPath.row % Sentences.count], attributes: [
+            NSParagraphStyleAttributeName: ViewTableCellLayer.paragraphStyle,
+            NSFontAttributeName: ViewTableCellLayer.font
+        ])
+        let height = type.boundingHeight(tableView.frame.width - 30, options: [], numberOfLines: 0, context: nil) + 30
+        self.heights[indexPath] = height
+        return height
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ViewTableCell", forIndexPath: indexPath) as! ViewTableCell
-        cell.label?.numberOfLines = 0
-        cell.label?.attributedText = NSAttributedString(
-            string: Sentences[indexPath.row],
-            attributes: [
-                NSParagraphStyleAttributeName: self.paragraphStyle,
-                NSFontAttributeName: UIFont.systemFontOfSize(24)
-            ]
-        )
+        cell.titleLayer.type.string = Sentences[indexPath.row % Sentences.count]
+        cell.titleLayer.frame = CGRectMake(15, 15, cell.frame.width - 30, cell.frame.height - 30)
+        cell.titleLayer.setNeedsDisplay()
         return cell
     }
 }
 
+
 private class ViewTableCell: UITableViewCell {
-    var label: KernLabel?
-    var indexPath: NSIndexPath?
+    var titleLayer = ViewTableCellLayer()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.label = KernLabel(frame: CGRectZero)
-        self.label?.removeFromSuperview()
-        self.label?.translatesAutoresizingMaskIntoConstraints = false
-        self.contentView.addSubview(self.label!)
-        self.contentView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat(
-            "V:|-15-[view]-15-|",
-            options: [],
-            metrics: nil,
-            views: ["view": self.label!]))
-        self.contentView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat(
-            "H:|-15-[view]-15-|",
-            options: [],
-            metrics: nil,
-            views: ["view": self.label!]))
+        self.contentView.layer.addSublayer(self.titleLayer)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
 }
+
+private class ViewTableCellLayer: CALayer {
+    var type: KernTypeString = KernTypeString(string: "")
+
+    static var paragraphStyle: NSParagraphStyle {
+        let style = NSMutableParagraphStyle()
+        style.lineHeightMultiple = 1.2
+        return style
+    }
+    static let font = UIFont.systemFontOfSize(24)
+
+    override init() {
+        super.init()
+        self.delegate = self
+        self.contentsScale = UIScreen.mainScreen().scale
+        self.type.attributes = [
+            NSParagraphStyleAttributeName: ViewTableCellLayer.paragraphStyle,
+            NSFontAttributeName: ViewTableCellLayer.font
+        ]
+    }
+
+    override init(layer: AnyObject) {
+        super.init(layer: layer)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private override func drawLayer(layer: CALayer, inContext ctx: CGContext) {
+        self.type.drawWithRect(layer.bounds, options: .UsesLineFragmentOrigin, context: ctx)
+    }
+}
+

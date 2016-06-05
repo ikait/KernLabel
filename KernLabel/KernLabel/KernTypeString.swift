@@ -12,7 +12,7 @@ import UIKit
 public class KernTypeString {
 
     public var string: String = ""
-    public var attributes: [String : AnyObject]? = [:]
+    public var attributes: [String : AnyObject] = [:]
     public var padding: UIEdgeInsets = UIEdgeInsetsZero
 
     var attributedString: NSAttributedString {
@@ -23,7 +23,7 @@ public class KernTypeString {
         self.string = string
     }
 
-    public init(string: String, attributes: [String: AnyObject]?) {
+    public init(string: String, attributes: [String : AnyObject]) {
         self.string = string
         self.attributes = attributes
     }

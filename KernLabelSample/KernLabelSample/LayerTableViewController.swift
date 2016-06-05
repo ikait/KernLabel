@@ -43,20 +43,21 @@ class LayerTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Sentences.count
+        return 400
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if let height = self.heights[indexPath] {
             return height
         }
-        let str = KernTypeString(string: Sentences[indexPath.row], attributes: [
+        let type = KernTypeString(string: Sentences[indexPath.row % Sentences.count], attributes: [
             NSParagraphStyleAttributeName: LayerTableCell.paragraphStyle,
             NSFontAttributeName: LayerTableCell.font
         ])
-        let height = str.boundingHeight(tableView.frame.width - 30, options: [], numberOfLines: 0, context: nil) + 30
+        let height = type.boundingHeight(
+            tableView.frame.width - 30, options: [], numberOfLines: 0, context: nil) + 30
         self.heights[indexPath] = height
-        let image = str.createImage(CGRectMake(0, 0, tableView.frame.width - 30, height - 30), options: [])
+        let image = type.createImage(CGRectMake(0, 0, tableView.frame.width - 30, height - 30), options: [])
         self.images[indexPath] = image
         return height
     }
