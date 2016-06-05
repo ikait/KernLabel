@@ -16,7 +16,8 @@ class TabBarController: UITabBarController {
         self.viewControllers = [
             ViewController(),
             SpeedTestViewController(),
-            TableViewController()
+            ViewTableViewController(),
+            LayerTableViewController()
         ]
     }
 
