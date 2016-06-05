@@ -368,7 +368,7 @@ struct Type {
 
      - returns: 描画する行の Y 座標のオフセット
      */
-    private func getDrawOffsetY() -> CGFloat {
+    func getDrawOffsetY() -> CGFloat {
         switch self.verticalAlignment {
         case .Top:
             return 0
