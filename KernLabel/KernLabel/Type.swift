@@ -125,7 +125,13 @@ struct Type {
         self.verticalAlignment = verticalAlignment
     }
 
-    func createEmptyContext(context: CGContext? = nil) -> CGContext {
+    /**
+     context を生成する。与えられた context が nil でないときはそのままそれを返す
+
+     - parameter context: 描画する context
+     - returns: 生成した context
+     */
+    func createContext(context: CGContext? = nil) -> CGContext {
         if let context = context {
             return context
         }
@@ -157,7 +163,10 @@ struct Type {
     }
 
     /**
-     行末の文字を取得
+     行末の文字を取得する。行末が改行の場合は、改行文字の前の文字を取得する。
+
+     - parameter range: 行末の文字を取得するための、現在行の全体における範囲。
+     - returns: 行末の文字
      */
     private func getLineTail(range: NSRange) -> String {
         var tail = ""
@@ -173,6 +182,8 @@ struct Type {
 
     /**
      行頭オフセットを取得。カーニング対象文字の場合は、半角分のオフセット
+
+     - parameter lineHead: 行頭文字
      */
     private func getOffset(lineHead: String? = nil) -> CGFloat {
         return kCharactersHaveLeftSpace.contains(lineHead ?? self.getLineHead()) ? self.fontHalfWidth : 0
@@ -180,6 +191,9 @@ struct Type {
 
     /**
      行末から offset を計算する
+
+     - parameter range: offset を計算するための、現在行の全体における範囲
+     - returns: 行末文字と alignment を考慮した際の行頭オフセット
      */
     private func getOffsetTail(range: NSRange) -> CGFloat {
         guard let alignment = self.attributedText.textAlignment else {
@@ -211,6 +225,7 @@ struct Type {
     /**
      offset を考慮したうえで、現在の行には何文字入るか？
 
+     - parameter offset: 行頭オフセット。指定しない場合は `getOffset()` で算出したものを使用する
      - returns: (現在行にはいる文字数, 押し出しされたかどうか)
      */
     private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool) {
@@ -251,6 +266,8 @@ struct Type {
 
     /**
      現在行の、全体におけるレンジ
+
+     - returns: 全体における現在行の範囲
      */
     private func getCurrentLineRange(currentLineCount: Int? = nil) -> NSRange {
         return NSMakeRange(
@@ -260,6 +277,8 @@ struct Type {
 
     /** 
      次の行が指定した高さを超えるか or 行数制限を超えるか
+
+     - returns: 次の行が指定した高さを超えるか or 行数制限を超えるか
      */
     private func isOverflow(currentLineCount: Int? = nil) -> Bool {
         let surplus = self.location + (currentLineCount ?? self.getSuggestedLineCount().0) < self.length
@@ -270,6 +289,9 @@ struct Type {
 
     /**
      truncate する行の文字数 (truncate 文字列を含まない)
+
+     - parameter: 行頭オフセット
+     - returns: truncate される行の挿入可能な文字数 (truncate 文字分の幅を含めない)
      */
     private func getTruncateLineCount(offset: CGFloat? = nil) -> Int {
         return CTTypesetterSuggestLineBreak(
@@ -285,6 +307,15 @@ struct Type {
         return (truncateLineCount ?? self.getTruncateLineCount()) + self.location
     }
 
+    /**
+     行を描画する
+
+     - parameters:
+        - range: 全体における描画する行の範囲
+        - offset: 行頭オフセット
+        - oshidashi: 押し出しするか？
+        - on: 描画する context
+     */
     private mutating func drawLine(range: NSRange, offset: CGFloat, oshidashi: Bool = false, on context: CGContext) {
 
         // 反転をもどす
@@ -322,11 +353,21 @@ struct Type {
         CTLineDraw(ctline, context)
     }
 
+    /**
+     次の行に進む
+
+     - parameter: 現在行の文字数 (これを `location` に加えて次の行に進む)
+     */
     private mutating func goToNextLine(count: Int) {
         self.location += count
         self.lines += 1
     }
 
+    /**
+     `verticalAlignment` で設定した値をもとに Y 座標のオフセットを返す
+
+     - returns: 描画する行の Y 座標のオフセット
+     */
     private func getDrawOffsetY() -> CGFloat {
         switch self.verticalAlignment {
         case .Top:
@@ -338,24 +379,11 @@ struct Type {
         }
     }
 
-    private func draw(context: CGContext, on canvasContext: CGContext?) {
-        if let canvasContext = canvasContext {
-            CGContextDrawImage(
-                canvasContext,
-                CGRectMake(
-                    0,
-                    self.getDrawOffsetY(),
-                    self.width + self.startPosition.x,   // 開始位置分、描画範囲が広がる(x分)
-                    self.height + self.startPosition.y), // 開始位置分、描画範囲が広がる(y分)
-                CGBitmapContextCreateImage(context)
-            )
-        }
-    }
-
     /**
      文字を生成する。canvasContext を与えると、そこに文字を描画する。
 
      - parameter canvasContext: 文字が描画される context
+     - returns: 描画された context
      */
     private mutating func process(canvasContext: CGContext? = nil) -> CGContext? {
 
@@ -363,7 +391,7 @@ struct Type {
             return nil
         }
 
-        let context = self.createEmptyContext()
+        let context = self.createContext(canvasContext)
 
         while self.location < self.length {
 
@@ -405,17 +433,13 @@ struct Type {
             self.currentLongestTypographicWidth,
             self.currentPosition.y + self.font.ascender - self.font.capHeight)
 
-        // 描画
-        self.draw(context, on: canvasContext)
-
-
         return context
     }
 
     /**
      文字を context に描画する
 
-     - parameter on: 文字が描画される canvas
+     - parameter on: 文字が描画される context
      */
     mutating func drawText(on context: CGContext) {
         self.process(context)
