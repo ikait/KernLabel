@@ -10,14 +10,14 @@ import UIKit
 import KernLabel
 
 
-class TableViewController: UITableViewController {
+class LayerTableViewController: UITableViewController {
 
     var heights: [NSIndexPath: CGFloat] = [:]
     var images: [NSIndexPath: CGImage?] = [:]
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.title = "Table View"
+        self.title = "Layer Table"
     }
 
     convenience init() {
@@ -30,8 +30,7 @@ class TableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerClass(Cell.self, forCellReuseIdentifier: "Cell")
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
+        self.tableView.registerClass(LayerTableCell.self, forCellReuseIdentifier: "LayerTableCell")
     }
 
     override func viewDidAppear(animated: Bool) {
@@ -52,12 +51,12 @@ class TableViewController: UITableViewController {
             return height
         }
         let str = KernTypeString(string: Sentences[indexPath.row], attributes: [
-            NSParagraphStyleAttributeName: Cell.paragraphStyle,
-            NSFontAttributeName: Cell.font
+            NSParagraphStyleAttributeName: LayerTableCell.paragraphStyle,
+            NSFontAttributeName: LayerTableCell.font
         ])
         let height = str.boundingHeight(tableView.frame.width - 30, options: [], numberOfLines: 0, context: nil) + 30
         self.heights[indexPath] = height
-        let image = str.createImage(CGRectMake(0, 0, tableView.frame.width, height - 30), options: [])
+        let image = str.createImage(CGRectMake(0, 0, tableView.frame.width - 30, height - 30), options: [])
         self.images[indexPath] = image
         return height
     }
@@ -66,14 +65,14 @@ class TableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! Cell
+        let cell = tableView.dequeueReusableCellWithIdentifier("LayerTableCell", forIndexPath: indexPath) as! LayerTableCell
         cell.titleLayer.frame = CGRectMake(15, 15, cell.frame.width - 30, cell.frame.height - 30)
         cell.titleLayer.contents = self.images[indexPath]!
         return cell
     }
 }
 
-private class Cell: UITableViewCell {
+private class LayerTableCell: UITableViewCell {
     var type: KernTypeString!
     var indexPath: NSIndexPath?
 
