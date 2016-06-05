@@ -83,6 +83,8 @@ struct Type {
         return self.fontSize / 2
     }
 
+    var padding: UIEdgeInsets = UIEdgeInsetsZero
+
     var verticalAlignment = KernLabelVerticalAlignment.Middle
 
     /// 現時点での最長の一行の長さ
@@ -105,7 +107,8 @@ struct Type {
         numberOfLines: Int = 0,
         options: NSStringDrawingOptions = .UsesLineFragmentOrigin,
         truncateText: String = "...",
-        verticalAlignment: KernLabelVerticalAlignment = .Top) {
+        verticalAlignment: KernLabelVerticalAlignment = .Top,
+        padding: UIEdgeInsets = UIEdgeInsetsZero) {
         self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(kerningRegexp)
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
@@ -114,8 +117,8 @@ struct Type {
         self.width = rect.size.width
         self.height = rect.size.height
         self.startPosition = CGPointMake(
-            options.contains(.UsesLineFragmentOrigin) ? rect.origin.x : 0,
-            options.contains(.UsesLineFragmentOrigin) ? rect.origin.y : 0)
+            (options.contains(.UsesLineFragmentOrigin) ? rect.origin.x : 0),
+            (options.contains(.UsesLineFragmentOrigin) ? rect.origin.y : 0))
         self.currentPosition = CGPointZero
         self.truncateRect = NSString(string: truncateText).boundingRectWithSize(CGSizeMake(kCGFloatHuge, kCGFloatHuge), options: NSStringDrawingOptions(), attributes: attributedText.attributes, context: nil)
         self.lines = 0
@@ -137,15 +140,12 @@ struct Type {
         if let context = context {
             return context
         }
+        let contextWidth = Int((self.startPosition.x + self.width + self.padding.left + self.padding.right) * kScreenScale)
+        let contextHeight = Int((self.startPosition.y + self.height + self.padding.top + self.padding.bottom) * kScreenScale)
         let c = CGBitmapContextCreate(
-            nil,
-            Int((self.startPosition.x + self.width) * kScreenScale),
-            Int((self.startPosition.y + self.height) * kScreenScale),
-            8,
-            0,
-            kCGColorSpace,
-            kCGImageAlphaInfo)!
-        CGContextScaleCTM(c, kScreenScale, kScreenScale)
+            nil, contextWidth, contextHeight, 8, 0, kCGColorSpace, kCGImageAlphaInfo)!
+        CGContextTranslateCTM(c, 0, CGFloat(contextHeight))
+        CGContextScaleCTM(c, kScreenScale, 0 - kScreenScale)
         return c
     }
 
@@ -326,8 +326,8 @@ struct Type {
         ) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 描画開始位置を設定。offsetで行頭約物の位置を修正
-        let offsetX = self.startPosition.x + self.currentPosition.x - offset
-        let offsetY = self.startPosition.y + self.currentPosition.y
+        let offsetX = self.startPosition.x + self.currentPosition.x + self.padding.left - offset
+        let offsetY = self.startPosition.y + self.currentPosition.y + self.padding.top
 
         // 行を生成
         let ctline = CTTypesetterCreateLine(
@@ -390,23 +390,6 @@ struct Type {
             return CGFloat(Int((self.height - self.intrinsicTextSize.height) / 2))
         case .Bottom:
             return CGFloat(Int(self.height - self.intrinsicTextSize.height))
-        }
-    }
-
-    /**
-     canvasContext の上に context を描画する
-     */
-    private func draw(context: CGContext, on canvasContext: CGContext?) {
-        if let canvasContext = canvasContext {
-            CGContextDrawImage(
-                canvasContext,
-                CGRectMake(
-                    0,
-                    self.getDrawOffsetY(),
-                    self.width + self.startPosition.x,   // 開始位置分、描画範囲が広がる(x分)
-                    self.height + self.startPosition.y), // 開始位置分、描画範囲が広がる(y分)
-                CGBitmapContextCreateImage(context)
-            )
         }
     }
 
@@ -485,10 +468,11 @@ struct Type {
     /**
      文字が描画された CGImage をかえす
      */
-    mutating func createDrawedImage() -> CGImage? {
+    mutating func createImage() -> CGImage? {
         guard let typedContext = self.process() else {
             return nil
         }
+        CGContextTranslateCTM(typedContext, 0, self.height);
         return CGBitmapContextCreateImage(typedContext)
     }
 }
