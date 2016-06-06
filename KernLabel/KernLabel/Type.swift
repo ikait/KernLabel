@@ -106,9 +106,9 @@ struct Type {
         kerningRegexp: NSRegularExpression? = KernLabelKerningMode.Normal.regexp,
         numberOfLines: Int = 0,
         options: NSStringDrawingOptions = .UsesLineFragmentOrigin,
+        padding: UIEdgeInsets = UIEdgeInsetsZero,
         truncateText: String = "...",
-        verticalAlignment: KernLabelVerticalAlignment = .Top,
-        padding: UIEdgeInsets = UIEdgeInsetsZero) {
+        verticalAlignment: KernLabelVerticalAlignment = .Top) {
         self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(kerningRegexp)
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
@@ -128,6 +128,7 @@ struct Type {
         self.truncateText = truncateText
         self.numberOfLines = numberOfLines
         self.verticalAlignment = verticalAlignment
+        self.padding = padding
     }
 
     /**
@@ -348,6 +349,17 @@ struct Type {
         return (CGFloat(typographicWidth), offsetX, offsetY, ctline)
     }
 
+    private func fillBackgroundColor(rect: CGRect, on context: CGContext?) {
+        guard let context = context else {
+            return
+        }
+        guard let backgroundColor = self.attributedText.backgroundColor else {
+            return
+        }
+        backgroundColor.setFill()
+        CGContextFillRect(context, rect)
+    }
+
     /**
      与えられた全ての行を描画する
 
@@ -360,6 +372,13 @@ struct Type {
             return
         }
         let y = self.getDrawOffsetY()
+        self.fillBackgroundColor(
+            CGRectMake(
+                self.startPosition.x, self.startPosition.y + y,
+                self.intrinsicTextSize.width + self.padding.left + self.padding.right,
+                self.intrinsicTextSize.height + self.padding.top + self.padding.bottom
+            ),
+            on: context)
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1)) // 反転を戻す
         lines.forEach { _, offsetX, offsetY, ctline in
             CGContextSetTextPosition(context, offsetX, offsetY + y)
