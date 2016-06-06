@@ -13,7 +13,6 @@ public class KernTypeString {
 
     public var string: String = ""
     public var attributes: [String : AnyObject] = [:]
-    public var padding: UIEdgeInsets = UIEdgeInsetsZero
 
     var attributedString: NSAttributedString {
         return NSAttributedString(string: self.string, attributes: self.attributes)
@@ -49,11 +48,12 @@ public class KernTypeString {
         return self.boundingRectWithSize(CGSizeMake(kCGFloatHuge, kCGFloatHuge), options: [], numberOfLines: 0, context: nil).size
     }
 
-    public func drawWithRect(rect: CGRect, options: NSStringDrawingOptions, context: CGContextRef?) {
+    public func drawWithRect(rect: CGRect, options: NSStringDrawingOptions, context: CGContextRef?, padding: UIEdgeInsets = UIEdgeInsetsZero) {
         guard let context = context else {
             return
         }
         var type = Type(attributedText: self.attributedString, rect: rect, kerningRegexp: KernLabelKerningMode.Normal.regexp, numberOfLines: 0, options: options)
+        type.padding = padding
         type.drawText(on: context)
     }
 
