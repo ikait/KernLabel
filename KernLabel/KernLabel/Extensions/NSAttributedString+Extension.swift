@@ -27,6 +27,13 @@ extension NSAttributedString {
         return paragraphStyle.alignment
     }
 
+    var backgroundColor: UIColor? {
+        guard let attributes = self.attributes else {
+            return nil
+        }
+        return attributes[NSBackgroundColorAttributeName] as? UIColor
+    }
+
     var attributes: [String : AnyObject]? {
         return self.length != 0 ? self.attributesAtIndex(0, effectiveRange: nil) : nil
     }
