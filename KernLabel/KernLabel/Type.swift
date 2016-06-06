@@ -321,9 +321,7 @@ struct Type {
         - on: 描画する context
      - returns: 描画した行の実質的な幅(長さ)
      */
-    private func getCTLine(
-        range: NSRange, offset: CGFloat, burasagari: Bool = false, on context: CGContext
-        ) -> (CGFloat, CGFloat, CGFloat, CTLine) {
+    private func getCTLine(range: NSRange, offset: CGFloat, burasagari: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 描画開始位置を設定。offsetで行頭約物の位置を修正
         let offsetX = self.startPosition.x + self.currentPosition.x + self.padding.left - offset
@@ -355,9 +353,12 @@ struct Type {
 
      - parameters
         - lines: (typographicWidth, offsetX, offsetY, ctline)
-        - context: 描画する context
+        - context: 描画する context. 与えないとスキップする
      */
-    private func drawLines(lines: [(CGFloat, CGFloat, CGFloat, CTLine)], on context: CGContext) {
+    private func drawLines(lines: [(CGFloat, CGFloat, CGFloat, CTLine)], on context: CGContext?) {
+        guard let context = context else {
+            return
+        }
         let y = self.getDrawOffsetY()
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1)) // 反転を戻す
         lines.forEach { _, offsetX, offsetY, ctline in
@@ -395,17 +396,19 @@ struct Type {
 
     /**
      文字を生成する。canvasContext を与えると、そこに文字を描画する。
+     needsDrawing を false にすると、実際に描画しない（カーニングや禁則を処理し、描画はせず描画領域 (intrinsicTextSize) をセットして終了する）
 
      - parameter canvasContext: 文字が描画される context
+     - parameter needsDrawing: 描画をするかどうか
      - returns: 描画された context
      */
-    private mutating func process(canvasContext: CGContext? = nil) -> CGContext? {
+    private mutating func process(canvasContext: CGContext? = nil, needsDrawing: Bool = true) -> CGContext? {
 
         if self.attributedText.string.isEmpty {
             return nil
         }
 
-        let context = self.createContext(canvasContext)
+        let context: CGContext? = needsDrawing ? self.createContext(canvasContext) : nil
 
         /// currentLongestTypographicWidth, offsetX, offsetY, ctline
         var lines: [(CGFloat, CGFloat, CGFloat, CTLine)] = []
@@ -434,7 +437,7 @@ struct Type {
             // 末尾文字列を考慮して先頭のオフセットを減算
             offset += self.getOffsetTail(range)
 
-            lines.append(self.getCTLine(range, offset: offset, burasagari: burasagari, on: context))
+            lines.append(self.getCTLine(range, offset: offset, burasagari: burasagari))
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
@@ -472,7 +475,16 @@ struct Type {
         guard let typedContext = self.process() else {
             return nil
         }
-        CGContextTranslateCTM(typedContext, 0, self.height);
+        CGContextTranslateCTM(typedContext, 0, self.height)
         return CGBitmapContextCreateImage(typedContext)
+    }
+
+    /**
+     文字を処理して描画範囲 (intrinsicTextSize) をセットする。 context への描画は行わない
+
+     - seealso: `process(:_, needsDrawing:_)`
+     */
+    mutating func processWithoutDrawing() {
+        self.process(nil, needsDrawing: false)
     }
 }
