@@ -40,7 +40,7 @@ public class KernTypeString {
     }
 
     public func boundingRectWithSize(size: CGSize, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGRect {
-        var type = Type(attributedText: self.attributedString, rect: CGRect(origin: CGPointZero, size: size), kerningRegexp: KernLabelKerningMode.Normal.regexp, numberOfLines: 10, options: options)
+        var type = Type(attributedText: self.attributedString, rect: CGRect(origin: CGPointZero, size: size), kerningRegexp: KernLabelKerningMode.Normal.regexp, numberOfLines: 10, options: options, truncateText: DefaultLabelSettings.truncateText, verticalAlignment: .Top)
         type.createImage()
         return CGRect(origin: CGPointZero, size: type.intrinsicTextSize)
     }
