@@ -45,6 +45,10 @@ extension NSAttributedString {
         return UIFont.systemFontOfSize(UIFont.systemFontSize())
     }
 
+    func substring(range: NSRange) -> String {
+        return self.attributedSubstringFromRange(range).string
+    }
+
     func boundingWidth(options options: NSStringDrawingOptions, context: NSStringDrawingContext?) -> CGFloat {
         return self.boundingRect(options: options, context: context).size.width
     }
