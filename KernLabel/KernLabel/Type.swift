@@ -165,7 +165,7 @@ struct Type {
      行頭の文字を取得
      */
     private func getLineHead() -> String {
-        return self.attributedText.attributedSubstringFromRange (NSMakeRange(self.location, 1)).string
+        return self.attributedText.substring(NSMakeRange(self.location, 1))
     }
 
     /**
@@ -178,9 +178,9 @@ struct Type {
         var tail = ""
         let location = range.location + range.length
         if location <= self.attributedText.length {
-            tail = self.attributedText.attributedSubstringFromRange(NSMakeRange(location - 1, 1)).string
+            tail = self.attributedText.substring(NSMakeRange(location - 1, 1))
             if tail == "\n" && location - 2 >= 0 {  // 行末が改行の場合は、改行文字の前の文字を取得する。
-                tail = self.attributedText.attributedSubstringFromRange(NSMakeRange(location - 2, 1)).string
+                tail = self.attributedText.substring(NSMakeRange(location - 2, 1))
             }
         }
         return tail
@@ -223,7 +223,7 @@ struct Type {
                         options: [.UsesLineFragmentOrigin], context: nil).size.width)
                 ) / 2
         default:
-            break
+            break  // .Left, .Justified
         }
         return offset
     }
@@ -236,19 +236,22 @@ struct Type {
      */
     private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool, Bool) {
         let lineWidth: CGFloat = self.width + (offset ?? self.getOffset())
-        var currentLineCount = CTTypesetterSuggestClusterBreak(self.typesetter, self.location, Double(lineWidth))
+        var currentLineCount = CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(lineWidth))
         var range = self.getCurrentLineRange(currentLineCount)
         var (didBurasagari, didOikomi) = (false, false)
-        if range.location + range.length + 1 <= self.length {  // 1文字加算しても全体の文字数に収まるか
-            let tmpTail = self.attributedText.attributedSubstringFromRange(NSMakeRange(range.location + range.length, 1)).string  // 次の行の2文字目
-            if kCharactersCanBurasagari.contains(tmpTail) {
-                range = NSMakeRange(range.location, range.length + 1)
-                currentLineCount = range.length
-                didBurasagari = true
-            } else if kCharactersCanOikomi.contains(tmpTail) {
-                range = NSMakeRange(range.location, range.length + 1)
-                currentLineCount = range.length
-                didOikomi = true
+
+        if let alignment = self.attributedText.textAlignment where alignment == .Justified {
+            if range.location + range.length + 2 <= self.length {  // 1文字加算しても全体の文字数に収まるか
+                let tmpTail = self.attributedText.substring(NSMakeRange(range.location + range.length + 1, 1))  // 次の行の2文字目
+                if kCharactersCanBurasagari.contains(tmpTail) {
+                    range = NSMakeRange(range.location, range.length + 2)
+                    currentLineCount = range.length
+                    didBurasagari = true
+                } else if kCharactersCanOikomi.contains(tmpTail) {
+                    range = NSMakeRange(range.location, range.length + 2)
+                    currentLineCount = range.length
+                    didOikomi = true
+                }
             }
         }
         return (currentLineCount, didBurasagari, didOikomi)
@@ -321,15 +324,16 @@ struct Type {
         let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
 
         // 均等揃えする。ぶら下がりのために、右側のスペースを開けておく
-        let burasagariSpace = burasagari ? Double(self.fontSize) : 0
-        let oikomiSpace = oikomi ? Double(self.fontSize / 2) : 0
-        let lineWidth = Double(self.width) + burasagariSpace + oikomiSpace
-        if typographicWidth > (lineWidth - Double(self.fontSize)) {
-            if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
-                ctline = justifiedCtline
+        if let alignment = self.attributedText.textAlignment where alignment == .Justified {
+            let burasagariSpace = burasagari ? Double(self.fontSize) : 0
+            let oikomiSpace = oikomi ? Double(self.fontSize / 2) : 0
+            let lineWidth = Double(self.width) + burasagariSpace + oikomiSpace
+            if typographicWidth > (lineWidth - Double(self.fontSize)) {
+                if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
+                    ctline = justifiedCtline
+                }
             }
         }
-
         return (CGFloat(typographicWidth), offsetX, offsetY, ctline)
     }
 
