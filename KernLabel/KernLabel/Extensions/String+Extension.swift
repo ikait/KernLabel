@@ -12,4 +12,8 @@ extension String {
     var length: Int {
         return self.characters.count
     }
+
+    var isAlphanumeric: Bool {
+        return self.rangeOfString("^[a-zA-Z0-9]+$", options: .RegularExpressionSearch) != nil
+    }
 }
