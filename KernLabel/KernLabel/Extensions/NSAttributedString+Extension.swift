@@ -49,6 +49,28 @@ extension NSAttributedString {
         return self.attributedSubstringFromRange(range).string
     }
 
+    func getFont(location: Int) -> UIFont? {
+        if let font = self.attributesAtIndex(location, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+            return font
+        }
+        return nil
+    }
+
+    func getLineHeight(location: Int) -> CGFloat {
+        guard let paragraphStyle = self.attributesAtIndex(location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle, font = self.getFont(location) else {
+                return self.font.lineHeight
+        }
+        let lineHeightMultiple = paragraphStyle.lineHeightMultiple
+        return font.lineHeight * ((lineHeightMultiple.isZero) ? 1 : lineHeightMultiple)
+    }
+
+    func getTextAlignment(location: Int) -> NSTextAlignment? {
+        guard let paragraphStyle = self.attributesAtIndex(location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+            return nil
+        }
+        return paragraphStyle.alignment
+    }
+
     func boundingWidth(options options: NSStringDrawingOptions, context: NSStringDrawingContext?) -> CGFloat {
         return self.boundingRect(options: options, context: context).size.width
     }
