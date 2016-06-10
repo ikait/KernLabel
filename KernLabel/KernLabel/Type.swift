@@ -458,7 +458,7 @@ struct Type {
         // 文字の大きさを補足
         self.intrinsicTextSize = CGSizeMake(
             lines.maxElement { $0.0 < $1.0 }?.0 ?? self.width,  // 最も大きい typographicWidth
-            self.currentPosition.y + self.font.ascender - self.font.capHeight)
+            CGFloat(Int(self.currentPosition.y + self.font.ascender - self.font.capHeight)))
 
         // 全ての行を描画
         self.drawLines(lines, on: context)
