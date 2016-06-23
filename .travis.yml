@@ -5,11 +5,11 @@ env:
   - LC_CTYPE="en_US.UTF-8"
   - LANG="en_US.UTF-8"
   - WORKSPACE="KernLabel.xcworkspace"
-  - SCHEME="KernLabel"
+  - SCHEME="KernLabelTests"
   - SDK="iphonesimulator9.3"
   - DESTINATION="OS=8.1,name=iPhone 5"
 before_install:
   - gem update --no-document cocoapods && pod repo update
 script:
   - set -o pipefail
-  - xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
+  - xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" test | xcpretty -c;
