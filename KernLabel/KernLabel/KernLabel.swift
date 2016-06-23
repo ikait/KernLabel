@@ -364,7 +364,7 @@ public class KernLabel: UIView {
         self.setNeedsUpdateConstraints()
     }
 
-    private func drawRectWithKerning(rect: CGRect, options: NSStringDrawingOptions, context: CGContextRef) {
+    private func drawRectWithKerning(rect: CGRect, options: NSStringDrawingOptions, context: CGContext) {
         guard let _attributedText = self.attributedText else {
             return
         }
@@ -379,8 +379,10 @@ public class KernLabel: UIView {
         type.drawText(on: context)
     }
 
-    public func drawTextInRect(rect: CGRect) {
-        let context = UIGraphicsGetCurrentContext()
+    public func drawTextInRect(rect: CGRect, context: CGContext?) {
+        guard let context = context else {
+            return
+        }
         var options = NSStringDrawingOptions.UsesLineFragmentOrigin
         if self.lineBreakMode == .ByTruncatingTail {
             options.unionInPlace(.TruncatesLastVisibleLine)
@@ -388,10 +390,11 @@ public class KernLabel: UIView {
         self.drawRectWithKerning(
             rect,
             options: options,
-            context: context!)
+            context: context)
     }
 
     public override func drawRect(rect: CGRect) {
-        self.drawTextInRect(rect)
+        let context = UIGraphicsGetCurrentContext()
+        self.drawTextInRect(rect, context: context)
     }
 }
