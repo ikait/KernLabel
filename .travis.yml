@@ -9,9 +9,7 @@ env:
   - SDK="iphonesimulator9.3"
   - DESTINATION="OS=8.1,name=iPhone 5"
 before_install:
-  - gem update cocoapods
+  - gem update --no-document cocoapods && pod repo update
 script:
   - set -o pipefail
-  - xcodebuild -version
-  - xcodebuild -showsdks
   - xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty -c;
