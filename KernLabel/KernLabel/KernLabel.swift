@@ -312,7 +312,7 @@ public class KernLabel: UIView {
             options: [.UsesLineFragmentOrigin],
             truncateText: self.truncateText,
             kerningRegexp: self.kerningMode.regexp)
-        type.createImage()
+        type.processWithoutDrawing()
         return CGRect(origin: CGPointZero, size: type.intrinsicTextSize)
     }
 
