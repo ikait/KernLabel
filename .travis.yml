@@ -8,6 +8,8 @@ env:
   - SCHEME="KernLabel"
   - SDK="iphonesimulator9.3"
   - DESTINATION="OS=8.1,name=iPhone 5"
+before_install:
+  - gem update cocoapods
 script:
   - set -o pipefail
   - xcodebuild -version
