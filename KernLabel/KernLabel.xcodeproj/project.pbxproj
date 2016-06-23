@@ -7,28 +7,60 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F67A1115079BBC40B299CF2 /* Pods_KernLabelTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA3E0C90B8A074A9644E40E9 /* Pods_KernLabelTests.framework */; };
 		4D74810D1CF6AE5A0036B932 /* NSMutableAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D74810C1CF6AE5A0036B932 /* NSMutableAttributedString+Extension.swift */; };
 		4D7481101CF6AF080036B932 /* NSAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D74810F1CF6AF080036B932 /* NSAttributedString+Extension.swift */; };
 		4D7481121CF6AF370036B932 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7481111CF6AF370036B932 /* String+Extension.swift */; };
 		5A2152661CF5C71D00C136A4 /* Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2152651CF5C71D00C136A4 /* Type.swift */; };
+		5A4C39341D1BFFF3009DEB65 /* KernLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4C39331D1BFFF3009DEB65 /* KernLabelTests.swift */; };
+		5A4C39361D1BFFF3009DEB65 /* KernLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ABC40B51CF539C200CC65A2 /* KernLabel.framework */; };
+		5A4C393E1D1C0C8A009DEB65 /* KernTypeStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4C393D1D1C0C8A009DEB65 /* KernTypeStringTests.swift */; };
+		5A4C39401D1C0CC3009DEB65 /* TestSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4C393F1D1C0CC3009DEB65 /* TestSettings.swift */; };
 		5A53A3701CFF2A9600F05432 /* KernTypeString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A53A36F1CFF2A9600F05432 /* KernTypeString.swift */; };
 		5ABC40B91CF539C200CC65A2 /* KernLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5ABC40B81CF539C200CC65A2 /* KernLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5ABC41031CF57C5000CC65A2 /* KernLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ABC41021CF57C5000CC65A2 /* KernLabel.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5A4C39371D1BFFF3009DEB65 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5ABC40AC1CF539C200CC65A2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5ABC40B41CF539C200CC65A2;
+			remoteInfo = KernLabel;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		4D74810C1CF6AE5A0036B932 /* NSMutableAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSMutableAttributedString+Extension.swift"; path = "Extensions/NSMutableAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		4D74810F1CF6AF080036B932 /* NSAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSAttributedString+Extension.swift"; path = "Extensions/NSAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		4D7481111CF6AF370036B932 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Extension.swift"; path = "Extensions/String+Extension.swift"; sourceTree = "<group>"; };
 		5A2152651CF5C71D00C136A4 /* Type.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Type.swift; sourceTree = "<group>"; };
+		5A4C39311D1BFFF3009DEB65 /* KernLabelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KernLabelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A4C39331D1BFFF3009DEB65 /* KernLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernLabelTests.swift; sourceTree = "<group>"; };
+		5A4C39351D1BFFF3009DEB65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5A4C393D1D1C0C8A009DEB65 /* KernTypeStringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KernTypeStringTests.swift; sourceTree = "<group>"; };
+		5A4C393F1D1C0CC3009DEB65 /* TestSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSettings.swift; sourceTree = "<group>"; };
 		5A53A36F1CFF2A9600F05432 /* KernTypeString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KernTypeString.swift; sourceTree = "<group>"; };
 		5ABC40B51CF539C200CC65A2 /* KernLabel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KernLabel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ABC40B81CF539C200CC65A2 /* KernLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KernLabel.h; sourceTree = "<group>"; };
 		5ABC40BA1CF539C200CC65A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5ABC41021CF57C5000CC65A2 /* KernLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KernLabel.swift; sourceTree = "<group>"; };
+		AE9FA911F15572EC55D9F8B6 /* Pods-KernLabelTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KernLabelTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-KernLabelTests/Pods-KernLabelTests.release.xcconfig"; sourceTree = "<group>"; };
+		C9D666A038950CD68BBE36A1 /* Pods-KernLabelTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KernLabelTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-KernLabelTests/Pods-KernLabelTests.debug.xcconfig"; sourceTree = "<group>"; };
+		DA3E0C90B8A074A9644E40E9 /* Pods_KernLabelTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KernLabelTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5A4C392E1D1BFFF3009DEB65 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A4C39361D1BFFF3009DEB65 /* KernLabel.framework in Frameworks */,
+				1F67A1115079BBC40B299CF2 /* Pods_KernLabelTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5ABC40B11CF539C200CC65A2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -49,11 +81,25 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		5A4C39321D1BFFF3009DEB65 /* KernLabelTests */ = {
+			isa = PBXGroup;
+			children = (
+				5A4C39331D1BFFF3009DEB65 /* KernLabelTests.swift */,
+				5A4C393D1D1C0C8A009DEB65 /* KernTypeStringTests.swift */,
+				5A4C393F1D1C0CC3009DEB65 /* TestSettings.swift */,
+				5A4C39351D1BFFF3009DEB65 /* Info.plist */,
+			);
+			path = KernLabelTests;
+			sourceTree = "<group>";
+		};
 		5ABC40AB1CF539C200CC65A2 = {
 			isa = PBXGroup;
 			children = (
 				5ABC40B71CF539C200CC65A2 /* KernLabel */,
+				5A4C39321D1BFFF3009DEB65 /* KernLabelTests */,
 				5ABC40B61CF539C200CC65A2 /* Products */,
+				5F35E068665B90029AAD069C /* Pods */,
+				AAF0913BFF85A90F031323A1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				5ABC40B51CF539C200CC65A2 /* KernLabel.framework */,
+				5A4C39311D1BFFF3009DEB65 /* KernLabelTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,6 +125,23 @@
 			path = KernLabel;
 			sourceTree = "<group>";
 		};
+		5F35E068665B90029AAD069C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C9D666A038950CD68BBE36A1 /* Pods-KernLabelTests.debug.xcconfig */,
+				AE9FA911F15572EC55D9F8B6 /* Pods-KernLabelTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		AAF0913BFF85A90F031323A1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DA3E0C90B8A074A9644E40E9 /* Pods_KernLabelTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -92,6 +156,27 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		5A4C39301D1BFFF3009DEB65 /* KernLabelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A4C393B1D1BFFF3009DEB65 /* Build configuration list for PBXNativeTarget "KernLabelTests" */;
+			buildPhases = (
+				E49D3CC10086D2741DFF9CB2 /* 📦 Check Pods Manifest.lock */,
+				5A4C392D1D1BFFF3009DEB65 /* Sources */,
+				5A4C392E1D1BFFF3009DEB65 /* Frameworks */,
+				5A4C392F1D1BFFF3009DEB65 /* Resources */,
+				C48D02753DA52A0EF3BD093A /* 📦 Embed Pods Frameworks */,
+				FF32FD500AFA2800E3F7B4B3 /* 📦 Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5A4C39381D1BFFF3009DEB65 /* PBXTargetDependency */,
+			);
+			name = KernLabelTests;
+			productName = KernLabelTests;
+			productReference = 5A4C39311D1BFFF3009DEB65 /* KernLabelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		5ABC40B41CF539C200CC65A2 /* KernLabel */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5ABC40BD1CF539C200CC65A2 /* Build configuration list for PBXNativeTarget "KernLabel" */;
@@ -116,9 +201,13 @@
 		5ABC40AC1CF539C200CC65A2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Taishi Ikai";
 				TargetAttributes = {
+					5A4C39301D1BFFF3009DEB65 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					5ABC40B41CF539C200CC65A2 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -137,11 +226,19 @@
 			projectRoot = "";
 			targets = (
 				5ABC40B41CF539C200CC65A2 /* KernLabel */,
+				5A4C39301D1BFFF3009DEB65 /* KernLabelTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5A4C392F1D1BFFF3009DEB65 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5ABC40B31CF539C200CC65A2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -151,7 +248,65 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		C48D02753DA52A0EF3BD093A /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-KernLabelTests/Pods-KernLabelTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E49D3CC10086D2741DFF9CB2 /* 📦 Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		FF32FD500AFA2800E3F7B4B3 /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-KernLabelTests/Pods-KernLabelTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		5A4C392D1D1BFFF3009DEB65 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A4C39401D1C0CC3009DEB65 /* TestSettings.swift in Sources */,
+				5A4C39341D1BFFF3009DEB65 /* KernLabelTests.swift in Sources */,
+				5A4C393E1D1C0C8A009DEB65 /* KernTypeStringTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5ABC40B01CF539C200CC65A2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -167,7 +322,41 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5A4C39381D1BFFF3009DEB65 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5ABC40B41CF539C200CC65A2 /* KernLabel */;
+			targetProxy = 5A4C39371D1BFFF3009DEB65 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5A4C39391D1BFFF3009DEB65 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9D666A038950CD68BBE36A1 /* Pods-KernLabelTests.debug.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = KernLabelTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = tokyo.ikai.KernLabelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5A4C393A1D1BFFF3009DEB65 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AE9FA911F15572EC55D9F8B6 /* Pods-KernLabelTests.release.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = KernLabelTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = tokyo.ikai.KernLabelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5ABC40BB1CF539C200CC65A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -299,6 +488,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5A4C393B1D1BFFF3009DEB65 /* Build configuration list for PBXNativeTarget "KernLabelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5A4C39391D1BFFF3009DEB65 /* Debug */,
+				5A4C393A1D1BFFF3009DEB65 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		5ABC40AF1CF539C200CC65A2 /* Build configuration list for PBXProject "KernLabel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
