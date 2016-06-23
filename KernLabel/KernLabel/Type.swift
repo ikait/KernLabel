@@ -140,7 +140,7 @@ struct Type {
      - parameter context: 描画する context
      - returns: 生成した context
      */
-    func createContext(context: CGContext? = nil) -> CGContext {
+    private func createContext(context: CGContext? = nil) -> CGContext {
         if let context = context {
             return context
         }
@@ -390,7 +390,7 @@ struct Type {
      - returns: 描画する行の Y 座標のオフセット
      - precondition: `instrinsicTextSize` が計算済みであること
      */
-    func getDrawOffsetY() -> CGFloat {
+    private func getDrawOffsetY() -> CGFloat {
         switch self.verticalAlignment {
         case .Top:
             return 0
