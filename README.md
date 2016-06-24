@@ -1,6 +1,7 @@
 # KernLabel
 
 [![Build Status](https://travis-ci.org/ikait/KernLabel.svg?branch=master)](https://travis-ci.org/ikait/KernLabel)
+[![CocoaPods](https://img.shields.io/cocoapods/v/KernLabel.svg?maxAge=2592000)]()
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](http://img.shields.io/:license-MIT-blue.svg)](http://doge.mit-license.org)
 
