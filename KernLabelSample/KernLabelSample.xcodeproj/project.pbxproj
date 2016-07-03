@@ -10,6 +10,7 @@
 		4DAF3E091CFBCEC6007F99C2 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAF3E081CFBCEC6007F99C2 /* TabBarController.swift */; };
 		5A2618841D293AC400B5F803 /* TabBarChild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2618831D293AC400B5F803 /* TabBarChild.swift */; };
 		5A2618881D29523A00B5F803 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2618871D29523A00B5F803 /* TableViewController.swift */; };
+		5A5341A81D296A7B00E322FD /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5341A71D296A7B00E322FD /* Device.swift */; };
 		5A53A3431CF87CDF00F05432 /* KernLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; };
 		5A53A3441CF87CDF00F05432 /* KernLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5A53A3421CF87CC600F05432 /* KernLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5A53A3691CF9009900F05432 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A53A3681CF9009900F05432 /* ViewController.swift */; };
@@ -64,6 +65,7 @@
 		4DAF3E081CFBCEC6007F99C2 /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		5A2618831D293AC400B5F803 /* TabBarChild.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarChild.swift; sourceTree = "<group>"; };
 		5A2618871D29523A00B5F803 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		5A5341A71D296A7B00E322FD /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		5A53A33D1CF87CC500F05432 /* KernLabel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KernLabel.xcodeproj; path = ../KernLabel/KernLabel.xcodeproj; sourceTree = "<group>"; };
 		5A53A3681CF9009900F05432 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5A7481B31D006D49008E4A97 /* PerformanceCheck.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerformanceCheck.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				5A7481B31D006D49008E4A97 /* PerformanceCheck.swift */,
 				5A2618831D293AC400B5F803 /* TabBarChild.swift */,
 				5A2618871D29523A00B5F803 /* TableViewController.swift */,
+				5A5341A71D296A7B00E322FD /* Device.swift */,
 				5ABC40F71CF53AAE00CC65A2 /* Assets.xcassets */,
 				5ABC40F91CF53AAE00CC65A2 /* LaunchScreen.storyboard */,
 				5ABC40FC1CF53AAE00CC65A2 /* Info.plist */,
@@ -238,6 +241,7 @@
 				5ABC40F11CF53AAE00CC65A2 /* AppDelegate.swift in Sources */,
 				5A2618881D29523A00B5F803 /* TableViewController.swift in Sources */,
 				5AC9EE901CF5B2CC00E92EA6 /* LayerTableViewController.swift in Sources */,
+				5A5341A81D296A7B00E322FD /* Device.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
