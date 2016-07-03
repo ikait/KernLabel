@@ -10,8 +10,10 @@ import Foundation
 
 
 final class PerformanceCheck {
+
     static func time(sample: Int = 1000, target: (() -> Void)) -> NSTimeInterval {
         var opt = NSTimeInterval()
+        var ms = 0.0
         let q = dispatch_queue_create("\(target)", DISPATCH_QUEUE_SERIAL)
         dispatch_sync(q) {
             let st = NSDate()
@@ -19,8 +21,9 @@ final class PerformanceCheck {
                 target()
             }
             opt = NSDate().timeIntervalSinceDate(st)
-            print("\(opt * 1000 / Double(sample)) ms")
+            ms = opt * 1000 / Double(sample)
+            print("\(ms) ms")
         }
-        return opt
+        return ms
     }
 }

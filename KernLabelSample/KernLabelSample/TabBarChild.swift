@@ -8,10 +8,13 @@
 
 import UIKit
 
+
 protocol TabBarChild: class {
 }
 
+
 extension TabBarChild where Self: UIViewController {
+
     func setNavigationBar(title: String? = nil,
                           leftBarButtonItems:[UIBarButtonItem]? = nil,
                           rightBarButtonItems: [UIBarButtonItem]? = nil) {

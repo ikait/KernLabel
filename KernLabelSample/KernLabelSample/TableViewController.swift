@@ -8,10 +8,18 @@
 
 import UIKit
 
+
 class TableViewController: UITableViewController, TabBarChild {
+
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.setNavigationBar()
-        self.tableView.contentInset = UIEdgeInsetsMake(self.topLayoutGuide.length, 0, self.bottomLayoutGuide.length, 0)
+        self.tableView.contentInset = UIEdgeInsetsMake(
+            self.topLayoutGuide.length, 0, self.bottomLayoutGuide.length, 0)
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.tableView.reloadData()
     }
 }

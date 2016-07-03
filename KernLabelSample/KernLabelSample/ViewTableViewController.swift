@@ -9,9 +9,11 @@
 import UIKit
 import KernLabel
 
-class ViewTableViewController: UITableViewController {
+
+class ViewTableViewController: TableViewController {
 
     var heights: [NSIndexPath: CGFloat] = [:]
+    var numberOfRows = 0
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -29,10 +31,14 @@ class ViewTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerClass(ViewTableCell.self, forCellReuseIdentifier: "ViewTableCell")
+        self.tableView.tableHeaderView = nil
+        self.tableView.tableFooterView = nil
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.numberOfRows = 400
+        self.tableView.reloadData()
     }
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -40,7 +46,7 @@ class ViewTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 400
+        return self.numberOfRows
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -66,6 +72,7 @@ class ViewTableViewController: UITableViewController {
 
 
 private class ViewTableCell: UITableViewCell {
+
     var titleView = TitleView(frame: CGRectZero)
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -78,7 +85,9 @@ private class ViewTableCell: UITableViewCell {
     }
 }
 
+
 private class TitleView: UIView {
+
     var text = ""
 
     static var attributes: [String : AnyObject] {
@@ -89,7 +98,7 @@ private class TitleView: UIView {
         }
         return [
             NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: UIFont.systemFontOfSize(24)
+            NSFontAttributeName: UIFont.systemFontOfSize(Device.isPad ? 24 : 16)
         ]
     }
 

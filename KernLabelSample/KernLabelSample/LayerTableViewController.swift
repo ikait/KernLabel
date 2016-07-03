@@ -10,10 +10,11 @@ import UIKit
 import KernLabel
 
 
-class LayerTableViewController: UITableViewController {
+class LayerTableViewController: TableViewController {
 
     var heights: [NSIndexPath: CGFloat] = [:]
     var images: [NSIndexPath: CGImage?] = [:]
+    var numberOfRows = 0
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -31,10 +32,13 @@ class LayerTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerClass(LayerTableCell.self, forCellReuseIdentifier: "LayerTableCell")
+        self.tableView.tableHeaderView = nil
+        self.tableView.tableFooterView = nil
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        self.numberOfRows = 400
         self.tableView.reloadData()
     }
 
@@ -43,7 +47,7 @@ class LayerTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 400
+        return self.numberOfRows
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -73,18 +77,20 @@ class LayerTableViewController: UITableViewController {
     }
 }
 
+
 private class LayerTableCell: UITableViewCell {
+
     var type: KernTypeString!
     var indexPath: NSIndexPath?
-
     var titleLayer = CALayer()
+
+    static let font = UIFont.systemFontOfSize(Device.isPad ? 24 : 16)
 
     static var paragraphStyle: NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         style.lineHeightMultiple = 1.2
         return style
     }
-    static let font = UIFont.systemFontOfSize(24)
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

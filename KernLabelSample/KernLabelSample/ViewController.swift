@@ -9,11 +9,28 @@
 import UIKit
 import KernLabel
 
-class ViewController: UIViewController {
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.title = "View"
+private let kLabelHeight: CGFloat = 150
+
+
+class ViewController: TableViewController {
+
+    var uiLabel = UILabel()
+    var kernLabel = KernLabel()
+    var text = ""
+    var numberOfLines = 0
+    var textAlignment = NSTextAlignment.Left
+    var kerningMode = KernLabelKerningMode.Normal
+    var kerningParenSwitch = UISwitch()
+    var alignmentSegmentedControl = UISegmentedControl()
+
+    override init(style: UITableViewStyle) {
+        super.init(style: style)
+        self.title = "UILabel & KernLabel"
+    }
+
+    convenience init() {
+        self.init(style: .Grouped)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -22,32 +39,142 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.whiteColor()
-
-        var text = ""
-        text += "【行頭つめ】あいうえお「かきくけこ」「さ」、ああああああああああああ「：」！「「」」、。\n"
-        text += "ああ123いいabcうう【】【【】】…【】\n"
-        text += "→2016年1月1日（金）←"
-        let frame = CGRectMake(10, 100, self.view.frame.width - 20, 150)
-        let backgroundColor = UIColor.lightGrayColor()
-        let numberOfLines = 0
-        let textAlignment = NSTextAlignment.Left
-
-        let label = UILabel()
-        label.frame = frame
-        label.backgroundColor = backgroundColor
-        label.text = "\(UILabel.self)\n\n\(text)"
-        label.numberOfLines = numberOfLines
-        label.textAlignment = textAlignment
-        self.view.addSubview(label)
-
-        let klabel = KernLabel()
-        klabel.frame = frame.offsetBy(dx: 0, dy: frame.height + 20)
-        klabel.backgroundColor = backgroundColor
-        klabel.text = "\(KernLabel.self)\n\n\(text)"
-        klabel.numberOfLines = numberOfLines
-        klabel.textAlignment = textAlignment
-        self.view.addSubview(klabel)
+        self.prepareText()
+        self.prepareKerningParentSwitch()
+        self.prepareAlignmentSegmentedControl()
     }
 
+    private func prepareText() {
+        self.text = ""
+        self.text += "【行頭つめ】あいうえお「かきくけこ」「さ」、ああああああああああああ「：」！「「」」、。\n"
+        self.text += "ああ123いいabcうう【】【【】】…【】\n"
+        self.text += "→2016年1月1日（金）←"
+    }
+
+    private func prepareUILabel(with cell: UITableViewCell) {
+        self.uiLabel.removeFromSuperview()
+        if #available(iOS 9.0, *) {
+            self.uiLabel.frame = cell.readableContentGuide.layoutFrame
+            self.uiLabel.frame.origin.y = 0
+            self.uiLabel.frame.size.height = kLabelHeight
+        } else {
+            self.uiLabel.frame = CGRectInset(cell.bounds, 10, 0)
+        }
+        self.uiLabel.text = self.text
+        self.uiLabel.backgroundColor = UIColor.whiteColor()
+        self.uiLabel.numberOfLines = 0
+        self.uiLabel.textAlignment = self.textAlignment
+        cell.contentView.addSubview(self.uiLabel)
+    }
+
+    private func prepareKernLabel(with cell: UITableViewCell) {
+        self.kernLabel.removeFromSuperview()
+        if #available(iOS 9.0, *) {
+            self.kernLabel.frame = cell.readableContentGuide.layoutFrame
+            self.kernLabel.frame.origin.y = 0
+            self.kernLabel.frame.size.height = kLabelHeight
+        } else {
+            self.kernLabel.frame = CGRectInset(cell.bounds, 10, 0)
+        }
+        self.kernLabel.text = self.text
+        self.kernLabel.backgroundColor = UIColor.whiteColor()
+        self.kernLabel.numberOfLines = 0
+        self.kernLabel.textAlignment = self.textAlignment
+        self.kernLabel.kerningMode = self.kerningMode
+        cell.contentView.addSubview(self.kernLabel)
+    }
+
+    private func prepareKerningParentSwitch() {
+        self.kerningParenSwitch = UISwitch()
+        self.kerningParenSwitch.addTarget(
+            self,
+            action: #selector(ViewController.handlerKerningParenSwitch(_:)),
+            forControlEvents: .ValueChanged)
+    }
+
+    private func prepareAlignmentSegmentedControl() {
+        self.alignmentSegmentedControl = UISegmentedControl(items: [
+            "Left", "Center", "Right"
+        ])
+        self.alignmentSegmentedControl.addTarget(
+            self,
+            action: #selector(ViewController.handlerAlignmentSegmentedControl(_:)),
+            forControlEvents: .ValueChanged)
+    }
+
+    @objc private func handlerAlignmentSegmentedControl(segmentedControl: UISegmentedControl) {
+        self.textAlignment = {
+            switch segmentedControl.selectedSegmentIndex {
+            case 0: return .Left
+            case 1: return .Center
+            case 2: return .Right
+            default: return .Left
+            }
+        }()
+        self.tableView.reloadData()
+    }
+
+    @objc private func handlerKerningParenSwitch(_switch: UISwitch) {
+        self.kerningMode = _switch.on ? .All : .Normal
+        self.tableView.reloadData()
+    }
+}
+
+//
+// MARK: - UITableViewDataSource
+//
+extension ViewController {
+
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 3
+    }
+
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            return "\(UILabel.self)"
+        case 1:
+            return "\(KernLabel.self)"
+        case 2:
+            return "Preferences"
+        default:
+            return ""
+        }
+    }
+
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return section == 2 ? 2 : 1
+    }
+
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return indexPath.section == 2 ? UITableViewAutomaticDimension : kLabelHeight
+    }
+
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .Subtitle, reuseIdentifier: "UITableViewCell")
+        cell.bounds.size.width = tableView.bounds.width
+        switch indexPath.section {
+        case 0:
+            self.prepareUILabel(with: cell)
+        case 1:
+            self.prepareKernLabel(with: cell)
+        case 2:
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Alignment"
+                cell.accessoryView = self.alignmentSegmentedControl
+                cell.accessoryView?.sizeToFit()
+            case 1:
+                cell.textLabel?.text = "Kerning parentheses"
+                cell.detailTextLabel?.text = "Only KernLabel"
+                cell.accessoryView = self.kerningParenSwitch
+            default:
+                break
+            }
+            cell.selectionStyle = .None
+        default:
+            break
+        }
+        return cell
+    }
 }
