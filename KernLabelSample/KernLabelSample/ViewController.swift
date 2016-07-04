@@ -10,7 +10,7 @@ import UIKit
 import KernLabel
 
 
-private let kLabelHeight: CGFloat = 150
+private let kLabelHeight: CGFloat = 130
 
 
 class ViewController: TableViewController {
@@ -26,7 +26,7 @@ class ViewController: TableViewController {
 
     override init(style: UITableViewStyle) {
         super.init(style: style)
-        self.title = "UILabel & KernLabel"
+        self.title = "KernLabel Sample"
     }
 
     convenience init() {
@@ -46,9 +46,10 @@ class ViewController: TableViewController {
 
     private func prepareText() {
         self.text = ""
-        self.text += "【行頭つめ】あいうえお「かきくけこ」「さ」、ああああああああああああ「：」！「「」」、。\n"
-        self.text += "ああ123いいabcうう【】【【】】…【】\n"
-        self.text += "→2016年1月1日（金）←"
+        self.text += "【行頭つめ】あいう「えお」「か」、！？\n"
+        self.text += "（連続）する約物「：」！「」、。；折り返し「１」「２」「３」「４」\n"
+        self.text += "英数123abc＠“ん”〘〛｛［』〕…【括弧）終\n"
+        self.text += "2016年1月1日（金）"
     }
 
     private func prepareUILabel(with cell: UITableViewCell) {
@@ -132,9 +133,9 @@ extension ViewController {
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "\(UILabel.self)"
-        case 1:
             return "\(KernLabel.self)"
+        case 1:
+            return "\(UILabel.self)"
         case 2:
             return "Preferences"
         default:
@@ -155,9 +156,9 @@ extension ViewController {
         cell.bounds.size.width = tableView.bounds.width
         switch indexPath.section {
         case 0:
-            self.prepareUILabel(with: cell)
-        case 1:
             self.prepareKernLabel(with: cell)
+        case 1:
+            self.prepareUILabel(with: cell)
         case 2:
             switch indexPath.row {
             case 0:
