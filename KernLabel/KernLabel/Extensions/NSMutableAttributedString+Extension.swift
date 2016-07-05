@@ -15,8 +15,9 @@ extension NSMutableAttributedString {
             return self
         }
         let defaultFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
-        regexp.matchesInString(self.string, options: [], range: NSMakeRange(0, self.length)).enumerate().forEach { result in
-            let (location, length) = (result.element.range.location, result.element.range.length)
+        regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { (result, _, _) in
+            guard let result = result else { return }
+            let (location, length) = (result.range.location, result.range.length)
             let curAttrs = self.attributesAtIndex(location, effectiveRange: nil)
             let font = curAttrs[NSFontAttributeName] as? UIFont ?? defaultFont
             self.addAttribute(NSKernAttributeName, value: font.pointSize * -0.5, range: NSMakeRange(location, length - 1))
