@@ -24,19 +24,6 @@ class ViewController: TableViewController {
     var kerningParenSwitch = UISwitch()
     var alignmentSegmentedControl = UISegmentedControl()
 
-    override init(style: UITableViewStyle) {
-        super.init(style: style)
-        self.title = "KernLabel Sample"
-    }
-
-    convenience init() {
-        self.init(style: .Grouped)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.prepareText()
@@ -61,6 +48,7 @@ class ViewController: TableViewController {
         } else {
             self.uiLabel.frame = CGRectInset(cell.bounds, 10, 0)
         }
+        self.uiLabel.frame.size.height = kLabelHeight
         self.uiLabel.text = self.text
         self.uiLabel.backgroundColor = UIColor.whiteColor()
         self.uiLabel.numberOfLines = 0
@@ -73,10 +61,10 @@ class ViewController: TableViewController {
         if #available(iOS 9.0, *) {
             self.kernLabel.frame = cell.readableContentGuide.layoutFrame
             self.kernLabel.frame.origin.y = 0
-            self.kernLabel.frame.size.height = kLabelHeight
         } else {
             self.kernLabel.frame = CGRectInset(cell.bounds, 10, 0)
         }
+        self.kernLabel.frame.size.height = kLabelHeight
         self.kernLabel.text = self.text
         self.kernLabel.backgroundColor = UIColor.whiteColor()
         self.kernLabel.numberOfLines = 0

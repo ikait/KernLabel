@@ -20,20 +20,8 @@ class SpeedTestViewController: TableViewController {
 
     var textView = UITextView(frame: CGRectMake(0, 0, 0, kTestFieldHeight))
     var startButton = UIBarButtonItem()
-    var speedTestView = SpeedTestView()
-
-    override init(style: UITableViewStyle) {
-        super.init(style: style)
-        self.title = "Speed Test"
-    }
-
-    convenience init() {
-        self.init(style: .Grouped)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private var testResultView1 = TestResultView1()
+    private var testResultView2 = TestResultView2()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,14 +58,17 @@ class SpeedTestViewController: TableViewController {
 
     func performSpeedTest() {
         self.textView.resignFirstResponder()
-        self.speedTestView.needsPerform = true
-        self.speedTestView.text = self.textView.text
-        self.speedTestView.setNeedsDisplay()
+        self.testResultView1.needsPerform = true
+        self.testResultView2.needsPerform = true
+        self.testResultView1.text = self.textView.text
+        self.testResultView2.text = self.textView.text
+        self.testResultView1.setNeedsDisplay()
+        self.testResultView2.setNeedsDisplay()
     }
 }
 
 
-class SpeedTestView: UIView {
+private class TestResultView: UIView {
 
     var needsPerform = false
     var text = ""
@@ -91,37 +82,52 @@ class SpeedTestView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func drawRect(rect: CGRect) {
+    private func fillRectWhite(context: CGContext?) {
+
+        // Clear with white color
+        CGContextSetRGBFillColor(context, 1, 1, 1, 1)
+        CGContextFillRect(context, self.bounds)
+    }
+}
+
+private class TestResultView1: TestResultView {
+
+    private override func drawRect(rect: CGRect) {
         guard needsPerform else {
             return
         }
         let context = UIGraphicsGetCurrentContext()
-
-        // Clear with white color
-        CGContextSetRGBFillColor(context, 1, 1, 1, 1)
-        CGContextFillRect(context, rect)
-
-        let s = NSAttributedString(string: self.text, attributes: [
+        self.fillRectWhite(context)
+        let str = NSAttributedString(string: self.text, attributes: [
             NSFontAttributeName: kTestFont
         ])
-        let k = KernTypeString(string: self.text, attributes: [
+        let rect = CGRectMake(0, 0, self.frame.width, kTestFieldHeight)
+        let time = PerformanceCheck.time {
+            str.drawWithRect(rect, options: [.UsesLineFragmentOrigin], context: nil)
+        }
+        let height = str.boundingRectWithSize(rect.size, options: [.UsesLineFragmentOrigin], context: nil).height
+        NSAttributedString(string: "\(time) ms").drawInRect(rect.offsetBy(dx: 0, dy: height + 5))
+        self.needsPerform = false
+    }
+}
+
+private class TestResultView2: TestResultView {
+
+    private override func drawRect(rect: CGRect) {
+        guard needsPerform else {
+            return
+        }
+        let context = UIGraphicsGetCurrentContext()
+        self.fillRectWhite(context)
+        let str = KernTypeString(string: self.text, attributes: [
             NSFontAttributeName: kTestFont
         ])
-
-        let sRect = CGRectMake(0, 0, self.frame.width, kTestFieldHeight)
-        let sTime = PerformanceCheck.time {
-            s.drawWithRect(sRect, options: [.UsesLineFragmentOrigin], context: nil)
+        let rect = CGRectMake(0, 0, self.frame.width, kTestFieldHeight)
+        let time = PerformanceCheck.time {
+            str.drawWithRect(rect, options: [.UsesLineFragmentOrigin], context: context)
         }
-        let sBRect = s.boundingRectWithSize(sRect.size, options: [.UsesLineFragmentOrigin], context: nil)
-        NSAttributedString(string: "\(sTime) ms").drawInRect(sRect.offsetBy(dx: 0, dy: sBRect.height + 5))
-
-        let kRect = sRect.offsetBy(dx: 0, dy: sRect.height)
-        let kTime = PerformanceCheck.time {
-            k.drawWithRect(kRect, options: [.UsesLineFragmentOrigin], context: context)
-        }
-        let kBRect = s.boundingRectWithSize(kRect.size, options: [.UsesLineFragmentOrigin], context: nil)
-        NSAttributedString(string: "\(kTime) ms").drawInRect(kRect.offsetBy(dx: 0, dy: kBRect.height + 5))
-
+        let height = str.boundingHeight(rect.size.width, options: [.UsesLineFragmentOrigin], numberOfLines: 0, context: nil)
+        NSAttributedString(string: "\(time) ms").drawInRect(rect.offsetBy(dx: 0, dy: height + 5))
         self.needsPerform = false
     }
 }
@@ -132,7 +138,7 @@ class SpeedTestView: UIView {
 extension SpeedTestViewController {
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return section == 1 ? 2 : 1
     }
 
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -147,7 +153,7 @@ extension SpeedTestViewController {
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return (kTestFieldHeight + kTestFieldPadding * 2) * (indexPath.section == 0 ? 1 : 2)
+        return kTestFieldHeight + kTestFieldPadding * 2
     }
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -160,15 +166,23 @@ extension SpeedTestViewController {
         case 0:
             self.textView.removeFromSuperview()
             self.textView.frame = CGRectInset(cell.bounds, kTestFieldPadding, kTestFieldPadding)
-            cell.selectionStyle = .None
             cell.contentView.addSubview(self.textView)
         case 1:
-            self.speedTestView.removeFromSuperview()
-            self.speedTestView.frame = CGRectInset(cell.bounds, kTestFieldPadding, kTestFieldPadding)
-            cell.userInteractionEnabled = false
-            cell.contentView.addSubview(self.speedTestView)
+            switch indexPath.row {
+            case 0:
+                self.testResultView1.removeFromSuperview()
+                self.testResultView1.frame = CGRectInset(cell.bounds, kTestFieldPadding, kTestFieldPadding)
+                cell.contentView.addSubview(self.testResultView1)
+            case 1:
+                self.testResultView2.removeFromSuperview()
+                self.testResultView2.frame = CGRectInset(cell.bounds, kTestFieldPadding, kTestFieldPadding)
+                cell.contentView.addSubview(self.testResultView2)
+            default:
+                break
+            }
         default: break
         }
+        cell.selectionStyle = .None
         return cell
     }
 }

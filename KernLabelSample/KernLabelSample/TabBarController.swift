@@ -15,10 +15,10 @@ class TabBarController: UITabBarController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
         self.viewControllers = [
-            ViewController(),
-            SpeedTestViewController(),
-            ViewTableViewController(),
-            LayerTableViewController()
+            ViewController(title: "KernLabel Sample"),
+            SpeedTestViewController(title: "Speed Test"),
+            ViewTableViewController(title: "View Table"),
+            LayerTableViewController(title: "Layer Table")
         ]
     }
 

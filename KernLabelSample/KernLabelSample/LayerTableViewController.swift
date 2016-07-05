@@ -16,24 +16,9 @@ class LayerTableViewController: TableViewController {
     var images: [NSIndexPath: CGImage?] = [:]
     var numberOfRows = 0
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.title = "Layer Table"
-    }
-
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerClass(LayerTableCell.self, forCellReuseIdentifier: "LayerTableCell")
-        self.tableView.tableHeaderView = nil
-        self.tableView.tableFooterView = nil
     }
 
     override func viewDidAppear(animated: Bool) {
@@ -64,9 +49,6 @@ class LayerTableViewController: TableViewController {
         let image = type.createImage(CGRectMake(0, 0, tableView.frame.width - 30, height - 30), options: [])
         self.images[indexPath] = image
         return height
-    }
-
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

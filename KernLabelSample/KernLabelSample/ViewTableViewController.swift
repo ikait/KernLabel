@@ -15,24 +15,9 @@ class ViewTableViewController: TableViewController {
     var heights: [NSIndexPath: CGFloat] = [:]
     var numberOfRows = 0
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.title = "View Table"
-    }
-
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerClass(ViewTableCell.self, forCellReuseIdentifier: "ViewTableCell")
-        self.tableView.tableHeaderView = nil
-        self.tableView.tableFooterView = nil
     }
 
     override func viewDidAppear(animated: Bool) {
