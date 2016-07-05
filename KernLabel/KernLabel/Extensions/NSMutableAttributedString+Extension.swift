@@ -15,12 +15,12 @@ extension NSMutableAttributedString {
             return self
         }
         let defaultFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
-        regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { (result, _, _) in
-            guard let result = result else { return }
+        regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
+            guard let result = result, this = self else { return }
             let (location, length) = (result.range.location, result.range.length)
-            let curAttrs = self.attributesAtIndex(location, effectiveRange: nil)
+            let curAttrs = this.attributesAtIndex(location, effectiveRange: nil)
             let font = curAttrs[NSFontAttributeName] as? UIFont ?? defaultFont
-            self.addAttribute(NSKernAttributeName, value: font.pointSize * -0.5, range: NSMakeRange(location, length - 1))
+            this.addAttribute(NSKernAttributeName, value: font.pointSize * -0.5, range: NSMakeRange(location, length - 1))
         }
         return self
     }
