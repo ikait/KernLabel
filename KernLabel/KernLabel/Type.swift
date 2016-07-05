@@ -202,7 +202,7 @@ struct Type {
      - parameter range: offset を計算するための、現在行の全体における範囲
      - returns: 行末文字と alignment を考慮した際の行頭オフセット
      */
-    private func getOffsetTail(range: NSRange) -> CGFloat {
+    private func getOffsetTail(with offsetHead: CGFloat, range: NSRange) -> CGFloat {
         guard let alignment = self.attributedText.textAlignment else {
             return 0
         }
@@ -214,14 +214,14 @@ struct Type {
                 (
                     (kCharactersHaveRightSpace.contains(tail) ? self.fontHalfWidth : 0) +
                         (self.width - self.attributedText.attributedSubstringFromRange(range).boundingRect(
-                        options: [.UsesLineFragmentOrigin], context: nil).size.width)
+                        options: [.UsesLineFragmentOrigin], context: nil).size.width) + offsetHead
                 )
         case .Center:
             offset -=
                 (
                     (kCharactersHaveRightSpace.contains(tail) ? self.fontHalfWidth : 0) +
                     (self.width - self.attributedText.attributedSubstringFromRange(range).boundingRect(
-                        options: [.UsesLineFragmentOrigin], context: nil).size.width)
+                        options: [.UsesLineFragmentOrigin], context: nil).size.width) + offsetHead
                 ) / 2
         default:
             break  // .Left, .Justified
@@ -443,7 +443,7 @@ struct Type {
             }
 
             // 末尾文字列を考慮して先頭のオフセットを減算
-            offset += self.getOffsetTail(range)
+            offset += self.getOffsetTail(with: offset, range: range)
 
             lines.append(self.getCTLine(range, offset: offset, burasagari: burasagari, oikomi: oikomi))
 
