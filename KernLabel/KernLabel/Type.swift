@@ -17,6 +17,7 @@ private let kCharactersHaveLeftSpace = [
 ]
 private let kCharactersHaveRightSpace = [
     "」", "』", "】", "》", "〉", "〕", "｝", "）", "］",
+    "、", "。", "，", "．"
 ]
 private let kCharactersCanBurasagari = [
     "、", "。", "，", "．"
