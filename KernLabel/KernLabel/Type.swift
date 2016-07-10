@@ -309,7 +309,7 @@ struct Type {
         - offset: 行頭オフセット
         - burasagari: ぶらさがりするか？
         - on: 描画する context
-     - returns: 描画した行の実質的な幅(長さ)
+     - returns: (描画する行の実質的な幅(長さ), xオフセット, yオフセット, ctline)
      */
     private func getCTLine(range: NSRange, offset: CGFloat, burasagari: Bool = false, oikomi: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
