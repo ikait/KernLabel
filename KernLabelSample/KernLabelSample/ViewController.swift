@@ -21,20 +21,20 @@ class ViewController: TableViewController {
     var numberOfLines = 0
     var textAlignment = NSTextAlignment.Left
     var kerningMode = KernLabelKerningMode.Normal
-    var kerningParenSwitch = UISwitch()
+    var kerningModeSegmentedControl = UISegmentedControl()
     var alignmentSegmentedControl = UISegmentedControl()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.prepareText()
-        self.prepareKerningParentSwitch()
         self.prepareAlignmentSegmentedControl()
+        self.prepareKerningModeSegmentedControl()
     }
 
     private func prepareText() {
         self.text = ""
         self.text += "【行頭つめ】あいう「えお」「か」、！？\n"
-        self.text += "（連続）する約物「：」！「」、。；折り返し「１」「２」「３」「４」\n"
+        self.text += "（連続）する約物「：」！「」、。；折り返し「１」（２）〈３〉【４】［５］《６》\n"
         self.text += "英数123abc＠“ん”〘〛｛［』〕…【括弧）終\n"
         self.text += "2016年1月1日（金）"
     }
@@ -73,22 +73,26 @@ class ViewController: TableViewController {
         cell.contentView.addSubview(self.kernLabel)
     }
 
-    private func prepareKerningParentSwitch() {
-        self.kerningParenSwitch = UISwitch()
-        self.kerningParenSwitch.addTarget(
-            self,
-            action: #selector(ViewController.handlerKerningParenSwitch(_:)),
-            forControlEvents: .ValueChanged)
-    }
-
     private func prepareAlignmentSegmentedControl() {
         self.alignmentSegmentedControl = UISegmentedControl(items: [
-            "Left", "Center", "Right"
+            "Left", "Center", "Right", "Justified"
         ])
         self.alignmentSegmentedControl.addTarget(
             self,
             action: #selector(ViewController.handlerAlignmentSegmentedControl(_:)),
             forControlEvents: .ValueChanged)
+        self.alignmentSegmentedControl.selectedSegmentIndex = 0
+    }
+
+    private func prepareKerningModeSegmentedControl() {
+        self.kerningModeSegmentedControl = UISegmentedControl(items: [
+            "None", "Minimum", "Normal", "All"
+        ])
+        self.kerningModeSegmentedControl.addTarget(
+            self,
+            action: #selector(ViewController.handlerKerningModeSegmentedControl(_:)),
+            forControlEvents: .ValueChanged)
+        self.kerningModeSegmentedControl.selectedSegmentIndex = 2
     }
 
     @objc private func handlerAlignmentSegmentedControl(segmentedControl: UISegmentedControl) {
@@ -97,14 +101,23 @@ class ViewController: TableViewController {
             case 0: return .Left
             case 1: return .Center
             case 2: return .Right
+            case 3: return .Justified
             default: return .Left
             }
         }()
         self.tableView.reloadData()
     }
 
-    @objc private func handlerKerningParenSwitch(_switch: UISwitch) {
-        self.kerningMode = _switch.on ? .All : .Normal
+    @objc private func handlerKerningModeSegmentedControl(segmentedControl: UISegmentedControl) {
+        self.kerningMode = {
+            switch segmentedControl.selectedSegmentIndex {
+            case 0: return .None
+            case 1: return .Minimum
+            case 2: return .Normal
+            case 3: return .All
+            default: return .None
+            }
+        }()
         self.tableView.reloadData()
     }
 }
@@ -156,7 +169,8 @@ extension ViewController {
             case 1:
                 cell.textLabel?.text = "Kerning parentheses"
                 cell.detailTextLabel?.text = "Only KernLabel"
-                cell.accessoryView = self.kerningParenSwitch
+                cell.accessoryView = self.kerningModeSegmentedControl
+                cell.accessoryView?.sizeToFit()
             default:
                 break
             }
