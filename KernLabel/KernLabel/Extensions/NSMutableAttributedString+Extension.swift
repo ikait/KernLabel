@@ -9,18 +9,23 @@
 import UIKit
 
 
+private let kDefaultFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
+
 extension NSMutableAttributedString {
-    func kerning(regexp: NSRegularExpression?) -> Self {
-        guard let regexp = regexp else {
-            return self
-        }
-        let defaultFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
+    func kerning(regexp: NSRegularExpression, value: CGFloat = -0.5) -> Self {
         regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
             guard let result = result, this = self else { return }
             let (location, length) = (result.range.location, result.range.length)
             let curAttrs = this.attributesAtIndex(location, effectiveRange: nil)
-            let font = curAttrs[NSFontAttributeName] as? UIFont ?? defaultFont
-            this.addAttribute(NSKernAttributeName, value: font.pointSize * -0.5, range: NSMakeRange(location, length - 1))
+            let font = curAttrs[NSFontAttributeName] as? UIFont ?? kDefaultFont
+            this.addAttribute(NSKernAttributeName, value: font.pointSize * value, range: NSMakeRange(location, length))
+        }
+        return self
+    }
+
+    func kerning(with settings: KerningSettings) -> Self {
+        settings.forEach { (regexp, value) in
+            self.kerning(regexp, value: value)
         }
         return self
     }

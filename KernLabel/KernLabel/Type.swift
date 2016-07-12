@@ -25,7 +25,7 @@ private let kCharactersCanBurasagari = [
 private let kCharactersCanOikomi = [
     "」", "』", "】", "》", "〉", "〕", "｝", "）", "］",
 ]
-private let kCharacterHaveRightSpaceRatio: CGFloat = 0.25  // 右半分が空白な文字の、fontSize における実質的な幅の割合
+private let kCharacterHaveRightSpaceRatio: CGFloat = 0.4  // 右半分が空白な文字の、fontSize における実質的な幅の割合
 let kCGFloatHuge: CGFloat = pow(2, 12)
 
 
@@ -107,13 +107,13 @@ struct Type {
     init(
         attributedText: NSAttributedString,
         rect: CGRect,
-        kerningRegexp: NSRegularExpression? = KernLabelKerningMode.Normal.regexp,
+        kerningSettings: KerningSettings = KernLabelKerningMode.Normal.kerningSettings,
         numberOfLines: Int = 0,
         options: NSStringDrawingOptions = .UsesLineFragmentOrigin,
         padding: UIEdgeInsets = UIEdgeInsetsZero,
         truncateText: String = "...",
         verticalAlignment: KernLabelVerticalAlignment = .Top) {
-        self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(kerningRegexp)
+        self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(with: kerningSettings)
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
         self.fontSize = self.font.pointSize

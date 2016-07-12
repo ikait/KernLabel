@@ -39,34 +39,54 @@ public enum KernLabelKerningMode: Int {
     /// カーニングを行わない
     case None
 
-    /// 一部をカーニングする
+    /// 終わり括弧と始め括弧の間などの一部のみをカーニング
+    case Minimum
+
+    /// 括弧全てをカーニング
     case Normal
 
-    /// すべてカーニングする
+    /// 括弧全てと句読点をカーニング
     case All
 
-    var regexp: NSRegularExpression? {
+    internal var kerningSettings: KerningSettings {
         switch self {
         case .None:
-            return nil
+            return []
+        case .Minimum:
+            return kKernLabelKerningSettingsMinimum
         case .Normal:
-            return kKernLabelKerningModeRegexpNormal
+            return kKernLabelKerningSettingsNormal
         case .All:
-            return kKernLabelKerningModeRegexpAll
+            return kKernLabelKerningSettingsAll
         }
     }
 }
+
+
+/**
+ カーニングを行うための正規表現とカーニング値(フォントサイズを1としたときの比率)
+ */
+typealias KerningSettings = [(NSRegularExpression, CGFloat)]
+
 private let k句読点 = "、，。．"
 private let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
 private let k括弧開 = "｛［「『（｟〈《〔〘【〖"
 private let k他約物 = "！？：；︰‐・…‥〜ー―※"
-private let kKernLabelKerningModeRegexpNormal = try! NSRegularExpression(
-    pattern: "([\(k括弧閉)]?[\(k句読点)]?[\(k他約物)]?[\(k括弧開)])|([\(k括弧閉)][\(k句読点)]?[\(k他約物)]?)",
-    options: [])
-private let kKernLabelKerningModeRegexpAll = try! NSRegularExpression(
-    pattern: "(.[\(k括弧開)])|([\(k括弧閉)].)",
-    options: [])
-
+private let kKernLabelKerningSettingsMinimum: KerningSettings = [
+    (try! NSRegularExpression(
+        pattern: "([\(k括弧閉)\(k句読点)][\(k他約物)]?)(?=[\(k括弧開)])", options: []), -0.5)]
+private let kKernLabelKerningSettingsNormal: KerningSettings = [
+    (try! NSRegularExpression(
+        pattern: "([\(k括弧閉)])|(.)(?=[\(k括弧開)])", options: []), -0.5),
+    (try! NSRegularExpression(
+        pattern: "([\(k括弧閉)])(?=[\(k括弧開)])", options: []), -0.9)
+]
+private let kKernLabelKerningSettingsAll: KerningSettings = [
+    (try! NSRegularExpression(
+        pattern: "([\(k括弧閉)\(k句読点)])|(.)(?=[\(k括弧開)])", options: []), -0.5),
+    (try! NSRegularExpression(
+        pattern: "([\(k括弧閉)\(k句読点)])(?=[\(k括弧開)])", options: []), -0.9)
+]
 
 
 /**
@@ -311,7 +331,7 @@ public class KernLabel: UIView {
             numberOfLines: self.numberOfLines,
             options: [.UsesLineFragmentOrigin],
             truncateText: self.truncateText,
-            kerningRegexp: self.kerningMode.regexp)
+            kerningSettings: self.kerningMode.kerningSettings)
         type.processWithoutDrawing()
         return CGRect(origin: CGPointZero, size: type.intrinsicTextSize)
     }
@@ -371,7 +391,7 @@ public class KernLabel: UIView {
         var type = Type(
             attributedText: _attributedText,
             rect: rect,
-            kerningRegexp: self.kerningMode.regexp,
+            kerningSettings: self.kerningMode.kerningSettings,
             numberOfLines: self.numberOfLines,
             options: options,
             truncateText: self.truncateText,

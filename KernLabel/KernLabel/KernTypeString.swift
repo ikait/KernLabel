@@ -13,6 +13,7 @@ public class KernTypeString {
 
     public var string: String = ""
     public var attributes: [String : AnyObject] = [:]
+    public var kerningMode: KernLabelKerningMode = .Normal
 
     var attributedString: NSAttributedString {
         return NSAttributedString(string: self.string, attributes: self.attributes)
@@ -39,7 +40,7 @@ public class KernTypeString {
     }
 
     public func boundingRectWithSize(size: CGSize, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGRect {
-        var type = Type(attributedText: self.attributedString, rect: CGRect(origin: CGPointZero, size: size), kerningRegexp: KernLabelKerningMode.Normal.regexp, numberOfLines: 0, options: options, truncateText: DefaultLabelSettings.truncateText, verticalAlignment: .Top)
+        var type = Type(attributedText: self.attributedString, rect: CGRect(origin: CGPointZero, size: size), kerningSettings: self.kerningMode.kerningSettings, numberOfLines: 0, options: options, truncateText: DefaultLabelSettings.truncateText, verticalAlignment: .Top)
         type.processWithoutDrawing()
         return CGRect(origin: CGPointZero, size: type.intrinsicTextSize)
     }
@@ -52,13 +53,13 @@ public class KernTypeString {
         guard let context = context else {
             return
         }
-        var type = Type(attributedText: self.attributedString, rect: rect, kerningRegexp: KernLabelKerningMode.Normal.regexp, numberOfLines: 0, options: options)
+        var type = Type(attributedText: self.attributedString, rect: rect, kerningSettings: self.kerningMode.kerningSettings, numberOfLines: 0, options: options)
         type.padding = padding
         type.drawText(on: context)
     }
 
     public func createImage(rect: CGRect, options: NSStringDrawingOptions) -> CGImage? {
-        var type = Type(attributedText: self.attributedString, rect: rect, kerningRegexp: KernLabelKerningMode.Normal.regexp, numberOfLines: 0, options: options)
+        var type = Type(attributedText: self.attributedString, rect: rect, kerningSettings: self.kerningMode.kerningSettings, numberOfLines: 0, options: options)
         return type.createImage()
     }
 }
