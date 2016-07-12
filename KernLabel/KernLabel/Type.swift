@@ -173,18 +173,19 @@ struct Type {
      行末の文字を取得する。行末が改行の場合は、改行文字の前の文字を取得する。
 
      - parameter range: 行末の文字を取得するための、現在行の全体における範囲。
-     - returns: 行末の文字
+     - returns: (行末の文字, 行末が改行か)
      */
-    private func getLineTail(range: NSRange) -> String {
-        var tail = ""
+    private func getLineTail(range: NSRange) -> (String, Bool) {
+        var (tail, returned) = ("", false)
         let location = range.location + range.length
         if location <= self.attributedText.length {
             tail = self.attributedText.substring(NSMakeRange(location - 1, 1))
             if tail == "\n" && location - 2 >= 0 {  // 行末が改行の場合は、改行文字の前の文字を取得する。
                 tail = self.attributedText.substring(NSMakeRange(location - 2, 1))
+                returned = true
             }
         }
-        return tail
+        return (tail, returned)
     }
 
     /**
@@ -192,41 +193,17 @@ struct Type {
 
      - parameter lineHead: 行頭文字
      */
-    private func getOffset(lineHead: String? = nil) -> CGFloat {
-        return kCharactersHaveLeftSpace.contains(lineHead ?? self.getLineHead()) ? self.fontHalfWidth : 0
+    private func getHeadOffset(lineHead: String? = nil) -> CGFloat {
+        return kCharactersHaveLeftSpace.contains(lineHead ?? self.getLineHead()) ? self.fontHalfWidth * -1 : 0
     }
 
     /**
-     行末から offset を計算する
+     行末オフセットを取得。カーニング対象文字の場合は、半角分のオフセット
 
-     - parameter range: offset を計算するための、現在行の全体における範囲
-     - returns: 行末文字と alignment を考慮した際の行頭オフセット
+     - parameter lineTail: 行末文字
      */
-    private func getOffsetTail(with offsetHead: CGFloat, range: NSRange) -> CGFloat {
-        guard let alignment = self.attributedText.textAlignment else {
-            return 0
-        }
-        let tail = self.getLineTail(range)
-        var offset: CGFloat = 0
-        switch alignment {
-        case .Right:
-            offset -=
-                (
-                    (kCharactersHaveRightSpace.contains(tail) ? self.fontHalfWidth : 0) +
-                        (self.width - self.attributedText.attributedSubstringFromRange(range).boundingRect(
-                        options: [.UsesLineFragmentOrigin], context: nil).size.width) + offsetHead
-                )
-        case .Center:
-            offset -=
-                (
-                    (kCharactersHaveRightSpace.contains(tail) ? self.fontHalfWidth : 0) +
-                    (self.width - self.attributedText.attributedSubstringFromRange(range).boundingRect(
-                        options: [.UsesLineFragmentOrigin], context: nil).size.width) + offsetHead
-                ) / 2
-        default:
-            break  // .Left, .Justified
-        }
-        return offset
+    private func getTailOffset(lineTail: String) -> CGFloat {
+        return kCharactersHaveRightSpace.contains(lineTail) ? self.fontHalfWidth : 0
     }
 
     /**
@@ -236,7 +213,7 @@ struct Type {
      - returns: (現在行にはいる文字数, ぶらさがるかどうか)
      */
     private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool, Bool) {
-        let lineWidth: CGFloat = self.width + (offset ?? self.getOffset())
+        let lineWidth: CGFloat = self.width - (offset ?? self.getHeadOffset())
         var currentLineCount = CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(lineWidth))
         var range = self.getCurrentLineRange(currentLineCount)
         var (didBurasagari, didOikomi) = (false, false)
@@ -266,7 +243,7 @@ struct Type {
     private func getCurrentLineRange(currentLineCount: Int? = nil) -> NSRange {
         return NSMakeRange(
             self.location,
-            currentLineCount ?? self.getSuggestedLineCount(self.getOffset()).0)
+            currentLineCount ?? self.getSuggestedLineCount(self.getHeadOffset()).0)
     }
 
     /** 
@@ -291,7 +268,7 @@ struct Type {
         return CTTypesetterSuggestLineBreak(
             self.typesetter,
             self.location,
-            Double(self.width + (offset ?? self.getOffset()) - self.truncateRect.size.width))
+            Double(self.width - (offset ?? self.getHeadOffset()) - self.truncateRect.size.width))
     }
 
     /**
@@ -311,29 +288,47 @@ struct Type {
         - on: 描画する context
      - returns: (描画する行の実質的な幅(長さ), xオフセット, yオフセット, ctline)
      */
-    private func getCTLine(range: NSRange, offset: CGFloat, burasagari: Bool = false, oikomi: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
-
-        // 描画開始位置を設定。offsetで行頭約物の位置を修正
-        let offsetX = self.startPosition.x + self.currentPosition.x + self.padding.left - offset
-        let offsetY = self.startPosition.y + self.currentPosition.y + self.padding.top
+    private func getCTLine(
+        range: NSRange,
+        headOffset: CGFloat,
+        tailOffset: CGFloat,
+        burasagari: Bool = false,
+        oikomi: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 行を生成
-        var ctline = CTTypesetterCreateLine(
-            self.typesetter, CFRangeMake(range.location, range.length))
+        var ctline = CTTypesetterCreateLine(self.typesetter, CFRangeMake(range.location, range.length))
+
+        print(self.attributedText.substring(range).characters.first, self.attributedText.substring(range).characters.last)
+        print(headOffset, tailOffset)
 
         // 実質の文字の幅を取得
         let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
+        let alignment = self.attributedText.textAlignment ?? .Left
+        var lineWidth = Double(self.width)
 
-        // 均等揃えする。ぶら下がりのために、右側のスペースを開けておく
-        if let alignment = self.attributedText.textAlignment where alignment == .Justified {
+        // 描画開始位置を設定。offsetで行頭約物の位置を修正
+        var offsetX = self.startPosition.x + self.currentPosition.x + self.padding.left
+        let offsetY = self.startPosition.y + self.currentPosition.y + self.padding.top
+
+        switch alignment {
+        case .Left:
+            offsetX += headOffset
+        case .Center:
+            offsetX += (self.width - CGFloat(typographicWidth)) / 2 + (headOffset + tailOffset)
+        case .Right:
+            offsetX += self.width - CGFloat(typographicWidth) + tailOffset
+        case .Justified:
+            offsetX += headOffset
+            // ぶら下がりのために、右側のスペースを開けておく
             let burasagariSpace = burasagari ? Double(self.fontSize) : 0
             let oikomiSpace = oikomi ? Double(self.fontSize / 2) : 0
-            let lineWidth = Double(self.width) + burasagariSpace + oikomiSpace
+            lineWidth = lineWidth + burasagariSpace + oikomiSpace
             if typographicWidth > (lineWidth - Double(self.fontSize)) {
                 if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
                     ctline = justifiedCtline
                 }
             }
+        default: break;
         }
         return (CGFloat(typographicWidth), offsetX, offsetY, ctline)
     }
@@ -424,7 +419,7 @@ struct Type {
         while self.location < self.length {
 
             self.goToNextLinePosition()
-            var offset = self.getOffset()
+            let offset = self.getHeadOffset()
             let (currentLineCount, burasagari, oikomi) = self.getSuggestedLineCount(offset)
             var range = self.getCurrentLineRange(currentLineCount)
 
@@ -441,11 +436,11 @@ struct Type {
                 range = NSMakeRange(self.location, truncateLineCount + self.truncateText.length)
                 self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
             }
+            let (tailCharacter, returned) = self.getLineTail(range)
+            let tailOffset = self.getTailOffset(tailCharacter)
 
-            // 末尾文字列を考慮して先頭のオフセットを減算
-            offset += self.getOffsetTail(with: offset, range: range)
-
-            lines.append(self.getCTLine(range, offset: offset, burasagari: burasagari, oikomi: oikomi))
+            lines.append(self.getCTLine(NSMakeRange(range.location, range.length - (returned ? 1 : 0)),
+                headOffset: offset, tailOffset: tailOffset, burasagari: burasagari, oikomi: oikomi))
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
