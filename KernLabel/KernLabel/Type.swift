@@ -91,19 +91,6 @@ struct Type {
 
     var verticalAlignment = KernLabelVerticalAlignment.Middle
 
-    /// 現時点での最長の一行の長さ
-    var currentLongestTypographicWidth: CGFloat {
-        get {
-            return self._currentLongestTypographicWidth
-        }
-        set {
-            if newValue > self._currentLongestTypographicWidth {
-                self._currentLongestTypographicWidth = newValue
-            }
-        }
-    }
-    private var _currentLongestTypographicWidth: CGFloat = 0
-
     init(
         attributedText: NSAttributedString,
         rect: CGRect,
@@ -198,15 +185,6 @@ struct Type {
     }
 
     /**
-     行末オフセットを取得。カーニング対象文字の場合は、半角分のオフセット
-
-     - parameter lineTail: 行末文字
-     */
-    private func getTailOffset(lineTail: String) -> CGFloat {
-        return kCharactersHaveRightSpace.contains(lineTail) ? self.fontHalfWidth : 0
-    }
-
-    /**
      offset を考慮したうえで、現在の行には何文字入るか？
 
      - parameter offset: 行頭オフセット。指定しない場合は `getOffset()` で算出したものを使用する
@@ -291,46 +269,38 @@ struct Type {
     private func getCTLine(
         range: NSRange,
         headOffset: CGFloat,
-        tailOffset: CGFloat,
         burasagari: Bool = false,
         oikomi: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 行を生成
         var ctline = CTTypesetterCreateLine(self.typesetter, CFRangeMake(range.location, range.length))
 
-        print(self.attributedText.substring(range).characters.first, self.attributedText.substring(range).characters.last)
-        print(headOffset, tailOffset)
-
         // 実質の文字の幅を取得
-        let typographicWidth = CTLineGetTypographicBounds(ctline, nil, nil, nil)
+        let typographicWidth = CGFloat(CTLineGetTypographicBounds(ctline, nil, nil, nil))
         let alignment = self.attributedText.textAlignment ?? .Left
-        var lineWidth = Double(self.width)
+        var lineWidth = self.width
 
         // 描画開始位置を設定。offsetで行頭約物の位置を修正
-        var offsetX = self.startPosition.x + self.currentPosition.x + self.padding.left
-        let offsetY = self.startPosition.y + self.currentPosition.y + self.padding.top
-
-        switch alignment {
-        case .Left:
-            offsetX += headOffset
-        case .Center:
-            offsetX += (self.width - CGFloat(typographicWidth)) / 2 + (headOffset + tailOffset)
-        case .Right:
-            offsetX += self.width - CGFloat(typographicWidth) + tailOffset
-        case .Justified:
-            offsetX += headOffset
-            // ぶら下がりのために、右側のスペースを開けておく
-            let burasagariSpace = burasagari ? Double(self.fontSize) : 0
-            let oikomiSpace = oikomi ? Double(self.fontSize / 2) : 0
-            lineWidth = lineWidth + burasagariSpace + oikomiSpace
-            if typographicWidth > (lineWidth - Double(self.fontSize)) {
-                if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, lineWidth) {
-                    ctline = justifiedCtline
-                }
+        let offsetX: CGFloat = {
+            var x = self.startPosition.x + self.currentPosition.x + self.padding.left
+            switch alignment {
+                case .Left:   x += headOffset
+                case .Center: x += (self.width + headOffset - typographicWidth) / 2
+                case .Right:  x += self.width - typographicWidth
+                case .Justified:
+                    x += headOffset
+                    lineWidth = lineWidth + (burasagari ? self.fontSize : 0) + (oikomi ? self.fontHalfWidth : 0)
+                    if typographicWidth > (lineWidth - self.fontSize) {  // 残りの幅が fontSize 以下であれば justified しない
+                        if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, Double(lineWidth)) {
+                            ctline = justifiedCtline
+                        }
+                    }
+                default: break
             }
-        default: break;
-        }
-        return (CGFloat(typographicWidth), offsetX, offsetY, ctline)
+            return x
+        }()
+        let offsetY = self.startPosition.y + self.currentPosition.y + self.padding.top
+        return (typographicWidth, offsetX, offsetY, ctline)
     }
 
     private func fillBackgroundColor(rect: CGRect, on context: CGContext?) {
@@ -413,7 +383,7 @@ struct Type {
 
         let context: CGContext? = needsDrawing ? self.createContext(canvasContext) : nil
 
-        /// currentLongestTypographicWidth, offsetX, offsetY, ctline
+        /// typographicWidth, offsetX, offsetY, ctline
         var lines: [(CGFloat, CGFloat, CGFloat, CTLine)] = []
 
         while self.location < self.length {
@@ -436,11 +406,10 @@ struct Type {
                 range = NSMakeRange(self.location, truncateLineCount + self.truncateText.length)
                 self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
             }
-            let (tailCharacter, returned) = self.getLineTail(range)
-            let tailOffset = self.getTailOffset(tailCharacter)
+            let (_, returned) = self.getLineTail(range)
 
             lines.append(self.getCTLine(NSMakeRange(range.location, range.length - (returned ? 1 : 0)),
-                headOffset: offset, tailOffset: tailOffset, burasagari: burasagari, oikomi: oikomi))
+                headOffset: offset, burasagari: burasagari, oikomi: oikomi))
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
