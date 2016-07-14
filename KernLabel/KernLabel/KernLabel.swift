@@ -36,7 +36,7 @@ final class DefaultLabelSettings {
  */
 public enum KernLabelKerningMode: Int {
 
-    /// カーニングを行わない
+    /// 行頭以外のカーニングを行わない
     case None
 
     /// 終わり括弧と始め括弧の間などの一部のみをカーニング
@@ -74,16 +74,24 @@ private let k括弧開 = "｛［「『（｟〈《〔〘【〖"
 private let k他約物 = "！？：；︰‐・…‥〜ー―※"
 private let kKernLabelKerningSettingsMinimum: KerningSettings = [
     (try! NSRegularExpression(
-        pattern: "([\(k括弧閉)\(k句読点)][\(k他約物)]?)(?=[\(k括弧開)])", options: []), -0.5)]
+        pattern: "([\(k括弧閉)\(k句読点)])\n" + "|" +
+                 "([\(k括弧閉)\(k句読点)])$" + "|" +
+                 "([\(k括弧閉)\(k句読点)][\(k他約物)]?)(?=[\(k括弧開)])",
+        options: []), -0.5)]
 private let kKernLabelKerningSettingsNormal: KerningSettings = [
     (try! NSRegularExpression(
-        pattern: "([\(k括弧閉)])|(.)(?=[\(k括弧開)])", options: []), -0.5),
+        pattern: "([\(k句読点)])\n" + "|" +
+                 "([\(k句読点)])$" + "|" +
+                 "([\(k括弧閉)])|(.)(?=[\(k括弧開)])",
+        options: []), -0.5),
     (try! NSRegularExpression(
         pattern: "([\(k括弧閉)])(?=[\(k括弧開)])", options: []), -0.9)
 ]
 private let kKernLabelKerningSettingsAll: KerningSettings = [
     (try! NSRegularExpression(
-        pattern: "([\(k括弧閉)\(k句読点)])|(.)(?=[\(k括弧開)])", options: []), -0.5),
+        pattern: "([\(k括弧閉)\(k句読点)])" + "|" +
+                 "(.)(?=[\(k括弧開)])",
+        options: []), -0.5),
     (try! NSRegularExpression(
         pattern: "([\(k括弧閉)\(k句読点)])(?=[\(k括弧開)])", options: []), -0.9)
 ]
