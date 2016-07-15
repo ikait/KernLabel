@@ -12,6 +12,13 @@ import FBSnapshotTestCase
 
 
 private let kRectHuge = CGRectMake(0, 0, kCGFloatHuge, kCGFloatHuge)
+private let kTextKana = [
+    "【宮沢賢治】（ポラーノの広場）あのイーハトーヴォのすきとおった風、",
+    "夏でも底に冷たさをもつ青いそら、\n",
+    "（なつでもそこにつめたさをもつあおいそら）、「」…【】。［（〕《）\n",
+    "うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。",
+].joinWithSeparator("")
+
 
 class KernTypeStringTests: FBSnapshotTestCase {
 
@@ -90,7 +97,7 @@ class KernTypeStringTests: FBSnapshotTestCase {
     }
 
     func testDrawAtPointPerformance() {
-        self.string = KernTypeString(string: kText, attributes: TestSettings.attributes)
+        self.string = KernTypeString(string: kTextKana, attributes: TestSettings.attributes)
         let rect = CGRectMake(0, 0, 200, 200)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()
@@ -101,8 +108,8 @@ class KernTypeStringTests: FBSnapshotTestCase {
     }
 
     func testCreateImagePerformance() {
-        self.string = KernTypeString(string: kText, attributes: TestSettings.attributes)
-        let rect = CGRectMake(0, 0, 200, 200)
+        self.string = KernTypeString(string: kTextKana, attributes: TestSettings.attributes)
+        let rect = CGRectMake(0, 0, 500, 500)
         self.measureBlock {
             self.string.createImage(rect, options: [])
         }
