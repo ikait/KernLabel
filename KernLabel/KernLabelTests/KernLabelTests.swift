@@ -27,7 +27,7 @@ class KernLabelTests: FBSnapshotTestCase {
         super.setUp()
         self.label = KernLabel()
         self.label.bounds = CGRectMake(0, 0, 400, 200)
-        self.recordMode = true
+        self.recordMode = false
     }
 
     override func tearDown() {
