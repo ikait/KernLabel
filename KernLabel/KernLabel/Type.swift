@@ -22,9 +22,6 @@ private let kCharactersHaveRightSpace = [
 private let kCharactersCanBurasagari = [
     "、", "。", "，", "．"
 ]
-private let kCharactersCanOikomi = [
-    "」", "』", "】", "》", "〉", "〕", "｝", "）", "］",
-]
 private let kCharacterHaveRightSpaceRatio: CGFloat = 0.4  // 右半分が空白な文字の、fontSize における実質的な幅の割合
 let kCGFloatHuge: CGFloat = pow(2, 12)
 
@@ -190,11 +187,11 @@ struct Type {
      - parameter offset: 行頭オフセット。指定しない場合は `getOffset()` で算出したものを使用する
      - returns: (現在行にはいる文字数, ぶらさがるかどうか)
      */
-    private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool, Bool) {
+    private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool) {
         let lineWidth: CGFloat = self.width - (offset ?? self.getHeadOffset())
         var currentLineCount = CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(lineWidth))
         var range = self.getCurrentLineRange(currentLineCount)
-        var (didBurasagari, didOikomi) = (false, false)
+        var didBurasagari = false
 
         if let alignment = self.attributedText.textAlignment where alignment == .Justified {
             if range.location + range.length + 2 <= self.length {  // 1文字加算しても全体の文字数に収まるか
@@ -203,14 +200,10 @@ struct Type {
                     range = NSMakeRange(range.location, range.length + 2)
                     currentLineCount = range.length
                     didBurasagari = true
-                } else if kCharactersCanOikomi.contains(tmpTail) {
-                    range = NSMakeRange(range.location, range.length + 2)
-                    currentLineCount = range.length
-                    didOikomi = true
                 }
             }
         }
-        return (currentLineCount, didBurasagari, didOikomi)
+        return (currentLineCount, didBurasagari)
     }
 
     /**
@@ -269,8 +262,7 @@ struct Type {
     private func getCTLine(
         range: NSRange,
         headOffset: CGFloat,
-        burasagari: Bool = false,
-        oikomi: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
+        burasagari: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 行を生成
         var ctline = CTTypesetterCreateLine(self.typesetter, CFRangeMake(range.location, range.length))
@@ -289,7 +281,7 @@ struct Type {
                 case .Right:  x += self.width - typographicWidth
                 case .Justified:
                     x += headOffset
-                    lineWidth = lineWidth + (burasagari ? self.fontSize : 0) + (oikomi ? self.fontHalfWidth : 0)
+                    lineWidth = lineWidth + abs(headOffset) + (burasagari ? self.fontSize : 0)
                     if typographicWidth > (lineWidth - self.fontSize) {  // 残りの幅が fontSize 以下であれば justified しない
                         if let justifiedCtline = CTLineCreateJustifiedLine(ctline, 1, Double(lineWidth)) {
                             ctline = justifiedCtline
@@ -390,7 +382,7 @@ struct Type {
 
             self.goToNextLinePosition()
             let offset = self.getHeadOffset()
-            let (currentLineCount, burasagari, oikomi) = self.getSuggestedLineCount(offset)
+            let (currentLineCount, burasagari) = self.getSuggestedLineCount(offset)
             var range = self.getCurrentLineRange(currentLineCount)
 
             let overflow = self.isOverflow(currentLineCount)
@@ -409,7 +401,7 @@ struct Type {
             let (_, returned) = self.getLineTail(range)
 
             lines.append(self.getCTLine(NSMakeRange(range.location, range.length - (returned ? 1 : 0)),
-                headOffset: offset, burasagari: burasagari, oikomi: oikomi))
+                headOffset: offset, burasagari: burasagari))
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
