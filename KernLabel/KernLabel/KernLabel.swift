@@ -85,7 +85,7 @@ private let kKernLabelKerningSettingsNormal: KerningSettings = [
                  "([\(k括弧閉)])|(.)(?=[\(k括弧開)])",
         options: []), -0.5),
     (try! NSRegularExpression(
-        pattern: "([\(k括弧閉)])(?=[\(k括弧開)])", options: []), -0.9)
+        pattern: "([\(k括弧閉)])(?=[\(k括弧開)])", options: []), -1)
 ]
 private let kKernLabelKerningSettingsAll: KerningSettings = [
     (try! NSRegularExpression(
@@ -93,7 +93,7 @@ private let kKernLabelKerningSettingsAll: KerningSettings = [
                  "(.)(?=[\(k括弧開)])",
         options: []), -0.5),
     (try! NSRegularExpression(
-        pattern: "([\(k括弧閉)\(k句読点)])(?=[\(k括弧開)])", options: []), -0.9)
+        pattern: "([\(k括弧閉)\(k句読点)])(?=[\(k括弧開)])", options: []), -1)
 ]
 
 
