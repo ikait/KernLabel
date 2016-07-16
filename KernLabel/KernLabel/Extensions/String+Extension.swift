@@ -17,11 +17,11 @@ extension String {
         return self.rangeOfString("^[a-zA-Z0-9]+$", options: .RegularExpressionSearch) != nil
     }
 
-    var first: String? {
-        return String(self.characters.first)
+    var first: String {
+        return self.isEmpty ? "" : String(self.characters.first!) ?? ""
     }
 
-    var last: String? {
-        return String(self.characters.last)
+    var last: String {
+        return self.isEmpty ? "" : String(self.characters.last!) ?? ""
     }
 }

@@ -190,18 +190,9 @@ struct Type {
      - parameter offset: 行頭オフセット。指定しない場合は `getOffset()` で算出したものを使用する
      - returns: (現在行にはいる文字数, ぶらさがるかどうか)
      */
-    private func getSuggestedLineCount(offset: CGFloat? = nil) -> (Int, Bool) {
+    private func getSuggestedLineCount(offset: CGFloat? = nil) -> Int {
         let lineWidth: CGFloat = self.width - (offset ?? self.getHeadOffset())
-        var currentLineCount = CTTypesetterSuggestClusterBreak(self.typesetter, self.location, Double(lineWidth))
-        var didBurasagari = false
-        let range = self.getCurrentLineRange(currentLineCount)
-        if range.location + range.length + 1 <= self.length &&
-            kCharactersCanBurasagari.contains(
-                self.attributedText.substring(range.location + range.length, 1)) {
-            currentLineCount += 1
-            didBurasagari = true
-        }
-        return (currentLineCount, didBurasagari)
+        return CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(lineWidth))
     }
 
     /**
@@ -212,7 +203,7 @@ struct Type {
     private func getCurrentLineRange(currentLineCount: Int? = nil) -> NSRange {
         return NSMakeRange(
             self.location,
-            currentLineCount ?? self.getSuggestedLineCount(self.getHeadOffset()).0)
+            currentLineCount ?? self.getSuggestedLineCount(self.getHeadOffset()))
     }
 
     /** 
@@ -221,7 +212,7 @@ struct Type {
      - returns: 次の行が指定した高さを超えるか or 行数制限を超えるか
      */
     private func isOverflow(currentLineCount: Int? = nil) -> Bool {
-        let surplus = self.location + (currentLineCount ?? self.getSuggestedLineCount().0) < self.length
+        let surplus = self.location + (currentLineCount ?? self.getSuggestedLineCount()) < self.length
         let heightShortage = self.currentPosition.y + self.lineHeight > self.height
         let exceedNumberOfLines = self.numberOfLines == 0 ? false : self.lines + 1 >= self.numberOfLines
         return exceedNumberOfLines || (surplus && heightShortage)
@@ -250,15 +241,16 @@ struct Type {
     /**
      alignment を考慮せずに CTLine を取得する
      - parameter from: CTLine を取得する範囲
+     - returns: CTLine, NSMutableAttributedString
      */
-    private func getCTLine(from attributedText: NSMutableAttributedString, range: NSRange) -> CTLine {
-        var attributedText = attributedText
-        let tailCharacter = attributedText.substring(range.location + range.length - 1, 1)
-        if k他約物.characters.contains(tailCharacter.characters.first!) {
-            attributedText = attributedText.clearKerning(with: NSMakeRange(range.location + range.length - 1, 1))
-            return CTLineCreateWithAttributedString(attributedText.attributedSubstringFromRange(range))
+    private func getCTLine(from attributedText: NSMutableAttributedString, range: NSRange) -> (CTLine, NSMutableAttributedString) {
+        var croppedAttributedText = attributedText.mutableAttributedString(from: range)
+        let tailCharacter = croppedAttributedText.string.first!
+        if k他約物.containsString(tailCharacter) {
+            croppedAttributedText = croppedAttributedText.clearKerning(with: NSMakeRange(attributedText.length - 1, 1))
+            return (CTLineCreateWithAttributedString(croppedAttributedText), croppedAttributedText)
         } else {
-            return CTTypesetterCreateLine(self.typesetter, CFRangeMake(range.location, range.length))
+            return (CTTypesetterCreateLine(self.typesetter, CFRangeMake(range.location, range.length)), croppedAttributedText)
         }
     }
 
@@ -272,22 +264,20 @@ struct Type {
     }
 
     /**
-     range 行を、context 上に描画する。また、描画した行の実質的な幅をかえす。
+     range で指定した行の x, y オフセットと CTLine を生成する
 
      - parameters:
         - range: 全体における描画する行の範囲
-        - offset: 行頭オフセット
-        - burasagari: ぶらさがりするか？
-        - on: 描画する context
+        - headOffset: 行頭オフセット
      - returns: (描画する行の実質的な幅(長さ), xオフセット, yオフセット, ctline)
      */
-    private func getLineSetting(range: NSRange, burasagari: Bool = false) -> (CGFloat, CGFloat, CGFloat, CTLine) {
+    private func getLineSetting(range: NSRange, headOffset: CGFloat) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 行を生成
-        var ctline = self.getCTLine(from: self.attributedText, range: range)
+        var (ctline, attributedText) = self.getCTLine(from: self.attributedText, range: range)
 
         // 実質の文字の幅を取得
-        let alignment = self.attributedText.textAlignment ?? .Left
+        let alignment = attributedText.textAlignment ?? .Left
         var lineWidth = self.width
         let lineBounds = CGRectIntegral(CTLineGetBoundsWithOptions(ctline, [.UseGlyphPathBounds]))
         let (realLineOffsetX, realLineWidth) = (lineBounds.origin.x, lineBounds.width)
@@ -299,14 +289,15 @@ struct Type {
                 case .Center: x += (self.width - realLineWidth) / 2 - realLineOffsetX
                 case .Right:  x += self.width - realLineWidth - realLineOffsetX
                 case .Justified:
-                    x += -realLineOffsetX
-                    lineWidth = lineWidth + realLineOffsetX + (burasagari ? self.fontHalfWidth : 0)
-                    if realLineWidth > (lineWidth - self.fontSize * 1) {  // 残りの幅が fontSize 以下であれば justified しない
-                        if let justifiedCtline = self.getCTLineJustified(from: ctline, lineWidth: lineWidth) {
+                    x += headOffset == 0 ? 0 : -realLineOffsetX
+                    lineWidth = lineWidth + realLineOffsetX
+                    let kernValueSum = abs(attributedText.kerningValueSum(with: self.kerningSettings))
+                    if realLineWidth + min(kernValueSum, self.fontSize) > (lineWidth - self.fontSize) {  // 残りの幅が fontSize 以下であれば justified しない
+                        if let justifiedCtline = self.getCTLineJustified(from: ctline, lineWidth: lineWidth - realLineOffsetX) {
                             ctline = justifiedCtline
                         }
                     }
-                default: x += -realLineOffsetX
+            default: x += headOffset == 0 ? 0 : -realLineOffsetX
             }
             return x
         }()
@@ -401,7 +392,7 @@ struct Type {
 
             self.goToNextLinePosition()
             let offset = self.getHeadOffset()
-            let (currentLineCount, burasagari) = self.getSuggestedLineCount(offset)
+            let currentLineCount = self.getSuggestedLineCount(offset)
             var range = self.getCurrentLineRange(currentLineCount)
 
             let overflow = self.isOverflow(currentLineCount)
@@ -420,7 +411,7 @@ struct Type {
             let (_, returned) = self.getLineTail(range)
 
             lines.append(self.getLineSetting(
-                NSMakeRange(range.location, range.length - (returned ? 1 : 0)), burasagari: burasagari))
+                NSMakeRange(range.location, range.length - (returned ? 1 : 0)), headOffset: offset))
 
             // 次の行が指定した高さを超える場合は終了
             if overflow {
