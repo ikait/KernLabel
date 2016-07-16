@@ -30,6 +30,11 @@ extension NSMutableAttributedString {
         return self
     }
 
+    func clearKerning(with range: NSRange) -> Self {
+        self.removeAttribute(NSKernAttributeName, range: range)
+        return self
+    }
+
     override var attributes: [String : AnyObject]? {
         get {
             return super.attributes
