@@ -88,6 +88,8 @@ struct Type {
 
     var verticalAlignment = KernLabelVerticalAlignment.Middle
 
+    var kerningSettings = KernLabelKerningMode.Normal.kerningSettings
+
     init(
         attributedText: NSAttributedString,
         rect: CGRect,
@@ -116,6 +118,7 @@ struct Type {
         self.truncateText = truncateText
         self.numberOfLines = numberOfLines
         self.verticalAlignment = verticalAlignment
+        self.kerningSettings = kerningSettings
         self.padding = padding
     }
 
