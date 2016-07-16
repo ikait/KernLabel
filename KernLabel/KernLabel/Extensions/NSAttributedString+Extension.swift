@@ -49,6 +49,10 @@ extension NSAttributedString {
         return self.attributedSubstringFromRange(range).string
     }
 
+    func substring(location: Int, _ length: Int) -> String {
+        return self.substring(NSMakeRange(location, length))
+    }
+
     func getFont(location: Int) -> UIFont? {
         if let font = self.attributesAtIndex(location, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
             return font
