@@ -68,10 +68,10 @@ public enum KernLabelKerningMode: Int {
  */
 typealias KerningSettings = [(NSRegularExpression, CGFloat)]
 
-private let k句読点 = "、，。．"
-private let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
-private let k括弧開 = "｛［「『（｟〈《〔〘【〖"
-private let k他約物 = "！？：；︰‐・…‥〜ー―※"
+let k句読点 = "、，。．"
+let k括弧閉 = "｝］」』）｠〉》〕〙】〗"
+let k括弧開 = "｛［「『（｟〈《〔〘【〖"
+let k他約物 = "！？：；︰‐・…‥〜ー―※"
 private let kKernLabelKerningSettingsMinimum: KerningSettings = [
     (try! NSRegularExpression(
         pattern: "([\(k括弧閉)\(k句読点)])\n" + "|" +
