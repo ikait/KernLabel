@@ -75,6 +75,10 @@ extension NSAttributedString {
         return paragraphStyle.alignment
     }
 
+    func mutableAttributedString(from range: NSRange) -> NSMutableAttributedString {
+        return NSMutableAttributedString(attributedString: self.attributedSubstringFromRange(range))
+    }
+
     func boundingWidth(options options: NSStringDrawingOptions, context: NSStringDrawingContext?) -> CGFloat {
         return self.boundingRect(options: options, context: context).size.width
     }

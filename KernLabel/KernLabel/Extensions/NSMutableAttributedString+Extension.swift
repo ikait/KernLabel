@@ -30,6 +30,26 @@ extension NSMutableAttributedString {
         return self
     }
 
+    func kerningValueSum(regexp: NSRegularExpression, value: CGFloat = -0.5) -> CGFloat {
+        var kernValueSum: CGFloat = 0
+        regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
+            guard let result = result, this = self else { return }
+            let (location, _) = (result.range.location, result.range.length)
+            let curAttrs = this.attributesAtIndex(location, effectiveRange: nil)
+            let font = curAttrs[NSFontAttributeName] as? UIFont ?? kDefaultFont
+            kernValueSum += font.pointSize * value
+        }
+        return kernValueSum
+    }
+
+    func kerningValueSum(with settings: KerningSettings) -> CGFloat {
+        var kernValueSum: CGFloat = 0
+        settings.forEach { (regexp, value) in
+            kernValueSum += self.kerningValueSum(regexp, value: value)
+        }
+        return kernValueSum
+    }
+
     func clearKerning(with range: NSRange) -> Self {
         self.removeAttribute(NSKernAttributeName, range: range)
         return self

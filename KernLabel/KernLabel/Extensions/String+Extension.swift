@@ -16,4 +16,12 @@ extension String {
     var isAlphanumeric: Bool {
         return self.rangeOfString("^[a-zA-Z0-9]+$", options: .RegularExpressionSearch) != nil
     }
+
+    var first: String? {
+        return String(self.characters.first)
+    }
+
+    var last: String? {
+        return String(self.characters.last)
+    }
 }
