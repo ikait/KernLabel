@@ -245,7 +245,7 @@ struct Type {
      */
     private func getCTLine(from attributedText: NSMutableAttributedString, range: NSRange) -> (CTLine, NSMutableAttributedString) {
         var croppedAttributedText = attributedText.mutableAttributedString(from: range)
-        let tailCharacter = croppedAttributedText.string.first!
+        let tailCharacter = croppedAttributedText.string.first
         if k他約物.containsString(tailCharacter) {
             croppedAttributedText = croppedAttributedText.clearKerning(with: NSMakeRange(attributedText.length - 1, 1))
             return (CTLineCreateWithAttributedString(croppedAttributedText), croppedAttributedText)
