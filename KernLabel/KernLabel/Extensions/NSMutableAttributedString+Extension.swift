@@ -51,6 +51,7 @@ extension NSMutableAttributedString {
     }
 
     func clearKerning(with range: NSRange) -> Self {
+        print(self.length)
         self.removeAttribute(NSKernAttributeName, range: range)
         return self
     }

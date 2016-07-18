@@ -69,13 +69,13 @@ class KernTypeStringTests: FBSnapshotTestCase {
     func testBoundingWidthSingleLine() {
         self.string = KernTypeString(string: "あいうえお", attributes: TestSettings.attributes)
         let width = self.string.boundingWidth(1000, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
-        XCTAssertGreaterThanOrEqual(width, TestSettings.font.pointSize * 5)
+        XCTAssertLessThanOrEqual(width, TestSettings.font.pointSize * 5)
     }
 
     func testBoundingWidthMultipleLine() {
         self.string = KernTypeString(string: "あいうえお\nabc123", attributes: TestSettings.attributes)
         let width = self.string.boundingWidth(1000, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
-        XCTAssertGreaterThanOrEqual(width, TestSettings.font.pointSize * 5)
+        XCTAssertLessThanOrEqual(width, TestSettings.font.pointSize * 5)
     }
 
     func testBoundingHeightToBeZero() {
@@ -96,7 +96,7 @@ class KernTypeStringTests: FBSnapshotTestCase {
         XCTAssertEqual(width2, 0)
     }
 
-    func testDrawAtPointPerformance() {
+    func testDrawWithRectPerformance() {
         self.string = KernTypeString(string: kTextKana, attributes: TestSettings.attributes)
         let rect = CGRectMake(0, 0, 200, 200)
         UIGraphicsBeginImageContext(rect.size)

@@ -247,7 +247,7 @@ struct Type {
         var croppedAttributedText = attributedText.mutableAttributedString(from: range)
         let tailCharacter = croppedAttributedText.string.first
         if k他約物.containsString(tailCharacter) {
-            croppedAttributedText = croppedAttributedText.clearKerning(with: NSMakeRange(attributedText.length - 1, 1))
+            croppedAttributedText = croppedAttributedText.clearKerning(with: NSMakeRange(croppedAttributedText.length - 1, 1))
             return (CTLineCreateWithAttributedString(croppedAttributedText), croppedAttributedText)
         } else {
             return (CTTypesetterCreateLine(self.typesetter, CFRangeMake(range.location, range.length)), croppedAttributedText)
