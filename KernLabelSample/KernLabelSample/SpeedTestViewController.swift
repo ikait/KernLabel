@@ -84,6 +84,8 @@ private class TestResultView: UIView {
 
     private func fillRectWhite(context: CGContext?) {
 
+        guard let context = context else { return }
+
         // Clear with white color
         CGContextSetRGBFillColor(context, 1, 1, 1, 1)
         CGContextFillRect(context, self.bounds)

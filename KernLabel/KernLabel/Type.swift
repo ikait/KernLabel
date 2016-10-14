@@ -90,6 +90,8 @@ struct Type {
 
     var kerningSettings = KernLabelKerningMode.Normal.kerningSettings
 
+    var backgroundColor: UIColor? = nil
+
     init(
         attributedText: NSAttributedString,
         rect: CGRect,
@@ -100,6 +102,11 @@ struct Type {
         truncateText: String = "...",
         verticalAlignment: KernLabelVerticalAlignment = .Top) {
         self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(with: kerningSettings)
+
+        // Xcode8 + iOS 10 で、backgroundColor が意図しない形で drawLine に乗ってくるので、attributedText からは外しておく
+        self.backgroundColor = self.attributedText.backgroundColor
+        self.attributedText.removeAttribute(NSBackgroundColorAttributeName, range: NSMakeRange(0, self.attributedText.length))
+
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
         self.fontSize = self.font.pointSize
@@ -309,7 +316,7 @@ struct Type {
         guard let context = context else {
             return
         }
-        guard let backgroundColor = self.attributedText.backgroundColor else {
+        guard let backgroundColor = self.backgroundColor else {
             return
         }
         backgroundColor.setFill()
