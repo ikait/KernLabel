@@ -12,7 +12,7 @@ import UIKit
 private let kDefaultFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
 
 extension NSMutableAttributedString {
-    func kerning(regexp: NSRegularExpression, value: CGFloat = -0.5) -> Self {
+    func kerning(regexp: NSRegularExpression, value: CGFloat = 0 - kCharacterHalfSpace) -> Self {
         regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
             guard let result = result, this = self else { return }
             let (location, length) = (result.range.location, result.range.length)
@@ -30,7 +30,7 @@ extension NSMutableAttributedString {
         return self
     }
 
-    func kerningValueSum(regexp: NSRegularExpression, value: CGFloat = -0.5) -> CGFloat {
+    func kerningValueSum(regexp: NSRegularExpression, value: CGFloat = 0 - kCharacterHalfSpace) -> CGFloat {
         var kernValueSum: CGFloat = 0
         regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
             guard let result = result, this = self else { return }

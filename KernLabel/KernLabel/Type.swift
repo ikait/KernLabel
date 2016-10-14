@@ -22,7 +22,7 @@ private let kCharactersHaveRightSpace = [
 private let kCharactersCanBurasagari = [
     "、", "。", "，", "．"
 ]
-private let kCharacterHaveRightSpaceRatio: CGFloat = 0.4  // 右半分が空白な文字の、fontSize における実質的な幅の割合
+let kCharacterHalfSpace: CGFloat = 0.5  // 右半分が空白な文字の、fontSize における実質的な幅の割合
 let kCGFloatHuge: CGFloat = pow(2, 12)
 
 
