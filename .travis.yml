@@ -7,7 +7,7 @@ env:
   - WORKSPACE="KernLabel.xcworkspace"
   - SCHEME="KernLabelTests"
   - SDK="iphonesimulator10.0"
-  - DESTINATION="OS=9.3,name=iPhone 6s"
+  - DESTINATION="platform=iOS Simulator,name=iPhone 6s"
 before_install:
   - gem update --no-document cocoapods && pod repo update --silent
 script:
