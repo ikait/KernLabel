@@ -12,30 +12,30 @@ import KernLabel
 
 class LayerTableViewController: TableViewController {
 
-    var heights: [NSIndexPath: CGFloat] = [:]
-    var images: [NSIndexPath: CGImage?] = [:]
+    var heights: [IndexPath: CGFloat] = [:]
+    var images: [IndexPath: CGImage?] = [:]
     var numberOfRows = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerClass(LayerTableCell.self, forCellReuseIdentifier: "LayerTableCell")
+        self.tableView.register(LayerTableCell.self, forCellReuseIdentifier: "LayerTableCell")
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.numberOfRows = 400
         self.tableView.reloadData()
     }
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.numberOfRows
     }
 
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let height = self.heights[indexPath] {
             return height
         }
@@ -46,14 +46,14 @@ class LayerTableViewController: TableViewController {
         let height = type.boundingHeight(
             tableView.frame.width - 30, options: [], numberOfLines: 0, context: nil) + 30
         self.heights[indexPath] = height
-        let image = type.createImage(CGRectMake(0, 0, tableView.frame.width - 30, height - 30), options: [])
+        let image = type.createImage(CGRect(x: 0, y: 0, width: tableView.frame.width - 30, height: height - 30), options: [])
         self.images[indexPath] = image
         return height
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("LayerTableCell", forIndexPath: indexPath) as! LayerTableCell
-        cell.titleLayer.frame = CGRectMake(15, 15, cell.frame.width - 30, cell.frame.height - 30)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "LayerTableCell", for: indexPath) as! LayerTableCell
+        cell.titleLayer.frame = CGRect(x: 15, y: 15, width: cell.frame.width - 30, height: cell.frame.height - 30)
         cell.titleLayer.contents = self.images[indexPath]!
         return cell
     }
@@ -63,10 +63,10 @@ class LayerTableViewController: TableViewController {
 private class LayerTableCell: UITableViewCell {
 
     var type: KernTypeString!
-    var indexPath: NSIndexPath?
+    var indexPath: IndexPath?
     var titleLayer = CALayer()
 
-    static let font = UIFont.systemFontOfSize(Device.isPad ? 24 : 16)
+    static let font = UIFont.systemFont(ofSize: Device.isPad ? 24 : 16)
 
     static var paragraphStyle: NSParagraphStyle {
         let style = NSMutableParagraphStyle()
@@ -76,8 +76,8 @@ private class LayerTableCell: UITableViewCell {
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = UIColor.whiteColor()
-        self.opaque = true
+        self.backgroundColor = UIColor.white
+        self.isOpaque = true
         self.contentView.layer.addSublayer(self.titleLayer)
     }
 

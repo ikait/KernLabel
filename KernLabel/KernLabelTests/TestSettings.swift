@@ -20,7 +20,7 @@ final class TestSettings {
     }
 
     static var font: UIFont {
-        return UIFont.systemFontOfSize(24)
+        return UIFont.systemFont(ofSize: 24)
     }
 
     static var attributes: [String : AnyObject] {
@@ -30,7 +30,7 @@ final class TestSettings {
         ]
     }
 
-    static func text(string: String,
+    static func text(_ string: String,
                      attributes: [String : AnyObject] = TestSettings.attributes
         ) -> NSMutableAttributedString {
         return NSMutableAttributedString(string: string, attributes: attributes)

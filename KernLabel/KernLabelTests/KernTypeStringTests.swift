@@ -11,13 +11,13 @@ import FBSnapshotTestCase
 @testable import KernLabel
 
 
-private let kRectHuge = CGRectMake(0, 0, kCGFloatHuge, kCGFloatHuge)
+private let kRectHuge = CGRect(x: 0, y: 0, width: kCGFloatHuge, height: kCGFloatHuge)
 private let kTextKana = [
     "【宮沢賢治】（ポラーノの広場）あのイーハトーヴォのすきとおった風、",
     "夏でも底に冷たさをもつ青いそら、\n",
     "（なつでもそこにつめたさをもつあおいそら）、「」…【】。［（〕《）\n",
     "うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。",
-].joinWithSeparator("")
+].joined(separator: "")
 
 
 class KernTypeStringTests: FBSnapshotTestCase {
@@ -37,7 +37,7 @@ class KernTypeStringTests: FBSnapshotTestCase {
     func testBoundingRectSingleLine() {
         self.string = KernTypeString(string: "あいうえお", attributes: TestSettings.attributes)
         let size = self.string.boundingRectWithSize(
-            kRectHuge.size, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
+            kRectHuge.size, options: .usesLineFragmentOrigin, numberOfLines: 0, context: nil)
         XCTAssertLessThan(size.height,
                           TestSettings.font.pointSize * 2,
                           "Should size to less than two sizes.")
@@ -46,7 +46,7 @@ class KernTypeStringTests: FBSnapshotTestCase {
     func testBoundingRectMultipleLine() {
         self.string = KernTypeString(string: "あいうえお\nabc123", attributes: TestSettings.attributes)
         let size = self.string.boundingRectWithSize(
-            kRectHuge.size, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
+            kRectHuge.size, options: .usesLineFragmentOrigin, numberOfLines: 0, context: nil)
         XCTAssertGreaterThan(size.height,
                              TestSettings.font.pointSize,
                              "Should size to greater than a size.")
@@ -54,27 +54,27 @@ class KernTypeStringTests: FBSnapshotTestCase {
 
     func testBoundingHeightSingleLine() {
         self.string = KernTypeString(string: "あいうえお", attributes: TestSettings.attributes)
-        let height = self.string.boundingHeight(1000, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
+        let height = self.string.boundingHeight(1000, options: .usesLineFragmentOrigin, numberOfLines: 0, context: nil)
         XCTAssertGreaterThan(height, 0)
         XCTAssertLessThan(height, TestSettings.font.pointSize * 2)
     }
 
     func testBoundingHeightMultipleLine() {
         self.string = KernTypeString(string: "あいうえお\nabc", attributes: TestSettings.attributes)
-        let height = self.string.boundingHeight(1000, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
+        let height = self.string.boundingHeight(1000, options: .usesLineFragmentOrigin, numberOfLines: 0, context: nil)
         XCTAssertGreaterThan(height, TestSettings.font.pointSize)
         XCTAssertLessThan(height, TestSettings.font.pointSize * 3)
     }
 
     func testBoundingWidthSingleLine() {
         self.string = KernTypeString(string: "あいうえお", attributes: TestSettings.attributes)
-        let width = self.string.boundingWidth(1000, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
+        let width = self.string.boundingWidth(1000, options: .usesLineFragmentOrigin, numberOfLines: 0, context: nil)
         XCTAssertLessThanOrEqual(width, TestSettings.font.pointSize * 5)
     }
 
     func testBoundingWidthMultipleLine() {
         self.string = KernTypeString(string: "あいうえお\nabc123", attributes: TestSettings.attributes)
-        let width = self.string.boundingWidth(1000, options: .UsesLineFragmentOrigin, numberOfLines: 0, context: nil)
+        let width = self.string.boundingWidth(1000, options: .usesLineFragmentOrigin, numberOfLines: 0, context: nil)
         XCTAssertLessThanOrEqual(width, TestSettings.font.pointSize * 5)
     }
 
@@ -98,19 +98,19 @@ class KernTypeStringTests: FBSnapshotTestCase {
 
     func testDrawWithRectPerformance() {
         self.string = KernTypeString(string: kTextKana, attributes: TestSettings.attributes)
-        let rect = CGRectMake(0, 0, 200, 200)
+        let rect = CGRect(x: 0, y: 0, width: 200, height: 200)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()
         XCTAssertNotNil(context)
-        self.measureBlock {
+        self.measure {
             self.string.drawWithRect(rect, options: [], context: context)
         }
     }
 
     func testCreateImagePerformance() {
         self.string = KernTypeString(string: kTextKana, attributes: TestSettings.attributes)
-        let rect = CGRectMake(0, 0, 500, 500)
-        self.measureBlock {
+        let rect = CGRect(x: 0, y: 0, width: 500, height: 500)
+        self.measure {
             self.string.createImage(rect, options: [])
         }
     }

@@ -12,29 +12,29 @@ import KernLabel
 
 class ViewTableViewController: TableViewController {
 
-    var heights: [NSIndexPath: CGFloat] = [:]
+    var heights: [IndexPath: CGFloat] = [:]
     var numberOfRows = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerClass(ViewTableCell.self, forCellReuseIdentifier: "ViewTableCell")
+        self.tableView.register(ViewTableCell.self, forCellReuseIdentifier: "ViewTableCell")
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.numberOfRows = 400
         self.tableView.reloadData()
     }
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.numberOfRows
     }
 
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let height = self.heights[indexPath] {
             return height
         }
@@ -46,10 +46,10 @@ class ViewTableViewController: TableViewController {
         return height
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("ViewTableCell", forIndexPath: indexPath) as! ViewTableCell
-        cell.titleView.text = Sentences[indexPath.row % Sentences.count]
-        cell.titleView.frame = CGRectMake(15, 15, cell.frame.width - 30, cell.frame.height - 30)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ViewTableCell", for: indexPath) as! ViewTableCell
+        cell.titleView.text = Sentences[(indexPath as NSIndexPath).row % Sentences.count]
+        cell.titleView.frame = CGRect(x: 15, y: 15, width: cell.frame.width - 30, height: cell.frame.height - 30)
         cell.titleView.setNeedsDisplay()
         return cell
     }
@@ -58,7 +58,7 @@ class ViewTableViewController: TableViewController {
 
 private class ViewTableCell: UITableViewCell {
 
-    var titleView = TitleView(frame: CGRectZero)
+    var titleView = TitleView(frame: CGRect.zero)
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -83,22 +83,22 @@ private class TitleView: UIView {
         }
         return [
             NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: UIFont.systemFontOfSize(Device.isPad ? 24 : 16)
+            NSFontAttributeName: UIFont.systemFont(ofSize: Device.isPad ? 24 : 16)
         ]
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = UIColor.clearColor()
+        self.backgroundColor = UIColor.clear
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private override func drawRect(rect: CGRect) {
+    fileprivate override func draw(_ rect: CGRect) {
         let context = UIGraphicsGetCurrentContext()
-        let type = KernTypeString(string: self.text, attributes: self.dynamicType.attributes)
-        type.drawWithRect(rect, options: .UsesLineFragmentOrigin, context: context)
+        let type = KernTypeString(string: self.text, attributes: type(of: self).attributes)
+        type.drawWithRect(rect, options: .usesLineFragmentOrigin, context: context)
     }
 }

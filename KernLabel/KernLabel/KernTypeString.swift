@@ -9,11 +9,11 @@
 import UIKit
 
 
-public class KernTypeString {
+open class KernTypeString {
 
-    public var string: String = ""
-    public var attributes: [String : AnyObject] = [:]
-    public var kerningMode: KernLabelKerningMode = .Normal
+    open var string: String = ""
+    open var attributes: [String : AnyObject] = [:]
+    open var kerningMode: KernLabelKerningMode = .normal
 
     var attributedString: NSAttributedString {
         return NSAttributedString(string: self.string, attributes: self.attributes)
@@ -31,25 +31,25 @@ public class KernTypeString {
     public init() {
     }
 
-    public func boundingHeight(width: CGFloat, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGFloat {
-        return self.boundingRectWithSize(CGSizeMake(width, kCGFloatHuge), options: options, numberOfLines: numberOfLines, context: context).size.height
+    open func boundingHeight(_ width: CGFloat, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGFloat {
+        return self.boundingRectWithSize(CGSize(width: width, height: kCGFloatHuge), options: options, numberOfLines: numberOfLines, context: context).size.height
     }
 
-    public func boundingWidth(height: CGFloat, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGFloat {
-        return self.boundingRectWithSize(CGSizeMake(kCGFloatHuge, height), options: options, numberOfLines: numberOfLines, context: context).size.width
+    open func boundingWidth(_ height: CGFloat, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGFloat {
+        return self.boundingRectWithSize(CGSize(width: kCGFloatHuge, height: height), options: options, numberOfLines: numberOfLines, context: context).size.width
     }
 
-    public func boundingRectWithSize(size: CGSize, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGRect {
-        var type = Type(attributedText: self.attributedString, rect: CGRect(origin: CGPointZero, size: size), kerningSettings: self.kerningMode.kerningSettings, numberOfLines: 0, options: options, truncateText: DefaultLabelSettings.truncateText, verticalAlignment: .Top)
+    open func boundingRectWithSize(_ size: CGSize, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGRect {
+        var type = Type(attributedText: self.attributedString, rect: CGRect(origin: CGPoint.zero, size: size), kerningSettings: self.kerningMode.kerningSettings, numberOfLines: 0, options: options, truncateText: DefaultLabelSettings.truncateText, verticalAlignment: .top)
         type.processWithoutDrawing()
-        return CGRect(origin: CGPointZero, size: type.intrinsicTextSize)
+        return CGRect(origin: CGPoint.zero, size: type.intrinsicTextSize)
     }
 
-    public func size() -> CGSize {
-        return self.boundingRectWithSize(CGSizeMake(kCGFloatHuge, kCGFloatHuge), options: [], numberOfLines: 0, context: nil).size
+    open func size() -> CGSize {
+        return self.boundingRectWithSize(CGSize(width: kCGFloatHuge, height: kCGFloatHuge), options: [], numberOfLines: 0, context: nil).size
     }
 
-    public func drawWithRect(rect: CGRect, options: NSStringDrawingOptions, context: CGContextRef?, padding: UIEdgeInsets = UIEdgeInsetsZero) {
+    open func drawWithRect(_ rect: CGRect, options: NSStringDrawingOptions, context: CGContext?, padding: UIEdgeInsets = UIEdgeInsets.zero) {
         guard let context = context else {
             return
         }
@@ -58,7 +58,7 @@ public class KernTypeString {
         type.drawText(on: context)
     }
 
-    public func createImage(rect: CGRect, options: NSStringDrawingOptions) -> CGImage? {
+    open func createImage(_ rect: CGRect, options: NSStringDrawingOptions) -> CGImage? {
         var type = Type(attributedText: self.attributedString, rect: rect, kerningSettings: self.kerningMode.kerningSettings, numberOfLines: 0, options: options)
         return type.createImage()
     }

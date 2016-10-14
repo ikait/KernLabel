@@ -9,9 +9,9 @@
 import UIKit
 
 
-private let kScreenScale = UIScreen.mainScreen().scale
+private let kScreenScale = UIScreen.main.scale
 private let kCGColorSpace = CGColorSpaceCreateDeviceRGB()
-private let kCGImageAlphaInfo = CGImageAlphaInfo.PremultipliedLast.rawValue
+private let kCGImageAlphaInfo = CGImageAlphaInfo.premultipliedLast.rawValue
 private let kCharactersHaveLeftSpace = [
     "「", "『", "【", "《", "〈", "〔", "｛", "（", "［"
 ]
@@ -77,30 +77,30 @@ struct Type {
     var typesetter: CTTypesetter
 
     /// 実際のテキストサイズ
-    var intrinsicTextSize = CGSizeZero
+    var intrinsicTextSize = CGSize.zero
 
     /// フォントの半分の大きさ
     var fontHalfWidth: CGFloat {
         return self.fontSize / 2
     }
 
-    var padding: UIEdgeInsets = UIEdgeInsetsZero
+    var padding: UIEdgeInsets = UIEdgeInsets.zero
 
-    var verticalAlignment = KernLabelVerticalAlignment.Middle
+    var verticalAlignment = KernLabelVerticalAlignment.middle
 
-    var kerningSettings = KernLabelKerningMode.Normal.kerningSettings
+    var kerningSettings = KernLabelKerningMode.normal.kerningSettings
 
     var backgroundColor: UIColor? = nil
 
     init(
         attributedText: NSAttributedString,
         rect: CGRect,
-        kerningSettings: KerningSettings = KernLabelKerningMode.Normal.kerningSettings,
+        kerningSettings: KerningSettings = KernLabelKerningMode.normal.kerningSettings,
         numberOfLines: Int = 0,
-        options: NSStringDrawingOptions = .UsesLineFragmentOrigin,
-        padding: UIEdgeInsets = UIEdgeInsetsZero,
+        options: NSStringDrawingOptions = .usesLineFragmentOrigin,
+        padding: UIEdgeInsets = UIEdgeInsets.zero,
         truncateText: String = "...",
-        verticalAlignment: KernLabelVerticalAlignment = .Top) {
+        verticalAlignment: KernLabelVerticalAlignment = .top) {
         self.attributedText = NSMutableAttributedString(attributedString: attributedText).kerning(with: kerningSettings)
 
         // Xcode8 + iOS 10 で、backgroundColor が意図しない形で drawLine に乗ってくるので、attributedText からは外しておく
@@ -113,11 +113,11 @@ struct Type {
         self.lineHeight = self.attributedText.lineHeight
         self.width = rect.size.width
         self.height = rect.size.height
-        self.startPosition = CGPointMake(
-            (options.contains(.UsesLineFragmentOrigin) ? rect.origin.x : 0),
-            (options.contains(.UsesLineFragmentOrigin) ? rect.origin.y : 0))
-        self.currentPosition = CGPointZero
-        self.truncateRect = NSString(string: truncateText).boundingRectWithSize(CGSizeMake(kCGFloatHuge, kCGFloatHuge), options: NSStringDrawingOptions(), attributes: attributedText.attributes, context: nil)
+        self.startPosition = CGPoint(
+            x: (options.contains(.usesLineFragmentOrigin) ? rect.origin.x : 0),
+            y: (options.contains(.usesLineFragmentOrigin) ? rect.origin.y : 0))
+        self.currentPosition = CGPoint.zero
+        self.truncateRect = NSString(string: truncateText).boundingRect(with: CGSize(width: kCGFloatHuge, height: kCGFloatHuge), options: NSStringDrawingOptions(), attributes: attributedText.attributes, context: nil)
         self.lines = 0
         self.location = 0
         self.length = self.attributedText.length
@@ -135,16 +135,16 @@ struct Type {
      - parameter context: 描画する context
      - returns: 生成した context
      */
-    private func createContext(context: CGContext? = nil) -> CGContext {
+    fileprivate func createContext(_ context: CGContext? = nil) -> CGContext {
         if let context = context {
             return context
         }
         let contextWidth = Int((self.startPosition.x + self.width + self.padding.left + self.padding.right) * kScreenScale)
         let contextHeight = Int((self.startPosition.y + self.height + self.padding.top + self.padding.bottom) * kScreenScale)
-        let c = CGBitmapContextCreate(
-            nil, contextWidth, contextHeight, 8, 0, kCGColorSpace, kCGImageAlphaInfo)!
-        CGContextTranslateCTM(c, 0, CGFloat(contextHeight))
-        CGContextScaleCTM(c, kScreenScale, 0 - kScreenScale)
+        let c = CGContext(
+            data: nil, width: contextWidth, height: contextHeight, bitsPerComponent: 8, bytesPerRow: 0, space: kCGColorSpace, bitmapInfo: kCGImageAlphaInfo)!
+        c.translateBy(x: 0, y: CGFloat(contextHeight))
+        c.scaleBy(x: kScreenScale, y: 0 - kScreenScale)
         return c
     }
 
@@ -152,14 +152,14 @@ struct Type {
      y の開始位置を移動
      一行目であれば、ascender 分だけを加算する（lineHeight だと descender も含まれるので上が不自然に開いてしまうので）
      */
-    private mutating func goToNextLinePosition() {
+    fileprivate mutating func goToNextLinePosition() {
         self.currentPosition.y += (self.lines == 0) ? self.font.ascender : self.lineHeight
     }
 
     /**
      行頭の文字を取得
      */
-    private func getLineHead() -> String {
+    fileprivate func getLineHead() -> String {
         return self.attributedText.substring(self.location, 1)
     }
 
@@ -169,7 +169,7 @@ struct Type {
      - parameter range: 行末の文字を取得するための、現在行の全体における範囲。
      - returns: (行末の文字, 行末が改行か)
      */
-    private func getLineTail(range: NSRange) -> (String, Bool) {
+    fileprivate func getLineTail(_ range: NSRange) -> (String, Bool) {
         var (tail, returned) = ("", false)
         let location = range.location + range.length
         if location <= self.attributedText.length {
@@ -187,7 +187,7 @@ struct Type {
 
      - parameter lineHead: 行頭文字
      */
-    private func getHeadOffset(lineHead: String? = nil) -> CGFloat {
+    fileprivate func getHeadOffset(_ lineHead: String? = nil) -> CGFloat {
         return kCharactersHaveLeftSpace.contains(lineHead ?? self.getLineHead()) ? self.fontHalfWidth * -1 : 0
     }
 
@@ -197,7 +197,7 @@ struct Type {
      - parameter offset: 行頭オフセット。指定しない場合は `getOffset()` で算出したものを使用する
      - returns: (現在行にはいる文字数, ぶらさがるかどうか)
      */
-    private func getSuggestedLineCount(offset: CGFloat? = nil) -> Int {
+    fileprivate func getSuggestedLineCount(_ offset: CGFloat? = nil) -> Int {
         let lineWidth: CGFloat = self.width - (offset ?? self.getHeadOffset())
         return CTTypesetterSuggestLineBreak(self.typesetter, self.location, Double(lineWidth))
     }
@@ -207,7 +207,7 @@ struct Type {
 
      - returns: 全体における現在行の範囲
      */
-    private func getCurrentLineRange(currentLineCount: Int? = nil) -> NSRange {
+    fileprivate func getCurrentLineRange(_ currentLineCount: Int? = nil) -> NSRange {
         return NSMakeRange(
             self.location,
             currentLineCount ?? self.getSuggestedLineCount(self.getHeadOffset()))
@@ -218,7 +218,7 @@ struct Type {
 
      - returns: 次の行が指定した高さを超えるか or 行数制限を超えるか
      */
-    private func isOverflow(currentLineCount: Int? = nil) -> Bool {
+    fileprivate func isOverflow(_ currentLineCount: Int? = nil) -> Bool {
         let surplus = self.location + (currentLineCount ?? self.getSuggestedLineCount()) < self.length
         let heightShortage = self.currentPosition.y + self.lineHeight > self.height
         let exceedNumberOfLines = self.numberOfLines == 0 ? false : self.lines + 1 >= self.numberOfLines
@@ -231,7 +231,7 @@ struct Type {
      - parameter: 行頭オフセット
      - returns: truncate される行の挿入可能な文字数 (truncate 文字分の幅を含めない)
      */
-    private func getTruncateLineCount(offset: CGFloat? = nil) -> Int {
+    fileprivate func getTruncateLineCount(_ offset: CGFloat? = nil) -> Int {
         return CTTypesetterSuggestLineBreak(
             self.typesetter,
             self.location,
@@ -241,7 +241,7 @@ struct Type {
     /**
      truncate がスタートする位置
      */
-    private func getTruncateStartLocation(truncateLineCount: Int? = nil) -> Int {
+    fileprivate func getTruncateStartLocation(_ truncateLineCount: Int? = nil) -> Int {
         return (truncateLineCount ?? self.getTruncateLineCount()) + self.location
     }
 
@@ -250,10 +250,10 @@ struct Type {
      - parameter from: CTLine を取得する範囲
      - returns: CTLine, NSMutableAttributedString
      */
-    private func getCTLine(from attributedText: NSMutableAttributedString, range: NSRange) -> (CTLine, NSMutableAttributedString) {
+    fileprivate func getCTLine(from attributedText: NSMutableAttributedString, range: NSRange) -> (CTLine, NSMutableAttributedString) {
         var croppedAttributedText = attributedText.mutableAttributedString(from: range)
         let tailCharacter = croppedAttributedText.string.first
-        if k他約物.containsString(tailCharacter) {
+        if k他約物.contains(tailCharacter) {
             croppedAttributedText = croppedAttributedText.clearKerning(with: NSMakeRange(croppedAttributedText.length - 1, 1))
             return (CTLineCreateWithAttributedString(croppedAttributedText), croppedAttributedText)
         } else {
@@ -266,7 +266,7 @@ struct Type {
      - parameter from: ctline
      - parameter lineWidth: 行の長さ
      */
-    private func getCTLineJustified(from ctline: CTLine, lineWidth: CGFloat) -> CTLine? {
+    fileprivate func getCTLineJustified(from ctline: CTLine, lineWidth: CGFloat) -> CTLine? {
         return CTLineCreateJustifiedLine(ctline, 1, Double(lineWidth))
     }
 
@@ -278,24 +278,24 @@ struct Type {
         - headOffset: 行頭オフセット
      - returns: (描画する行の実質的な幅(長さ), xオフセット, yオフセット, ctline)
      */
-    private func getLineSetting(range: NSRange, headOffset: CGFloat) -> (CGFloat, CGFloat, CGFloat, CTLine) {
+    fileprivate func getLineSetting(_ range: NSRange, headOffset: CGFloat) -> (CGFloat, CGFloat, CGFloat, CTLine) {
 
         // 行を生成
         var (ctline, attributedText) = self.getCTLine(from: self.attributedText, range: range)
 
         // 実質の文字の幅を取得
-        let alignment = attributedText.textAlignment ?? .Left
+        let alignment = attributedText.textAlignment ?? .left
         var lineWidth = self.width
-        let lineBounds = CGRectIntegral(CTLineGetBoundsWithOptions(ctline, [.UseGlyphPathBounds]))
+        let lineBounds = CTLineGetBoundsWithOptions(ctline, [.useGlyphPathBounds]).integral
         let (realLineOffsetX, realLineWidth) = (lineBounds.origin.x, lineBounds.width)
 
         // 描画開始位置を設定。offsetで行頭約物の位置を修正
         let offsetX: CGFloat = {
             var x = self.startPosition.x + self.currentPosition.x + self.padding.left
             switch alignment {
-                case .Center: x += (self.width - realLineWidth) / 2 - realLineOffsetX
-                case .Right:  x += self.width - realLineWidth - realLineOffsetX
-                case .Justified:
+                case .center: x += (self.width - realLineWidth) / 2 - realLineOffsetX
+                case .right:  x += self.width - realLineWidth - realLineOffsetX
+                case .justified:
                     x += headOffset == 0 ? 0 : -realLineOffsetX
                     lineWidth = lineWidth + realLineOffsetX
                     let kernValueSum = abs(attributedText.kerningValueSum(with: self.kerningSettings))
@@ -312,7 +312,7 @@ struct Type {
         return (realLineWidth, offsetX, offsetY, ctline)
     }
 
-    private func fillBackgroundColor(rect: CGRect, on context: CGContext?) {
+    fileprivate func fillBackgroundColor(_ rect: CGRect, on context: CGContext?) {
         guard let context = context else {
             return
         }
@@ -320,7 +320,7 @@ struct Type {
             return
         }
         backgroundColor.setFill()
-        CGContextFillRect(context, rect)
+        context.fill(rect)
     }
 
     /**
@@ -330,21 +330,21 @@ struct Type {
         - lines: (typographicWidth, offsetX, offsetY, ctline)
         - context: 描画する context. 与えないとスキップする
      */
-    private func drawLines(lines: [(CGFloat, CGFloat, CGFloat, CTLine)], on context: CGContext?) {
+    fileprivate func drawLines(_ lines: [(CGFloat, CGFloat, CGFloat, CTLine)], on context: CGContext?) {
         guard let context = context else {
             return
         }
         let y = self.getDrawOffsetY()
         self.fillBackgroundColor(
-            CGRectMake(
-                self.startPosition.x, self.startPosition.y + y,
-                self.intrinsicTextSize.width + self.padding.left + self.padding.right,
-                self.intrinsicTextSize.height + self.padding.top + self.padding.bottom
+            CGRect(
+                x: self.startPosition.x, y: self.startPosition.y + y,
+                width: self.intrinsicTextSize.width + self.padding.left + self.padding.right,
+                height: self.intrinsicTextSize.height + self.padding.top + self.padding.bottom
             ),
             on: context)
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1)) // 反転を戻す
+        context.textMatrix = CGAffineTransform(scaleX: 1, y: -1) // 反転を戻す
         lines.forEach { _, offsetX, offsetY, ctline in
-            CGContextSetTextPosition(context, offsetX, offsetY + y)
+            context.textPosition = CGPoint(x: offsetX, y: offsetY + y)
             CTLineDraw(ctline, context)
         }
     }
@@ -354,7 +354,7 @@ struct Type {
 
      - parameter: 現在行の文字数 (これを `location` に加えて次の行に進む)
      */
-    private mutating func goToNextLine(count: Int) {
+    fileprivate mutating func goToNextLine(_ count: Int) {
         self.location += count
         self.lines += 1
     }
@@ -365,13 +365,13 @@ struct Type {
      - returns: 描画する行の Y 座標のオフセット
      - precondition: `instrinsicTextSize` が計算済みであること
      */
-    private func getDrawOffsetY() -> CGFloat {
+    fileprivate func getDrawOffsetY() -> CGFloat {
         switch self.verticalAlignment {
-        case .Top:
+        case .top:
             return 0
-        case .Middle:    // ↓ Int で切り捨ててピクセルまたぎでボヤけないようにする
+        case .middle:    // ↓ Int で切り捨ててピクセルまたぎでボヤけないようにする
             return CGFloat(Int((self.height - self.intrinsicTextSize.height) / 2))
-        case .Bottom:
+        case .bottom:
             return CGFloat(Int(self.height - self.intrinsicTextSize.height))
         }
     }
@@ -384,7 +384,8 @@ struct Type {
      - parameter needsDrawing: 描画をするかどうか
      - returns: 描画された context
      */
-    private mutating func process(canvasContext: CGContext? = nil, needsDrawing: Bool = true) -> CGContext? {
+    @discardableResult
+    fileprivate mutating func process(_ canvasContext: CGContext? = nil, needsDrawing: Bool = true) -> CGContext? {
 
         if self.attributedText.string.isEmpty {
             return nil
@@ -405,13 +406,13 @@ struct Type {
             let overflow = self.isOverflow(currentLineCount)
 
             // overflow していて、 truncate する必要があるとき
-            if overflow && self.options.contains(.TruncatesLastVisibleLine) {
+            if overflow && self.options.contains(.truncatesLastVisibleLine) {
                 let truncateLineCount = self.getTruncateLineCount(offset)
                 let truncateStartLocation = self.getTruncateStartLocation(truncateLineCount)
-                self.attributedText.deleteCharactersInRange(
-                    NSMakeRange(truncateStartLocation, self.attributedText.length - truncateStartLocation))
-                self.attributedText.replaceCharactersInRange(
-                    NSMakeRange(truncateStartLocation, 0), withString: self.truncateText)
+                self.attributedText.deleteCharacters(
+                    in: NSMakeRange(truncateStartLocation, self.attributedText.length - truncateStartLocation))
+                self.attributedText.replaceCharacters(
+                    in: NSMakeRange(truncateStartLocation, 0), with: self.truncateText)
                 range = NSMakeRange(self.location, truncateLineCount + self.truncateText.length)
                 self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
             }
@@ -430,9 +431,9 @@ struct Type {
         }
 
         // 文字の大きさを補足
-        self.intrinsicTextSize = CGSizeMake(
-            lines.maxElement { $0.0 < $1.0 }?.0 ?? self.width,  // 最も大きい typographicWidth
-            CGFloat(Int(self.currentPosition.y + self.font.ascender - self.font.capHeight)))
+        self.intrinsicTextSize = CGSize(
+            width: lines.max { $0.0 < $1.0 }?.0 ?? self.width,  // 最も大きい typographicWidth
+            height: CGFloat(Int(self.currentPosition.y + self.font.ascender - self.font.capHeight)))
 
         // 全ての行を描画
         self.drawLines(lines, on: context)
@@ -445,6 +446,7 @@ struct Type {
 
      - parameter on: 文字が描画される context
      */
+    @discardableResult
     mutating func drawText(on context: CGContext) {
         self.process(context)
     }
@@ -456,8 +458,8 @@ struct Type {
         guard let typedContext = self.process() else {
             return nil
         }
-        CGContextTranslateCTM(typedContext, 0, self.height)
-        return CGBitmapContextCreateImage(typedContext)
+        typedContext.translateBy(x: 0, y: self.height)
+        return typedContext.makeImage()
     }
 
     /**
@@ -465,6 +467,7 @@ struct Type {
 
      - seealso: `process(:_, needsDrawing:_)`
      */
+    @discardableResult
     mutating func processWithoutDrawing() {
         self.process(nil, needsDrawing: false)
     }

@@ -16,7 +16,7 @@ private let kTextKana = [
     "夏でも底に冷たさをもつ青いそら、\n",
     "（なつでもそこにつめたさをもつあおいそら）、「」…【】。［（〕《）\n",
     "うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。",
-].joinWithSeparator("")
+].joined(separator: "")
 
 
 class KernLabelTests: FBSnapshotTestCase {
@@ -26,7 +26,7 @@ class KernLabelTests: FBSnapshotTestCase {
     override func setUp() {
         super.setUp()
         self.label = KernLabel()
-        self.label.bounds = CGRectMake(0, 0, 400, 200)
+        self.label.bounds = CGRect(x: 0, y: 0, width: 400, height: 200)
         self.recordMode = false
     }
 
@@ -38,30 +38,30 @@ class KernLabelTests: FBSnapshotTestCase {
     // MARK: - textAlignment: Left
 
     func testDrawLeftKerningMinimum() {
-        self.label.textAlignment = .Left
+        self.label.textAlignment = .left
         self.label.text = kTextKana
-        self.label.kerningMode = .Minimum
+        self.label.kerningMode = .minimum
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawLeftKerningNormal() {
-        self.label.textAlignment = .Left
+        self.label.textAlignment = .left
         self.label.text = kTextKana
-        self.label.kerningMode = .Normal
+        self.label.kerningMode = .normal
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawLeftKerningAll() {
-        self.label.textAlignment = .Left
+        self.label.textAlignment = .left
         self.label.text = kTextKana
-        self.label.kerningMode = .All
+        self.label.kerningMode = .all
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawLeftKerningNormalTruncate() {
-        self.label.bounds = CGRectMake(0, 0, 200, 100)
-        self.label.kerningMode = .Normal
-        self.label.textAlignment = .Left
+        self.label.bounds = CGRect(x: 0, y: 0, width: 200, height: 100)
+        self.label.kerningMode = .normal
+        self.label.textAlignment = .left
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
@@ -69,30 +69,30 @@ class KernLabelTests: FBSnapshotTestCase {
     // MARK: - textAlignment: Center
 
     func testDrawCenterKerningMinimum() {
-        self.label.textAlignment = .Center
-        self.label.kerningMode = .Minimum
+        self.label.textAlignment = .center
+        self.label.kerningMode = .minimum
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawCenterKerningNormal() {
-        self.label.textAlignment = .Center
-        self.label.kerningMode = .Normal
+        self.label.textAlignment = .center
+        self.label.kerningMode = .normal
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawCenterKerningAll() {
-        self.label.textAlignment = .Center
-        self.label.kerningMode = .All
+        self.label.textAlignment = .center
+        self.label.kerningMode = .all
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawCenterKerningNormalTruncate() {
-        self.label.bounds = CGRectMake(0, 0, 200, 100)
-        self.label.kerningMode = .Normal
-        self.label.textAlignment = .Center
+        self.label.bounds = CGRect(x: 0, y: 0, width: 200, height: 100)
+        self.label.kerningMode = .normal
+        self.label.textAlignment = .center
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
@@ -100,30 +100,30 @@ class KernLabelTests: FBSnapshotTestCase {
     // MARK: - textAlignment: Right
 
     func testDrawRightKerningMinimum() {
-        self.label.textAlignment = .Right
-        self.label.kerningMode = .Minimum
+        self.label.textAlignment = .right
+        self.label.kerningMode = .minimum
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawRightKerningNormal() {
-        self.label.textAlignment = .Right
-        self.label.kerningMode = .Normal
+        self.label.textAlignment = .right
+        self.label.kerningMode = .normal
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawRightKerningAll() {
-        self.label.textAlignment = .Right
-        self.label.kerningMode = .All
+        self.label.textAlignment = .right
+        self.label.kerningMode = .all
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawRightKerningNormalTruncate() {
-        self.label.bounds = CGRectMake(0, 0, 200, 100)
-        self.label.kerningMode = .Normal
-        self.label.textAlignment = .Right
+        self.label.bounds = CGRect(x: 0, y: 0, width: 200, height: 100)
+        self.label.kerningMode = .normal
+        self.label.textAlignment = .right
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
@@ -131,30 +131,30 @@ class KernLabelTests: FBSnapshotTestCase {
     // MARK: - textAlignment: Justified
 
     func testDrawJustifiedKerningMinimum() {
-        self.label.textAlignment = .Justified
-        self.label.kerningMode = .Minimum
+        self.label.textAlignment = .justified
+        self.label.kerningMode = .minimum
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawJustifiedKerningNormal() {
-        self.label.textAlignment = .Justified
-        self.label.kerningMode = .Normal
+        self.label.textAlignment = .justified
+        self.label.kerningMode = .normal
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawJustifiedKerningAll() {
-        self.label.textAlignment = .Justified
-        self.label.kerningMode = .All
+        self.label.textAlignment = .justified
+        self.label.kerningMode = .all
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }
 
     func testDrawJustifiedKerningNormalTruncate() {
-        self.label.bounds = CGRectMake(0, 0, 200, 100)
-        self.label.kerningMode = .Normal
-        self.label.textAlignment = .Justified
+        self.label.bounds = CGRect(x: 0, y: 0, width: 200, height: 100)
+        self.label.kerningMode = .normal
+        self.label.textAlignment = .justified
         self.label.text = kTextKana
         FBSnapshotVerifyLayer(self.label.layer)
     }

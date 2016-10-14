@@ -9,14 +9,16 @@
 import UIKit
 
 
-private let kDefaultFont = UIFont.systemFontOfSize(UIFont.systemFontSize())
+private let kDefaultFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
 
 extension NSMutableAttributedString {
-    func kerning(regexp: NSRegularExpression, value: CGFloat = 0 - kCharacterHalfSpace) -> Self {
-        regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
-            guard let result = result, this = self else { return }
+
+    @discardableResult
+    func kerning(_ regexp: NSRegularExpression, value: CGFloat = 0 - kCharacterHalfSpace) -> Self {
+        regexp.enumerateMatches(in: self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
+            guard let result = result, let this = self else { return }
             let (location, length) = (result.range.location, result.range.length)
-            let curAttrs = this.attributesAtIndex(location, effectiveRange: nil)
+            let curAttrs = this.attributes(at: location, effectiveRange: nil)
             let font = curAttrs[NSFontAttributeName] as? UIFont ?? kDefaultFont
             this.addAttribute(NSKernAttributeName, value: font.pointSize * value, range: NSMakeRange(location, length))
         }
@@ -30,12 +32,12 @@ extension NSMutableAttributedString {
         return self
     }
 
-    func kerningValueSum(regexp: NSRegularExpression, value: CGFloat = 0 - kCharacterHalfSpace) -> CGFloat {
+    func kerningValueSum(_ regexp: NSRegularExpression, value: CGFloat = 0 - kCharacterHalfSpace) -> CGFloat {
         var kernValueSum: CGFloat = 0
-        regexp.enumerateMatchesInString(self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
-            guard let result = result, this = self else { return }
+        regexp.enumerateMatches(in: self.string, options: [], range: NSMakeRange(0, self.length)) { [weak self] (result, _, _) in
+            guard let result = result, let this = self else { return }
             let (location, _) = (result.range.location, result.range.length)
-            let curAttrs = this.attributesAtIndex(location, effectiveRange: nil)
+            let curAttrs = this.attributes(at: location, effectiveRange: nil)
             let font = curAttrs[NSFontAttributeName] as? UIFont ?? kDefaultFont
             kernValueSum += font.pointSize * value
         }
@@ -56,14 +58,11 @@ extension NSMutableAttributedString {
         return self
     }
 
-    override var attributes: [String : AnyObject]? {
+    override var attributes: [String : Any] {
         get {
             return super.attributes
         }
         set {
-            guard let newValue = newValue else {
-                return
-            }
             self.addAttributes(newValue, range: NSMakeRange(0, self.length))
         }
     }
