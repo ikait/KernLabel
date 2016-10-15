@@ -11,8 +11,7 @@ import UIKit
 
 extension NSAttributedString {
     var lineHeight: CGFloat {
-        guard let attributes = self.attributes,
-            let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+        guard let paragraphStyle = self.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
                 return self.font.lineHeight
         }
         let lineHeightMultiple = paragraphStyle.lineHeightMultiple
@@ -20,76 +19,76 @@ extension NSAttributedString {
     }
 
     var textAlignment: NSTextAlignment? {
-        guard let attributes = self.attributes,
-            let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+        guard let paragraphStyle = self.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
             return nil
         }
         return paragraphStyle.alignment
     }
 
     var backgroundColor: UIColor? {
-        guard let attributes = self.attributes else {
-            return nil
-        }
-        return attributes[NSBackgroundColorAttributeName] as? UIColor
+        return self.attributes[NSBackgroundColorAttributeName] as? UIColor
     }
 
-    var attributes: [String : AnyObject]? {
-        return self.length != 0 ? self.attributesAtIndex(0, effectiveRange: nil) : nil
+    var attributes: [String : Any] {
+        if self.length != 0 {
+            return self.attributes(at: 0, effectiveRange: nil)
+        } else {
+            return [:]
+        }
     }
 
     var font: UIFont {
-        if let attributes = self.attributes, font = attributes[NSFontAttributeName] as? UIFont {
+        if let font = self.attributes[NSFontAttributeName] as? UIFont {
             return font
         }
-        return UIFont.systemFontOfSize(UIFont.systemFontSize())
+        return UIFont.systemFont(ofSize: UIFont.systemFontSize)
     }
 
-    func substring(range: NSRange) -> String {
-        return self.attributedSubstringFromRange(range).string
+    func substring(_ range: NSRange) -> String {
+        return self.attributedSubstring(from: range).string
     }
 
-    func substring(location: Int, _ length: Int) -> String {
+    func substring(_ location: Int, _ length: Int) -> String {
         return self.substring(NSMakeRange(location, length))
     }
 
-    func getFont(location: Int) -> UIFont? {
-        if let font = self.attributesAtIndex(location, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+    func getFont(_ location: Int) -> UIFont? {
+        if let font = self.attributes(at: location, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
             return font
         }
         return nil
     }
 
-    func getLineHeight(location: Int) -> CGFloat {
-        guard let paragraphStyle = self.attributesAtIndex(location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle, font = self.getFont(location) else {
+    func getLineHeight(_ location: Int) -> CGFloat {
+        guard let paragraphStyle = self.attributes(at: location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle, let font = self.getFont(location) else {
                 return self.font.lineHeight
         }
         let lineHeightMultiple = paragraphStyle.lineHeightMultiple
         return font.lineHeight * ((lineHeightMultiple.isZero) ? 1 : lineHeightMultiple)
     }
 
-    func getTextAlignment(location: Int) -> NSTextAlignment? {
-        guard let paragraphStyle = self.attributesAtIndex(location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+    func getTextAlignment(_ location: Int) -> NSTextAlignment? {
+        guard let paragraphStyle = self.attributes(at: location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
             return nil
         }
         return paragraphStyle.alignment
     }
 
     func mutableAttributedString(from range: NSRange) -> NSMutableAttributedString {
-        return NSMutableAttributedString(attributedString: self.attributedSubstringFromRange(range))
+        return NSMutableAttributedString(attributedString: self.attributedSubstring(from: range))
     }
 
-    func boundingWidth(options options: NSStringDrawingOptions, context: NSStringDrawingContext?) -> CGFloat {
+    func boundingWidth(options: NSStringDrawingOptions, context: NSStringDrawingContext?) -> CGFloat {
         return self.boundingRect(options: options, context: context).size.width
     }
 
-    func boundingRect(options options: NSStringDrawingOptions, context: NSStringDrawingContext?) -> CGRect {
-        return self.boundingRectWithSize(CGSizeMake(kCGFloatHuge, kCGFloatHuge), options: options, context: context)
+    func boundingRect(options: NSStringDrawingOptions, context: NSStringDrawingContext?) -> CGRect {
+        return self.boundingRect(with: CGSize(width: kCGFloatHuge, height: kCGFloatHuge), options: options, context: context)
     }
 
-    func boundingRectWithSize(size: CGSize, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGRect {
-        let boundingRect = self.boundingRectWithSize(
-            CGSizeMake(size.width, self.lineHeight * CGFloat(numberOfLines)), options: options, context: context)
+    func boundingRectWithSize(_ size: CGSize, options: NSStringDrawingOptions, numberOfLines: Int, context: NSStringDrawingContext?) -> CGRect {
+        let boundingRect = self.boundingRect(
+            with: CGSize(width: size.width, height: self.lineHeight * CGFloat(numberOfLines)), options: options, context: context)
         return boundingRect
     }
 }

@@ -11,16 +11,16 @@ import Foundation
 
 final class PerformanceCheck {
 
-    static func time(sample: Int = 1000, target: (() -> Void)) -> NSTimeInterval {
-        var opt = NSTimeInterval()
+    static func time(_ sample: Int = 1000, target: (() -> Void)) -> TimeInterval {
+        var opt = TimeInterval()
         var ms = 0.0
-        let q = dispatch_queue_create("\(target)", DISPATCH_QUEUE_SERIAL)
-        dispatch_sync(q) {
-            let st = NSDate()
+        let q = DispatchQueue(label: "\(target)", attributes: [])
+        q.sync {
+            let st = Date()
             [Int](0..<sample).forEach { _ in
                 target()
             }
-            opt = NSDate().timeIntervalSinceDate(st)
+            opt = Date().timeIntervalSince(st)
             ms = opt * 1000 / Double(sample)
             print("\(ms) ms")
         }

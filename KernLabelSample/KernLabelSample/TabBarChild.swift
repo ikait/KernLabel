@@ -15,7 +15,7 @@ protocol TabBarChild: class {
 
 extension TabBarChild where Self: UIViewController {
 
-    func setNavigationBar(title: String? = nil,
+    func setNavigationBar(_ title: String? = nil,
                           leftBarButtonItems:[UIBarButtonItem]? = nil,
                           rightBarButtonItems: [UIBarButtonItem]? = nil) {
         self.tabBarController?.navigationItem.leftBarButtonItems = leftBarButtonItems

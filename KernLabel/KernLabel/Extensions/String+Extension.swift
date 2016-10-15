@@ -14,14 +14,14 @@ extension String {
     }
 
     var isAlphanumeric: Bool {
-        return self.rangeOfString("^[a-zA-Z0-9]+$", options: .RegularExpressionSearch) != nil
+        return self.range(of: "^[a-zA-Z0-9]+$", options: .regularExpression) != nil
     }
 
     var first: String {
-        return self.isEmpty ? "" : String(self.characters.first!) ?? ""
+        return self.isEmpty ? "" : String(self.characters.first!) 
     }
 
     var last: String {
-        return self.isEmpty ? "" : String(self.characters.last!) ?? ""
+        return self.isEmpty ? "" : String(self.characters.last!)
     }
 }

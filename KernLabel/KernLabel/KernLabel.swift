@@ -10,24 +10,24 @@ import UIKit
 
 
 final class DefaultLabelSettings {
-    static let font = UIFont.systemFontOfSize(17)
-    static let textColor = UIColor.blackColor()
-    static let textAlignment = NSTextAlignment.Left
-    static let lineBreakMode = NSLineBreakMode.ByTruncatingTail
+    static let font = UIFont.systemFont(ofSize: 17)
+    static let textColor = UIColor.black
+    static let textAlignment = NSTextAlignment.left
+    static let lineBreakMode = NSLineBreakMode.byTruncatingTail
     static let enabled = true
     static let adjustsFontSizeToFitWidth = false
     static let allowsDefaultTighteningForTruncation = false
-    static let baselineAdjustment = UIBaselineAdjustment.AlignBaselines
+    static let baselineAdjustment = UIBaselineAdjustment.alignBaselines
     static let minimumScaleFactor: CGFloat = 0
     static let numberOfLines: Int = 0
     static let highlightedTextColor: UIColor? = nil
     static let highlighted = false
     static let shadowColor: UIColor? = nil
-    static let shadowOffset = CGSizeMake(0, -1)
+    static let shadowOffset = CGSize(width: 0, height: -1)
     static let preferredMaxLayoutWidth: CGFloat = 0
     static let truncateText = "..."
-    static let kerningMode = KernLabelKerningMode.Normal
-    static let verticalAlignment = KernLabelVerticalAlignment.Middle
+    static let kerningMode = KernLabelKerningMode.normal
+    static let verticalAlignment = KernLabelVerticalAlignment.middle
 }
 
 
@@ -37,26 +37,26 @@ final class DefaultLabelSettings {
 public enum KernLabelKerningMode: Int {
 
     /// 行頭以外のカーニングを行わない
-    case None
+    case none
 
     /// 終わり括弧と始め括弧の間などの一部のみをカーニング
-    case Minimum
+    case minimum
 
     /// 括弧全てをカーニング
-    case Normal
+    case normal
 
     /// 括弧全てと句読点をカーニング
-    case All
+    case all
 
     internal var kerningSettings: KerningSettings {
         switch self {
-        case .None:
+        case .none:
             return []
-        case .Minimum:
+        case .minimum:
             return kKernLabelKerningSettingsMinimum
-        case .Normal:
+        case .normal:
             return kKernLabelKerningSettingsNormal
-        case .All:
+        case .all:
             return kKernLabelKerningSettingsAll
         }
     }
@@ -77,13 +77,13 @@ private let kKernLabelKerningSettingsMinimum: KerningSettings = [
         pattern: "([\(k括弧閉)\(k句読点)])\n" + "|" +
                  "([\(k括弧閉)\(k句読点)])$" + "|" +
                  "([\(k括弧閉)\(k句読点)][\(k他約物)]?)(?=[\(k括弧開)])",
-        options: []), -0.5)]
+        options: []), 0 - kCharacterHalfSpace)]
 private let kKernLabelKerningSettingsNormal: KerningSettings = [
     (try! NSRegularExpression(
         pattern: "([\(k句読点)])\n" + "|" +
                  "([\(k句読点)])$" + "|" +
                  "([\(k括弧閉)])|(.)(?=[\(k括弧開)])",
-        options: []), -0.5),
+        options: []), 0 - kCharacterHalfSpace),
     (try! NSRegularExpression(
         pattern: "([\(k括弧閉)])(?=[\(k括弧開)])", options: []), -1)
 ]
@@ -91,7 +91,7 @@ private let kKernLabelKerningSettingsAll: KerningSettings = [
     (try! NSRegularExpression(
         pattern: "([\(k括弧閉)\(k句読点)])" + "|" +
                  "(.)(?=[\(k括弧開)])",
-        options: []), -0.5),
+        options: []), 0 - kCharacterHalfSpace),
     (try! NSRegularExpression(
         pattern: "([\(k括弧閉)\(k句読点)])(?=[\(k括弧開)])", options: []), -1)
 ]
@@ -101,9 +101,9 @@ private let kKernLabelKerningSettingsAll: KerningSettings = [
  縦方向の位置
  */
 public enum KernLabelVerticalAlignment: Int {
-    case Top
-    case Middle
-    case Bottom
+    case top
+    case middle
+    case bottom
 }
 
 
@@ -113,7 +113,7 @@ public enum KernLabelVerticalAlignment: Int {
  [UILabel Class Reference - Apple Developer]: https://developer.apple.com/library/ios/documentation/UIKit/Reference/UILabel_Class/#//apple_ref/occ/instp/UILabel "UILabel Class Reference - Apple Developer"
  - seealso: [UILabel Class Reference - Apple Developer]
  */
-public class KernLabel: UIView {
+open class KernLabel: UIView {
 
 
     // MARK: - Accessing the Text Attributes
@@ -121,7 +121,7 @@ public class KernLabel: UIView {
     /**
      The text displayed by the label.
      */
-    public var text: String? {
+    open var text: String? {
         get {
             return self.attributedText?.string
         }
@@ -146,9 +146,9 @@ public class KernLabel: UIView {
     /**
      The styled text displayed by the label.
      */
-    public var attributedText: NSAttributedString? = nil {
+    open var attributedText: NSAttributedString? = nil {
         didSet {
-            self.setNeedsDisplayInRect(self.bounds)
+            self.setNeedsDisplay(self.bounds)
             self.setNeedsUpdateConstraints()
         }
     }
@@ -156,11 +156,10 @@ public class KernLabel: UIView {
     /**
      The font of the text.
      */
-    public var font: UIFont {
+    open var font: UIFont {
         get {
             if let attributedText = self.attributedText,
-                let attributes = attributedText.attributes,
-                let font = attributes[NSFontAttributeName] as? UIFont {
+                let font = attributedText.attributes[NSFontAttributeName] as? UIFont {
                 return font
             }
             return self._font
@@ -182,11 +181,10 @@ public class KernLabel: UIView {
     /**
      The color of the text.
      */
-    public var textColor: UIColor {
+    open var textColor: UIColor {
         get {
             if let attributedText = self.attributedText,
-                let attributes = attributedText.attributes,
-                let color = attributes[NSForegroundColorAttributeName] as? UIColor {
+                let color = attributedText.attributes[NSForegroundColorAttributeName] as? UIColor {
                 return color
             }
             return self._textColor
@@ -212,11 +210,10 @@ public class KernLabel: UIView {
      * `.Center`
      * `.Right`
      */
-    public var textAlignment: NSTextAlignment {
+    open var textAlignment: NSTextAlignment {
         get {
             if let attributedText = self.attributedText,
-                let attributes = attributedText.attributes,
-                let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
+                let paragraphStyle = attributedText.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
                 return paragraphStyle.alignment
             }
             return self._textAlignment
@@ -237,7 +234,7 @@ public class KernLabel: UIView {
     }
     var _textAlignment = DefaultLabelSettings.textAlignment
 
-    public var verticalAlignment = DefaultLabelSettings.verticalAlignment
+    open var verticalAlignment = DefaultLabelSettings.verticalAlignment
 
 
     /**
@@ -245,11 +242,10 @@ public class KernLabel: UIView {
 
      - seealso: adjustsFontSizeToFitWidth
      */
-    public var lineBreakMode: NSLineBreakMode {
+    open var lineBreakMode: NSLineBreakMode {
         get {
             if let attributedText = self.attributedText,
-                let attributes = attributedText.attributes,
-                let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
+                let paragraphStyle = attributedText.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
                 return paragraphStyle.lineBreakMode
             }
             return self._lineBreakMode
@@ -274,17 +270,16 @@ public class KernLabel: UIView {
     /**
      The enabled state to use when drawing the label’s text.
      */
-    public var enabled = DefaultLabelSettings.enabled
+    open var enabled = DefaultLabelSettings.enabled
 
 
     // MARK: - Sizing
 
     @available(iOS 9.0, *)
-    public var allowsDefaultTighteningForTruncation: Bool {
+    open var allowsDefaultTighteningForTruncation: Bool {
         get {
             if let attributedText = self.attributedText,
-                let attributes = attributedText.attributes,
-                let paragraphStyle = attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
+                let paragraphStyle = attributedText.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
                 return paragraphStyle.allowsDefaultTighteningForTruncation
             }
             return self._allowsDefaultTighteningForTruncation
@@ -304,50 +299,50 @@ public class KernLabel: UIView {
     }
     var _allowsDefaultTighteningForTruncation = DefaultLabelSettings.allowsDefaultTighteningForTruncation
 
-    public var adjustsFontSizeToFitWidth = DefaultLabelSettings.adjustsFontSizeToFitWidth
-    public var baselineAdjustment = DefaultLabelSettings.baselineAdjustment
-    public var minimumScaleFactor: CGFloat = DefaultLabelSettings.minimumScaleFactor
-    public var numberOfLines: Int = DefaultLabelSettings.numberOfLines
-    public var kerningMode: KernLabelKerningMode = DefaultLabelSettings.kerningMode
+    open var adjustsFontSizeToFitWidth = DefaultLabelSettings.adjustsFontSizeToFitWidth
+    open var baselineAdjustment = DefaultLabelSettings.baselineAdjustment
+    open var minimumScaleFactor: CGFloat = DefaultLabelSettings.minimumScaleFactor
+    open var numberOfLines: Int = DefaultLabelSettings.numberOfLines
+    open var kerningMode: KernLabelKerningMode = DefaultLabelSettings.kerningMode
 
 
     // MARK: - Managing Highlight Values
 
-    public var highlightedTextColor: UIColor? = DefaultLabelSettings.highlightedTextColor
-    public var highlighted = DefaultLabelSettings.highlighted
+    open var highlightedTextColor: UIColor? = DefaultLabelSettings.highlightedTextColor
+    open var highlighted = DefaultLabelSettings.highlighted
 
 
     // MARK: - Drawing a Shadow
 
-    public var shadowColor: UIColor? = DefaultLabelSettings.shadowColor
-    public var shadowOffset = DefaultLabelSettings.shadowOffset
-    public var preferredMaxLayoutWidth: CGFloat = DefaultLabelSettings.preferredMaxLayoutWidth
-    public var truncateText = DefaultLabelSettings.truncateText
+    open var shadowColor: UIColor? = DefaultLabelSettings.shadowColor
+    open var shadowOffset = DefaultLabelSettings.shadowOffset
+    open var preferredMaxLayoutWidth: CGFloat = DefaultLabelSettings.preferredMaxLayoutWidth
+    open var truncateText = DefaultLabelSettings.truncateText
 
     // MARK: - Methods
 
     /**
      Text rect size
      */
-    public func textRectForBounds(bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+    open func textRectForBounds(_ bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
         guard let _attributedText = self.attributedText else {
-            return CGRectZero
+            return CGRect.zero
         }
         var type = Type(
             attributedText: _attributedText,
             rect: bounds,
+            kerningSettings: self.kerningMode.kerningSettings,
             numberOfLines: self.numberOfLines,
-            options: [.UsesLineFragmentOrigin],
-            truncateText: self.truncateText,
-            kerningSettings: self.kerningMode.kerningSettings)
+            options: [.usesLineFragmentOrigin],
+            truncateText: self.truncateText)
         type.processWithoutDrawing()
-        return CGRect(origin: CGPointZero, size: type.intrinsicTextSize)
+        return CGRect(origin: CGPoint.zero, size: type.intrinsicTextSize)
     }
 
     /**
      Essential label size which amount of texts considered
      */
-    public override func intrinsicContentSize() -> CGSize {
+    open override var intrinsicContentSize : CGSize {
         return self.intrinsicContentSize(self.preferredMaxLayoutWidth == 0 ?
             (superview?.frame.width ?? kCGFloatHuge) : self.preferredMaxLayoutWidth)
     }
@@ -355,11 +350,11 @@ public class KernLabel: UIView {
     /**
      Essential label size which amount of texts and width and height (optional) passed considered
      */
-    public func intrinsicContentSize(width: CGFloat, height: CGFloat = kCGFloatHuge) -> CGSize {
+    open func intrinsicContentSize(_ width: CGFloat, height: CGFloat = kCGFloatHuge) -> CGSize {
         guard self.attributedText != nil else {
-            return CGSizeZero
+            return CGSize.zero
         }
-        let rect = CGRectMake(0, 0, width, height)
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
         return self.textRectForBounds(rect, limitedToNumberOfLines: 0).size
     }
 
@@ -373,12 +368,12 @@ public class KernLabel: UIView {
         self.initLabelSettings()
     }
 
-    private func initLabelSettings() {
-        self.contentMode = .Redraw
-        self.backgroundColor = UIColor.clearColor()
+    fileprivate func initLabelSettings() {
+        self.contentMode = .redraw
+        self.backgroundColor = UIColor.clear
     }
 
-    public override func updateConstraints() {
+    open override func updateConstraints() {
         self.invalidateIntrinsicContentSize()
         if self.preferredMaxLayoutWidth != self.bounds.width {
             self.preferredMaxLayoutWidth = self.bounds.width
@@ -386,13 +381,13 @@ public class KernLabel: UIView {
         super.updateConstraints()
     }
 
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
-        self.setNeedsDisplayInRect(self.bounds)
+        self.setNeedsDisplay(self.bounds)
         self.setNeedsUpdateConstraints()
     }
 
-    private func drawRectWithKerning(rect: CGRect, options: NSStringDrawingOptions, context: CGContext) {
+    fileprivate func drawRectWithKerning(_ rect: CGRect, options: NSStringDrawingOptions, context: CGContext) {
         guard let _attributedText = self.attributedText else {
             return
         }
@@ -407,13 +402,13 @@ public class KernLabel: UIView {
         type.drawText(on: context)
     }
 
-    public func drawTextInRect(rect: CGRect, context: CGContext?) {
+    open func drawTextInRect(_ rect: CGRect, context: CGContext?) {
         guard let context = context else {
             return
         }
-        var options = NSStringDrawingOptions.UsesLineFragmentOrigin
-        if self.lineBreakMode == .ByTruncatingTail {
-            options.unionInPlace(.TruncatesLastVisibleLine)
+        var options = NSStringDrawingOptions.usesLineFragmentOrigin
+        if self.lineBreakMode == .byTruncatingTail {
+            options.formUnion(.truncatesLastVisibleLine)
         }
         self.drawRectWithKerning(
             rect,
@@ -421,7 +416,7 @@ public class KernLabel: UIView {
             context: context)
     }
 
-    public override func drawRect(rect: CGRect) {
+    open override func draw(_ rect: CGRect) {
         let context = UIGraphicsGetCurrentContext()
         self.drawTextInRect(rect, context: context)
     }
