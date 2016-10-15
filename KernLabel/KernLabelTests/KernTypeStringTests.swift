@@ -111,7 +111,7 @@ class KernTypeStringTests: FBSnapshotTestCase {
         self.string = KernTypeString(string: kTextKana, attributes: TestSettings.attributes)
         let rect = CGRect(x: 0, y: 0, width: 500, height: 500)
         self.measure {
-            self.string.createImage(rect, options: [])
+            let _ = self.string.createImage(rect, options: [])
         }
     }
 
