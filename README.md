@@ -17,6 +17,7 @@ KernLabel は、主に日本語で書かれたテキストをカーニングし�
 
 * iOS 8.0+
 * Xcode 8.0+
+* Swift 3.0+
 
 ## Install
 
