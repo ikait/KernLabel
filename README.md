@@ -5,7 +5,10 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![License](http://img.shields.io/:license-MIT-blue.svg)](http://doge.mit-license.org)
 
-KernLabel is a UILabel replacement to show mainly Japanese texts kerning applied for readability. 
+KernLabel is a UILabel replacement to show mainly Japanese texts kerning applied for readability.
+
+KernLabel は、主に日本語で書かれたテキストをカーニングし、可読性を向上させて表示するための UILabel 代替です。
+現在は約物系のみのカーニングに対応しています。
 
 ![Sample 1](https://github.com/ikait/KernLabel/raw/master/images/sample1.png)
 
@@ -13,7 +16,59 @@ KernLabel is a UILabel replacement to show mainly Japanese texts kerning applied
 ## Requirements
 
 * iOS 8.0+
+* Xcode 8.0+
+
+## Install
+
+You can install KernLabel to your project via CocoaPods or Carthage.
+
+### CocoaPods
+
+Add the following line to Podfile:
+
+```
+use_frameworks!
+
+pod 'KernLabel', '~> 0.5.0'
+```
+
+### Carthage
+
+Add the following line to Carthage:
+
+```
+github "ikait/KernLabel" == 0.5.0
+```
 
 ## Usage
 
-Just use like a UILabel.
+```swift
+let label = KernLabel()
+label.text = "「あいうえお」"
+view.addSubview(label)
+```
+
+UILabel にある一部のプロパティに加えて、以下のプロパティを利用できます。
+
+### Kerning Mode
+
+カーニングを行う対象を指定します。
+
+```swift
+label.kerningMode = .minimum
+```
+
+* `.minimum`: 終わり括弧や始め括弧
+* `.normal`: 上に加え、句読点
+
+### Vertical Alignment
+
+ラベル内において、文字列が配置される縦位置を指定します。
+
+```swift
+label.verticalAlignment = .top
+```
+
+* `.top`: 上揃え
+* `.middle`: 中央揃え
+* `.bottom`: 下揃え
