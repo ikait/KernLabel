@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5A4C39301D1BFFF3009DEB65"
+               BuildableName = "KernLabelTests.xctest"
+               BlueprintName = "KernLabelTests"
+               ReferencedContainer = "container:KernLabel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5ABC40B41CF539C200CC65A2"
+            BuildableName = "KernLabel.framework"
+            BlueprintName = "KernLabel"
+            ReferencedContainer = "container:KernLabel.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
