@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name          = "KernLabel"
-  s.version       = "0.3.5"
+  s.version       = "0.5.0"
   s.summary       = "KernLabel is a UILabel replacement to show mainly Japanese texts kerning applied for readability."
   s.homepage      = "https://github.com/ikait/KernLabel"
   s.screenshots   = [ "https://raw.githubusercontent.com/ikait/KernLabel/master/images/sample1.png" ]
