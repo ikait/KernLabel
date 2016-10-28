@@ -59,8 +59,10 @@ UILabel にある一部のプロパティに加えて、以下のプロパティ
 label.kerningMode = .minimum
 ```
 
-* `.minimum`: 終わり括弧や始め括弧
-* `.normal`: 上に加え、句読点
+* `.none`: 行頭の始め括弧系のみを詰める
+* `.minimum`: 上に加え、連続する括弧系を詰める
+* `.normal`: 上に加え、括弧系を全て詰める
+* `.all`: 上に加え、句読点を全て詰める
 
 ### Vertical Alignment
 
