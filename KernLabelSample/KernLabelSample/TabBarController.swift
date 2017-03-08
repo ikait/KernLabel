@@ -18,7 +18,6 @@ class TabBarController: UITabBarController {
             ViewController(title: "KernLabel Sample"),
             SpeedTestViewController(title: "Speed Test"),
             ViewTableViewController(title: "View Table"),
-            LayerTableViewController(title: "Layer Table")
         ]
     }
 

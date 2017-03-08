@@ -10,20 +10,38 @@ import UIKit
 import KernLabel
 
 
+class Queue<T: Hashable> {
+    var queue = OperationQueue()
+    var operations = [T: Operation]()
+
+    func add(operation key: T, block: @escaping () -> ()) {
+        let op = BlockOperation(block: block)
+        self.operations[key] = op
+        self.queue.addOperation(op)
+    }
+
+    func cancel(operation key: T) {
+        guard let op = self.operations[key] else {
+            return
+        }
+        op.cancel()
+    }
+
+    func cancelAllOperations() {
+        self.queue.cancelAllOperations()
+    }
+}
+
+
 class ViewTableViewController: TableViewController {
 
     var heights: [IndexPath: CGFloat] = [:]
-    var numberOfRows = 0
+    var numberOfRows = 1000
+    var queue = Queue<IndexPath>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(ViewTableCell.self, forCellReuseIdentifier: "ViewTableCell")
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.numberOfRows = 400
-        self.tableView.reloadData()
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -41,7 +59,7 @@ class ViewTableViewController: TableViewController {
         let type = KernTypeString(
             string: Sentences[indexPath.row % Sentences.count], attributes: TitleView.attributes)
         let height = type.boundingHeight(
-            tableView.frame.width - 30, options: [], numberOfLines: 0, context: nil) + 30
+            tableView.frame.width - 20, options: [], numberOfLines: 0, context: nil) + 20
         self.heights[indexPath] = height
         return height
     }
@@ -49,9 +67,24 @@ class ViewTableViewController: TableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ViewTableCell", for: indexPath) as! ViewTableCell
         cell.titleView.text = Sentences[(indexPath as NSIndexPath).row % Sentences.count]
-        cell.titleView.frame = CGRect(x: 15, y: 15, width: cell.frame.width - 30, height: cell.frame.height - 30)
-        cell.titleView.setNeedsDisplay()
+        cell.titleView.frame = CGRect(x: 10, y: 10, width: cell.frame.width - 20, height: cell.frame.height - 20)
+
+        self.queue.add(operation: indexPath) {
+            let type = KernTypeString(string: cell.titleView.text, attributes: TitleView.attributes)
+            let image = type.createImage(cell.titleView.bounds, options: .usesLineFragmentOrigin)
+            DispatchQueue.main.async {
+                cell.titleView.layer.contents = image
+            }
+        }
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        self.queue.cancel(operation: indexPath)
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        self.queue.cancelAllOperations()
     }
 }
 
@@ -94,11 +127,5 @@ private class TitleView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    fileprivate override func draw(_ rect: CGRect) {
-        let context = UIGraphicsGetCurrentContext()
-        let type = KernTypeString(string: self.text, attributes: type(of: self).attributes)
-        type.drawWithRect(rect, options: .usesLineFragmentOrigin, context: context)
     }
 }
