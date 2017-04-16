@@ -446,7 +446,6 @@ struct Type {
 
      - parameter on: 文字が描画される context
      */
-    @discardableResult
     mutating func drawText(on context: CGContext) {
         self.process(context)
     }
@@ -467,7 +466,6 @@ struct Type {
 
      - seealso: `process(:_, needsDrawing:_)`
      */
-    @discardableResult
     mutating func processWithoutDrawing() {
         self.process(nil, needsDrawing: false)
     }
