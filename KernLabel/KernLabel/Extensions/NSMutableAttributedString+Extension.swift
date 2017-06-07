@@ -19,15 +19,15 @@ extension NSMutableAttributedString {
             guard let result = result, let this = self else { return }
             let (location, length) = (result.range.location, result.range.length)
             let curAttrs = this.attributes(at: location, effectiveRange: nil)
-            let font = curAttrs[NSFontAttributeName] as? UIFont ?? kDefaultFont
-            this.addAttribute(NSKernAttributeName, value: font.pointSize * value, range: NSMakeRange(location, length))
+            let font = curAttrs[.font] as? UIFont ?? kDefaultFont
+            this.addAttribute(.kern, value: font.pointSize * value, range: NSMakeRange(location, length))
         }
         return self
     }
 
     func kerning(with settings: KerningSettings) -> Self {
-        settings.forEach { (regexp, value) in
-            self.kerning(regexp, value: value)
+        settings.forEach { body in
+            self.kerning(body.0, value: body.1)
         }
         return self
     }
@@ -38,7 +38,7 @@ extension NSMutableAttributedString {
             guard let result = result, let this = self else { return }
             let (location, _) = (result.range.location, result.range.length)
             let curAttrs = this.attributes(at: location, effectiveRange: nil)
-            let font = curAttrs[NSFontAttributeName] as? UIFont ?? kDefaultFont
+            let font = curAttrs[.font] as? UIFont ?? kDefaultFont
             kernValueSum += font.pointSize * value
         }
         return kernValueSum
@@ -46,24 +46,18 @@ extension NSMutableAttributedString {
 
     func kerningValueSum(with settings: KerningSettings) -> CGFloat {
         var kernValueSum: CGFloat = 0
-        settings.forEach { (regexp, value) in
-            kernValueSum += self.kerningValueSum(regexp, value: value)
+        settings.forEach { body in
+            kernValueSum += self.kerningValueSum(body.0, value: body.1)
         }
         return kernValueSum
     }
 
     func clearKerning(with range: NSRange) -> Self {
-        print(self.length)
-        self.removeAttribute(NSKernAttributeName, range: range)
+        self.removeAttribute(.kern, range: range)
         return self
     }
 
-    override var attributes: [String : Any] {
-        get {
-            return super.attributes
-        }
-        set {
-            self.addAttributes(newValue, range: NSMakeRange(0, self.length))
-        }
+    func setAttributes(attrs: [NSAttributedStringKey : Any]) {
+        self.addAttributes(attrs, range: NSMakeRange(0, self.length))
     }
 }

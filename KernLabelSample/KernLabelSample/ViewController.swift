@@ -32,11 +32,12 @@ class ViewController: TableViewController {
     }
 
     fileprivate func prepareText() {
-        self.text = ""
-        self.text += "【行頭つめ】あいう「えお」「か」、！？\n"
-        self.text += "（連続）する約物「：」！「」、。；折り返し「１」（２）〈３〉【４】［５］《６》\n"
-        self.text += "英数123abc＠“ん”〘〛｛［』〕…【括弧）終\n"
-        self.text += "2016年1月1日（金）"
+        self.text = """
+        【行頭つめ】あいう「えお」「か」、！？
+        （連続）する約物「：」！「」、。；折り返し「１」（２）〈３〉【４】［５］《６》
+        英数123abc＠“ん”〘〛｛［』〕…【括弧）終
+        2016年1月1日（金）
+        """
     }
 
     fileprivate func prepareUILabel(with cell: UITableViewCell) {

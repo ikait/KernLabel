@@ -11,7 +11,7 @@ import UIKit
 
 extension NSAttributedString {
     var lineHeight: CGFloat {
-        guard let paragraphStyle = self.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+        guard let paragraphStyle = self.attributes[.paragraphStyle] as? NSParagraphStyle else {
                 return self.font.lineHeight
         }
         let lineHeightMultiple = paragraphStyle.lineHeightMultiple
@@ -19,17 +19,17 @@ extension NSAttributedString {
     }
 
     var textAlignment: NSTextAlignment? {
-        guard let paragraphStyle = self.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+        guard let paragraphStyle = self.attributes[.paragraphStyle] as? NSParagraphStyle else {
             return nil
         }
         return paragraphStyle.alignment
     }
 
     var backgroundColor: UIColor? {
-        return self.attributes[NSBackgroundColorAttributeName] as? UIColor
+        return self.attributes[.backgroundColor] as? UIColor
     }
 
-    var attributes: [String : Any] {
+    var attributes: [NSAttributedStringKey : Any] {
         if self.length != 0 {
             return self.attributes(at: 0, effectiveRange: nil)
         } else {
@@ -38,7 +38,7 @@ extension NSAttributedString {
     }
 
     var font: UIFont {
-        if let font = self.attributes[NSFontAttributeName] as? UIFont {
+        if let font = self.attributes[.font] as? UIFont {
             return font
         }
         return UIFont.systemFont(ofSize: UIFont.systemFontSize)
@@ -53,14 +53,14 @@ extension NSAttributedString {
     }
 
     func getFont(_ location: Int) -> UIFont? {
-        if let font = self.attributes(at: location, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+        if let font = self.attributes(at: location, effectiveRange: nil)[.font] as? UIFont {
             return font
         }
         return nil
     }
 
     func getLineHeight(_ location: Int) -> CGFloat {
-        guard let paragraphStyle = self.attributes(at: location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle, let font = self.getFont(location) else {
+        guard let paragraphStyle = self.attributes(at: location, effectiveRange: nil)[.paragraphStyle] as? NSParagraphStyle, let font = self.getFont(location) else {
                 return self.font.lineHeight
         }
         let lineHeightMultiple = paragraphStyle.lineHeightMultiple
@@ -68,7 +68,7 @@ extension NSAttributedString {
     }
 
     func getTextAlignment(_ location: Int) -> NSTextAlignment? {
-        guard let paragraphStyle = self.attributes(at: location, effectiveRange: nil)[NSParagraphStyleAttributeName] as? NSParagraphStyle else {
+        guard let paragraphStyle = self.attributes(at: location, effectiveRange: nil)[.paragraphStyle] as? NSParagraphStyle else {
             return nil
         }
         return paragraphStyle.alignment

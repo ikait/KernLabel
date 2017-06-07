@@ -56,6 +56,7 @@ class SpeedTestViewController: TableViewController {
             action: #selector(SpeedTestViewController.performSpeedTest))
     }
 
+    @objc
     func performSpeedTest() {
         self.textView.resignFirstResponder()
         self.testResultView1.needsPerform = true
@@ -101,7 +102,7 @@ private class TestResultView1: TestResultView {
         let context = UIGraphicsGetCurrentContext()
         self.fillRectWhite(context)
         let str = NSAttributedString(string: self.text, attributes: [
-            NSFontAttributeName: kTestFont
+            .font: kTestFont
         ])
         let rect = CGRect(x: 0, y: 0, width: self.frame.width, height: kTestFieldHeight)
         let time = PerformanceCheck.time {
@@ -122,7 +123,7 @@ private class TestResultView2: TestResultView {
         let context = UIGraphicsGetCurrentContext()
         self.fillRectWhite(context)
         let str = KernTypeString(string: self.text, attributes: [
-            NSFontAttributeName: kTestFont
+            .font: kTestFont
         ])
         let rect = CGRect(x: 0, y: 0, width: self.frame.width, height: kTestFieldHeight)
         let time = PerformanceCheck.time {

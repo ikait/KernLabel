@@ -23,7 +23,7 @@ private let kCharactersCanBurasagari = [
     "、", "。", "，", "．"
 ]
 let kCharacterHalfSpace: CGFloat = 0.5  // 右半分が空白な文字の、fontSize における実質的な幅の割合
-let kCGFloatHuge: CGFloat = pow(2, 12)
+public let kCGFloatHuge: CGFloat = pow(2, 12)
 
 
 struct Type {
@@ -105,7 +105,7 @@ struct Type {
 
         // Xcode8 + iOS 10 で、backgroundColor が意図しない形で drawLine に乗ってくるので、attributedText からは外しておく
         self.backgroundColor = self.attributedText.backgroundColor
-        self.attributedText.removeAttribute(NSBackgroundColorAttributeName, range: NSMakeRange(0, self.attributedText.length))
+        self.attributedText.removeAttribute(.backgroundColor, range: NSMakeRange(0, self.attributedText.length))
 
         self.typesetter = CTTypesetterCreateWithAttributedString(self.attributedText)
         self.font = self.attributedText.font
@@ -343,7 +343,8 @@ struct Type {
             ),
             on: context)
         context.textMatrix = CGAffineTransform(scaleX: 1, y: -1) // 反転を戻す
-        lines.forEach { _, offsetX, offsetY, ctline in
+        lines.forEach { (args) in
+            let (_, offsetX, offsetY, ctline) = args
             context.textPosition = CGPoint(x: offsetX, y: offsetY + y)
             CTLineDraw(ctline, context)
         }

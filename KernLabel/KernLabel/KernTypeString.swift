@@ -12,18 +12,19 @@ import UIKit
 open class KernTypeString {
 
     open var string: String = ""
-    open var attributes: [String : AnyObject] = [:]
+    open var attributes: [NSAttributedStringKey : Any] = [:]
     open var kerningMode: KernLabelKerningMode = .normal
 
     var attributedString: NSAttributedString {
-        return NSAttributedString(string: self.string, attributes: self.attributes)
+        let attributedString = NSMutableAttributedString(string: self.string)
+        return attributedString
     }
 
     public init(string: String) {
         self.string = string
     }
 
-    public init(string: String, attributes: [String : AnyObject]) {
+    public init(string: String, attributes: [NSAttributedStringKey : Any]) {
         self.string = string
         self.attributes = attributes
     }

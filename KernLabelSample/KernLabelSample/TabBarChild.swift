@@ -21,5 +21,10 @@ extension TabBarChild where Self: UIViewController {
         self.tabBarController?.navigationItem.leftBarButtonItems = leftBarButtonItems
         self.tabBarController?.navigationItem.rightBarButtonItems = rightBarButtonItems
         self.tabBarController?.navigationItem.title = title ?? self.title
+
+        if #available(iOS 11, *) {
+            self.tabBarController?.navigationItem.largeTitleDisplayMode = .always
+            self.tabBarController?.navigationController?.navigationBar.prefersLargeTitles = true
+        }
     }
 }

@@ -67,11 +67,12 @@ class ViewTableViewController: TableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ViewTableCell", for: indexPath) as! ViewTableCell
         cell.titleView.text = Sentences[(indexPath as NSIndexPath).row % Sentences.count]
-        cell.titleView.frame = CGRect(x: 10, y: 10, width: cell.frame.width - 20, height: cell.frame.height - 20)
+        cell.titleView.frame = cell.readableContentGuide.layoutFrame
+        let bounds = cell.titleView.bounds
 
         self.queue.add(operation: indexPath) {
             let type = KernTypeString(string: cell.titleView.text, attributes: TitleView.attributes)
-            let image = type.createImage(cell.titleView.bounds, options: .usesLineFragmentOrigin)
+            let image = type.createImage(bounds, options: .usesLineFragmentOrigin)
             DispatchQueue.main.async {
                 cell.titleView.layer.contents = image
             }
@@ -108,15 +109,15 @@ private class TitleView: UIView {
 
     var text = ""
 
-    static var attributes: [String : AnyObject] {
+    static var attributes: [NSAttributedStringKey : Any] {
         var paragraphStyle: NSParagraphStyle {
             let style = NSMutableParagraphStyle()
             style.lineHeightMultiple = 1.2
             return style
         }
         return [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: UIFont.systemFont(ofSize: Device.isPad ? 24 : 16)
+            .paragraphStyle: paragraphStyle,
+            .font: UIFont.systemFont(ofSize: Device.isPad ? 24 : 16)
         ]
     }
 

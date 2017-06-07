@@ -136,9 +136,9 @@ open class KernLabel: UIView {
                 return style
             }()
             self.attributedText = NSAttributedString(string: newValue, attributes: [
-                NSFontAttributeName: self.font,
-                NSForegroundColorAttributeName: self.textColor,
-                NSParagraphStyleAttributeName: style
+                .font: self.font,
+                .foregroundColor: self.textColor,
+                .paragraphStyle: style
             ])
         }
     }
@@ -159,7 +159,7 @@ open class KernLabel: UIView {
     open var font: UIFont {
         get {
             if let attributedText = self.attributedText,
-                let font = attributedText.attributes[NSFontAttributeName] as? UIFont {
+                let font = attributedText.attributes[.font] as? UIFont {
                 return font
             }
             return self._font
@@ -167,9 +167,9 @@ open class KernLabel: UIView {
         set {
             if let _attributedText = self.attributedText {
                 let attributedText = NSMutableAttributedString(attributedString: _attributedText)
-                attributedText.attributes = [
-                    NSFontAttributeName: newValue
-                ]
+                attributedText.setAttributes(attrs: [
+                    .font: newValue
+                ])
                 self.attributedText = attributedText
             }
             self._font = newValue
@@ -184,7 +184,7 @@ open class KernLabel: UIView {
     open var textColor: UIColor {
         get {
             if let attributedText = self.attributedText,
-                let color = attributedText.attributes[NSForegroundColorAttributeName] as? UIColor {
+                let color = attributedText.attributes[.foregroundColor] as? UIColor {
                 return color
             }
             return self._textColor
@@ -192,9 +192,9 @@ open class KernLabel: UIView {
         set {
             if let _attributedText = self.attributedText {
                 let attributedText = NSMutableAttributedString(attributedString: _attributedText)
-                attributedText.attributes = [
-                    NSForegroundColorAttributeName: newValue
-                ]
+                attributedText.setAttributes(attrs: [
+                    .foregroundColor: newValue
+                ])
                 self.attributedText = attributedText
             }
             self._textColor = newValue
@@ -213,7 +213,7 @@ open class KernLabel: UIView {
     open var textAlignment: NSTextAlignment {
         get {
             if let attributedText = self.attributedText,
-                let paragraphStyle = attributedText.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
+                let paragraphStyle = attributedText.attributes[.paragraphStyle] as? NSParagraphStyle {
                 return paragraphStyle.alignment
             }
             return self._textAlignment
@@ -224,9 +224,9 @@ open class KernLabel: UIView {
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.alignment = newValue
                 paragraphStyle.lineBreakMode = self.lineBreakMode
-                attributedText.attributes = [
-                    NSParagraphStyleAttributeName: paragraphStyle
-                ]
+                attributedText.setAttributes(attrs: [
+                    .paragraphStyle: paragraphStyle
+                ])
                 self.attributedText = attributedText
             }
             self._textAlignment = newValue
@@ -245,7 +245,7 @@ open class KernLabel: UIView {
     open var lineBreakMode: NSLineBreakMode {
         get {
             if let attributedText = self.attributedText,
-                let paragraphStyle = attributedText.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
+                let paragraphStyle = attributedText.attributes[.paragraphStyle] as? NSParagraphStyle {
                 return paragraphStyle.lineBreakMode
             }
             return self._lineBreakMode
@@ -256,9 +256,9 @@ open class KernLabel: UIView {
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.lineBreakMode = newValue
                 paragraphStyle.alignment = self.textAlignment
-                attributedText.attributes = [
-                    NSParagraphStyleAttributeName: paragraphStyle
-                ]
+                attributedText.setAttributes(attrs: [
+                    .paragraphStyle: paragraphStyle
+                ])
                 self.attributedText = attributedText
             }
             self._lineBreakMode = newValue
@@ -279,7 +279,7 @@ open class KernLabel: UIView {
     open var allowsDefaultTighteningForTruncation: Bool {
         get {
             if let attributedText = self.attributedText,
-                let paragraphStyle = attributedText.attributes[NSParagraphStyleAttributeName] as? NSParagraphStyle {
+                let paragraphStyle = attributedText.attributes[.paragraphStyle] as? NSParagraphStyle {
                 return paragraphStyle.allowsDefaultTighteningForTruncation
             }
             return self._allowsDefaultTighteningForTruncation
@@ -289,9 +289,9 @@ open class KernLabel: UIView {
                 let attributedText = NSMutableAttributedString(attributedString: _attributedText)
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.allowsDefaultTighteningForTruncation = newValue
-                attributedText.attributes = [
-                    NSParagraphStyleAttributeName: paragraphStyle
-                ]
+                attributedText.setAttributes(attrs: [
+                    .paragraphStyle: paragraphStyle
+                ])
                 self.attributedText = attributedText
             }
             self._allowsDefaultTighteningForTruncation = newValue

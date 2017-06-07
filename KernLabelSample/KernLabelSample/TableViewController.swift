@@ -47,12 +47,6 @@ class TableViewController: UIViewController, TabBarChild {
         self.setNavigationBar()
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        self.tableView.contentInset = UIEdgeInsetsMake(
-            self.topLayoutGuide.length, 0, self.bottomLayoutGuide.length, 0)
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
